@@ -7,7 +7,7 @@ bool is_str_digit(const string &s) {
 int parse_arguments(char *av[]) {
 	string __port(av[1]);
 	string __password(av[2]);
-	if (!is_str_digit(__port))
+	if (!is_str_digit(__port) || __password.length() < 4)
 		return -1;
 	return (0);
 }
@@ -18,6 +18,8 @@ int main(int ac, char *av[])
 		cerr << "Bad command : usage : ./ircserv <port> <password>" << endl;
 		return (1);
 	}
-	if (parse_arguments(av) == -1)
+	if (parse_arguments(av) == -1){
+		cerr << "Bad arguments : please enter a valid arguments" << endl;
 	    return (2);
+	}
 }
