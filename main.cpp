@@ -13,7 +13,8 @@ int parse_arguments(const string &__port, const string &__password)
 
 int main(int __ac, char *__av[])
 {
-	int 				__socket_fd;
+	int 				__socket_fd, __connection;
+	vector<int>			__clients;
 	struct sockaddr_in	__server_addr = {};
 	if (__ac != 3)
 	{
@@ -43,18 +44,26 @@ int main(int __ac, char *__av[])
 		return (1);
 	}
 	unsigned long __address_len = sizeof(__server_addr);
-	int __connection = accept(__socket_fd, (struct sockaddr *)&__server_addr, (socklen_t *)&__address_len);
-	if (__connection == -1)
+	while (true)
 	{
-        cerr << "Accept error : failed to accept connection" << endl;
-		close(__socket_fd);
-		return (1);
+		__connection = accept(__socket_fd, (struct sockaddr *)&__server_addr, (socklen_t *)&__address_len);
+		if (__connection == -1)
+		{
+			cerr << "Accept error : failed to accept connection" << endl;
+			close(__socket_fd);
+			return (1);
+		}
+		__clients.push_back(__connection);
+		string __response = "Connected successfully <3";
+		send(__connection, __response.c_str(), __response.size(), 0);
+		char buffer[100] = {};
+		while (true)
+		{
+			
+		}
+		read(__connection, buffer, sizeof(buffer));
+		std::cout << "the message from the cliend is : " << buffer << endl;
 	}
-	string __response = "Connected successfully <3";
-	send(__connection, __response.c_str(), __response.size(), 0);
-	char buffer[100];
-	read(__connection, buffer, sizeof(buffer));
-	std::cout << "the message from the cliend is : " << buffer << endl;
 	close(__connection);
 	close(__socket_fd);
 	return (0);
