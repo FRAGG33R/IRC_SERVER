@@ -4,7 +4,7 @@ Internet Relay Chat (IRC) is a text-based chat system for instant messaging. IRC
 
 # The first irc server
 
-![first irc server image](https://upload.wikimedia.org/wikipedia/commons/e/e3/Tolsun_2.jpg)
+
 
 # usage
 
