@@ -15,7 +15,6 @@ int main(int __ac, char *__av[])
 {
 	int 				__socket_fd;
 	struct sockaddr_in	__server_addr = {};
-
 	if (__ac != 3)
 	{
 		cerr << "Bad command : usage : ./ircserv <port> <password>" << endl;
@@ -53,6 +52,9 @@ int main(int __ac, char *__av[])
 	}
 	string __response = "Connected successfully <3";
 	send(__connection, __response.c_str(), __response.size(), 0);
+	char buffer[100];
+	read(__connection, buffer, sizeof(buffer));
+	std::cout << "the message from the cliend is : " << buffer << endl;
 	close(__connection);
 	close(__socket_fd);
 	return (0);
