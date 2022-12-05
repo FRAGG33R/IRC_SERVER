@@ -32,23 +32,23 @@ int main(int __ac, char *__av[])
 		return (1);
 	}
 	__server_addr.sin_family = AF_INET;
-	__server_addr.sin_port = htons(stoi(__port));
+	__server_addr.sin_port = htons(1003);
 	__server_addr.sin_addr.s_addr = INADDR_ANY;
-	cout  << "-> Socekt file descriptor :  " << __socket_fd << endl;
 	if (bind(__socket_fd, (struct sockaddr *)&__server_addr, sizeof(__server_addr)) == -1)
 	{
 		cerr << "Bind error : failed to bind socket to port " << __port << endl;
 		return (1);
 	}
-	if (listen(__socket_fd, 100) == -1){
+	if (listen(__socket_fd, 10) == -1){
 		cerr << "listen error : failed to listen on socket " << __socket_fd << endl;
 		return (1);
 	}
-	sleep(200);
-	int __connection = accept(__socket_fd, (struct sockaddr *)&__server_addr, (socklen_t *)sizeof(__server_addr));
+	unsigned long __address_len = sizeof(__server_addr);
+	int __connection = accept(__socket_fd, (struct sockaddr *)&__server_addr, (socklen_t *)&__address_len);
 	if (__connection == -1)
 	{
         cerr << "Accept error : failed to accept connection" << endl;
+		close(__socket_fd);
 		return (1);
 	}
 	string __response = "Connected successfully <3";
