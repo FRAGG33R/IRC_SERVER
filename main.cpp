@@ -1,4 +1,4 @@
-#include "includes/irc.hpp"
+# include "includes/irc.hpp"
 
 bool is_str_digit(const string &__s) {
 	return __s.find_first_not_of("0123456789") == string::npos;
@@ -32,7 +32,7 @@ int main(int __ac, char *__av[])
 		return (1);
 	}
 	__server_addr.sin_family = AF_INET;
-	__server_addr.sin_port = htons(1003);
+	__server_addr.sin_port = htons(3000);
 	__server_addr.sin_addr.s_addr = INADDR_ANY;
 	if (bind(__socket_fd, (struct sockaddr *)&__server_addr, sizeof(__server_addr)) == -1)
 	{
@@ -56,13 +56,6 @@ int main(int __ac, char *__av[])
 		__clients.push_back(__connection);
 		string __response = "Connected successfully <3";
 		send(__connection, __response.c_str(), __response.size(), 0);
-		char buffer[100] = {};
-		while (true)
-		{
-			
-		}
-		read(__connection, buffer, sizeof(buffer));
-		std::cout << "the message from the cliend is : " << buffer << endl;
 	}
 	close(__connection);
 	close(__socket_fd);
