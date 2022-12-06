@@ -39,7 +39,7 @@ int main(int __ac, char *__av[])
 		cerr << "Bind error : failed to bind socket to port " << __port << endl;
 		return (1);
 	}
-	if (listen(__socket_fd, 10) == -1){
+	if (listen(__socket_fd, 2) == -1) {
 		cerr << "listen error : failed to listen on socket " << __socket_fd << endl;
 		return (1);
 	}
@@ -50,6 +50,9 @@ int main(int __ac, char *__av[])
 		if (__connection == -1)
 		{
 			cerr << "Accept error : failed to accept connection" << endl;
+			for (size_t i = 0; i < __clients.size(); i++) {
+				close(__clients[i]);
+			}
 			close(__socket_fd);
 			return (1);
 		}
