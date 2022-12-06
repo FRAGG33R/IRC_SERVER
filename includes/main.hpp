@@ -10,26 +10,10 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <arpa/inet.h>
-
-
-
-// #include    <sys/types.h>
-// #include    <netinet/in.h>
-// #include    <arpa/inet.h>
-// #include    <sys/socket.h>
-// #include    <string.h>
-// #include    <iostream>
-// #include    <unistd.h>
-// #include    <stdio.h>
-// #include    <string>
-// #include    <stdlib.h>
-// #include    <cstdlib>
-// #include    <iostream>
-// #include    <string>
-// #include    <fstream>
-// #include    <vector>
-// #include    <map>
-// #include    <cstring>
+//colors 
+#define GRN "\e[1;32m"
+#define RESET "\e[0m"
+#define RED "\e[1;31m"
 
 using std::cout;
 using std::vector;

@@ -20,17 +20,17 @@ int main(int __ac, char *__av[])
 	char __buffer[1024] = {0};
 	if (__ac != 3)
 	{
-		cerr << "Bad command : usage : ./ircserv <port> <password>" << endl;
+		cerr << RED << "Bad command : usage : ./ircserv <port> <password>" << RESET << endl;
 		return (1);
 	}
 	string __port(__av[1]), __password(__av[2]);
 	if (parse_arguments(__port, __password) == -1)
 	{
-		cerr << "Bad arguments : please enter a valid arguments" << endl;
+		cerr << RED << "Bad arguments : please enter a valid arguments" << RESET << endl;
 	    return (1);
 	}
 	if ((__socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1 ) {
-		cerr << "Socket error : could not creat socket" << endl;
+		cerr << RED << "Socket error : could not creat socket" << RESET << endl;
 		return (1);
 	}
 	__server_addr.sin_family = AF_INET;
@@ -38,25 +38,26 @@ int main(int __ac, char *__av[])
 	__server_addr.sin_addr.s_addr = INADDR_ANY;
 	if (bind(__socket_fd, (struct sockaddr *)&__server_addr, sizeof(__server_addr)) == -1)
 	{
-		cerr << "Bind error : failed to bind socket to port " << __port << endl;
+		cerr << RED << "Bind error : failed to bind socket to port " << __port << RESET << endl;
 		return (1);
 	}
 	if (listen(__socket_fd, 2) == -1) {
-		cerr << "listen error : failed to listen on socket " << __socket_fd << endl;
+		cerr << RED << "listen error : failed to listen on socket " << __socket_fd << RESET << endl;
 		return (1);
 	}
 	unsigned long __address_len = sizeof(__server_addr);
 	__connection = accept(__socket_fd, (struct sockaddr *)&__server_addr, (socklen_t *)&__address_len);
 	if (__connection == -1)
 	{
-		cerr << "Accept error : failed to accept connection" << endl;
+		cerr << RED << "Accept error : failed to accept connection" << RESET << endl;
 		for (size_t i = 0; i < __clients.size(); i++) {
 			close(__clients[i]);
 		}
 		close(__socket_fd);
 		return (1);
 	}
-	string __response = "Connected successfully <3";
+	string __response = string(GRN) + "Connected with the irc server successfully\n" + string(RESET);
+	string __confirmation  = string(GRN) + "the message was successfully sent\n" + string(RESET);
 	send(__connection, __response.c_str(), __response.size(), 0);
 	while (true)
 	{
@@ -65,6 +66,7 @@ int main(int __ac, char *__av[])
 			std::cout << "the Client was exited successfully ! " << endl;
 			break;
 		}
+		send(__connection , __confirmation.c_str(), __confirmation.size(), 0);
 		cout << "-> Client message : " << __buffer << endl;
 		memset(__buffer, 0, sizeof(__buffer));
 	}
