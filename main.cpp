@@ -6,7 +6,8 @@ bool is_str_digit(const string &__s) {
 
 int parse_arguments(const string &__port, const string &__password)
 {
-	if (!is_str_digit(__port) || __password.length() < 4)
+	int	__port_as_number = atoi(__port.c_str());
+	if (!is_str_digit(__port) || !(__port_as_number <= 65353 && __port_as_number >= 1)|| __password.length() < 4)
 		return -1;
 	return (0);
 }
@@ -32,7 +33,7 @@ int main(int __ac, char *__av[])
 		return (1);
 	}
 	__server_addr.sin_family = AF_INET;
-	__server_addr.sin_port = htons(3000);
+	__server_addr.sin_port = htons(stoi(__port));
 	__server_addr.sin_addr.s_addr = INADDR_ANY;
 	if (bind(__socket_fd, (struct sockaddr *)&__server_addr, sizeof(__server_addr)) == -1)
 	{
@@ -60,7 +61,10 @@ int main(int __ac, char *__av[])
 		string __response = "Connected successfully <3";
 		send(__connection, __response.c_str(), __response.size(), 0);
 	}
-	close(__connection);
+	//clean all sockets
+	for(size_t i  = 0; i < __clients.size(); i++) {
+		close(__clients[i]);
+	}
 	close(__socket_fd);
 	return (0);
 }
