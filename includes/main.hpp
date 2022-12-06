@@ -31,7 +31,10 @@
 // #include    <map>
 // #include    <cstring>
 
-using namespace std;
-
+using std::cout;
+using std::vector;
+using std::string;
+using std::endl;
+using std::cerr;
 
 #endif
