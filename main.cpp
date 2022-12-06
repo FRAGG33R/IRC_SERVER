@@ -61,7 +61,11 @@ int main(int __ac, char *__av[])
 	while (true)
 	{
 		recv(__connection, __buffer, sizeof(__buffer), 0);
-		cout << "the requiset message was " << __buffer << endl;
+		if (__buffer[0] == '\0') {
+			std::cout << "the Client was exited successfully ! " << endl;
+			break;
+		}
+		cout << "-> Client message : " << __buffer << endl;
 		memset(__buffer, 0, sizeof(__buffer));
 	}
 	for(size_t i  = 0; i < __clients.size(); i++) {
