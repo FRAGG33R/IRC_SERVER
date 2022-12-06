@@ -4,13 +4,18 @@ OBJ_FILE = $(SRC_FILE:.cpp=.o)
 
 NAME = ircserv
 
-RED = \033[0;31m
+RED = \033[0;31
+
 YELLOW = \033[0;33m
+
 BLUE=\033[0;34m
+
 RESET = \033[0m
+
 GREEN=\033[0;32m
 
 INCLUDE = includes/main.hpp
+
 CC = c++
 
 FLAGS = -Wall -Wextra -Werror -std=c++98

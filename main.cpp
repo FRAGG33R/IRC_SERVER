@@ -17,6 +17,7 @@ int main(int __ac, char *__av[])
 	int 				__socket_fd, __connection;
 	vector<int>			__clients;
 	struct sockaddr_in	__server_addr = {};
+	char __buffer[1024] = {0};
 	if (__ac != 3)
 	{
 		cerr << "Bad command : usage : ./ircserv <port> <password>" << endl;
@@ -45,23 +46,24 @@ int main(int __ac, char *__av[])
 		return (1);
 	}
 	unsigned long __address_len = sizeof(__server_addr);
+	__connection = accept(__socket_fd, (struct sockaddr *)&__server_addr, (socklen_t *)&__address_len);
+	if (__connection == -1)
+	{
+		cerr << "Accept error : failed to accept connection" << endl;
+		for (size_t i = 0; i < __clients.size(); i++) {
+			close(__clients[i]);
+		}
+		close(__socket_fd);
+		return (1);
+	}
+	string __response = "Connected successfully <3";
+	send(__connection, __response.c_str(), __response.size(), 0);
 	while (true)
 	{
-		__connection = accept(__socket_fd, (struct sockaddr *)&__server_addr, (socklen_t *)&__address_len);
-		if (__connection == -1)
-		{
-			cerr << "Accept error : failed to accept connection" << endl;
-			for (size_t i = 0; i < __clients.size(); i++) {
-				close(__clients[i]);
-			}
-			close(__socket_fd);
-			return (1);
-		}
-		__clients.push_back(__connection);
-		string __response = "Connected successfully <3";
-		send(__connection, __response.c_str(), __response.size(), 0);
+		recv(__connection, __buffer, sizeof(__buffer), 0);
+		cout << "the requiset message was " << __buffer << endl;
+		memset(__buffer, 0, sizeof(__buffer));
 	}
-	//clean all sockets
 	for(size_t i  = 0; i < __clients.size(); i++) {
 		close(__clients[i]);
 	}
