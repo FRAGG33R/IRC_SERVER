@@ -12,5 +12,4 @@ class Client
 		Client();
 		Client(string name, string password, string neckname, int id, bool is_operator);
 		Client(const Client& other);
-
 };

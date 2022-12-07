@@ -1,4 +1,4 @@
-SRC_FILE = main.cpp
+SRC_FILE = main.cpp Client.cpp
 
 OBJ_FILE = $(SRC_FILE:.cpp=.o)
 
@@ -14,16 +14,16 @@ RESET = \033[0m
 
 GREEN=\033[0;32m
 
-INCLUDE = includes/main.hpp
+INCLUDE = includes/main.hpp includes/Class.client.hpp
 
 CC = c++
 
-FLAGS = -Wextra -Werror -std=c++98
+CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 all:$(NAME)
 
 %.o:%.cpp $(INCLUDE)
-	@$(CC) $(FLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 	@echo "[$(GREEN) OK $(RESET)]$(YELLOW) Compiling $<$(RESET)"
 
 $(NAME) : $(OBJ_FILE)
