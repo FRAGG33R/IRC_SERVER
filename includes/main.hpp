@@ -11,10 +11,15 @@
 # include <unistd.h>
 # include <arpa/inet.h>
 # include <poll.h>
-//colors 
+# include <stdlib.h>
+
+//colors
+
 #define GRN "\e[1;32m"
 #define RESET "\e[0m"
 #define RED "\e[1;31m"
+#define MAX_PORT 65353
+#define MAX_FD 1024
 
 using std::cout;
 using std::vector;

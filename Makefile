@@ -18,7 +18,7 @@ INCLUDE = includes/main.hpp
 
 CC = c++
 
-FLAGS = -Wall -Wextra -Werror -std=c++98
+FLAGS = -Wextra -Werror -std=c++98
 
 all:$(NAME)
 
