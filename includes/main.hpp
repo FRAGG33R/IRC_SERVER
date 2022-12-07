@@ -12,6 +12,7 @@
 # include <arpa/inet.h>
 # include <poll.h>
 # include <stdlib.h>
+# include <fcntl.h>
 
 //colors
 
