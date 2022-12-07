@@ -28,4 +28,7 @@ using std::string;
 using std::endl;
 using std::cerr;
 
+#include "Class.client.hpp"
+
+
 #endif

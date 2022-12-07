@@ -91,7 +91,6 @@ int main(int __ac, char *__av[])
 	while(true) 
 	{
 		__poll_res = poll(__poll_fds, MAX_FD, 0); //try to decrease time complexity in MAX_FD
-		// cout << "poll res" << __poll_res << endl;
 		if ( __poll_res  == -1 )
 		{
 			cerr << RED << "poll error : failed to poll on socket " << __socket_fd << RESET << endl;
