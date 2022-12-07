@@ -10,6 +10,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <arpa/inet.h>
+# include <poll.h>
 //colors 
 #define GRN "\e[1;32m"
 #define RESET "\e[0m"

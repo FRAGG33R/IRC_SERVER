@@ -18,6 +18,7 @@ int main(int __ac, char *__av[])
 	vector<int>			__clients;
 	struct sockaddr_in	__server_addr = {};
 	char __buffer[1024] = {0};
+	struct pollfd	__poll_fds[100];
 	if (__ac != 3)
 	{
 		cerr << RED << "Bad command : usage : ./ircserv <port> <password>" << RESET << endl;
@@ -41,7 +42,7 @@ int main(int __ac, char *__av[])
 		cerr << RED << "Bind error : failed to bind socket to port " << __port << RESET << endl;
 		return (1);
 	}
-	if (listen(__socket_fd, 2) == -1) {
+	if (listen(__socket_fd, 100) == -1) {
 		cerr << RED << "listen error : failed to listen on socket " << __socket_fd << RESET << endl;
 		return (1);
 	}
