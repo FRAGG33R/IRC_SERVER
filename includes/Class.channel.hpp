@@ -11,7 +11,7 @@ class Channel
 
 	public:
 		Channel();
-		Channel(vector<string> users, int channel_id, int users_coun, string channel_name);
+		Channel(vector<string> users, int channel_id, int users_count, string channel_name);
 		Channel(const Channel &obj);
 		~Channel();
 };

@@ -1,4 +1,4 @@
-SRC_FILE = main.cpp Client.cpp
+SRC_FILE = main.cpp src/Client.cpp src/channel.cpp
 
 OBJ_FILE = $(SRC_FILE:.cpp=.o)
 
