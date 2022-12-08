@@ -13,6 +13,8 @@
 # include <poll.h>
 # include <stdlib.h>
 # include <fcntl.h>
+# include <string.h>
+# include <errno.h>
 
 //colors
 
