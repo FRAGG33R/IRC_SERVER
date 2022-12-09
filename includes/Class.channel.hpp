@@ -8,7 +8,6 @@ class Channel
 		int				__users_count;
 		string			__channel_name;
 
-
 	public:
 		Channel();
 		Channel(vector<string> users, int channel_id, int users_count, string channel_name);

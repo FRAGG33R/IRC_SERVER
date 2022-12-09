@@ -48,6 +48,43 @@ void	full_close(struct pollfd *__poll_fd)
 			close(__poll_fd[i].fd);
 }
 
+int	password_autontification(string __server_password, int __client_fd)
+{
+	int		__bytes = 0;
+	char	__buffer[1024] = {0};
+	string	__client_password;
+	string	__response = string(GRN) + "Connected with the irc server successfully\n" + string(RESET);
+	string	__try_password = string(RED) + "Password incorrect please try again.\n" + string(RESET);
+
+	if (send(__client_fd, "password ➜ ", 12, 0) == -1) {
+		cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
+		return (-1);
+	}
+	__bytes = recv(__client_fd, __buffer, sizeof(__buffer), 0);
+	if (__bytes == -1) {
+		cerr << RED << "recv error : failed to recive a request from client " << __client_fd << RESET << endl;
+		return (-1);
+	}
+	__client_password = __buffer;
+	if (__server_password == __client_password)
+	{
+		if (send(__client_fd, __response.c_str(), __response.size(), 0) == -1) {
+			cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
+			return (-1);
+		}
+		return (1);
+	}
+	else
+	{
+		if (send(__client_fd, __try_password.c_str(), __try_password.size(), 0) == -1) {
+			cerr << RED <<  "send error : failed to send response to " << __client_fd << RESET << endl;
+			password_autontification(__server_password, __client_fd);
+			// return (-1);
+		}
+		return (-1);
+	}
+}
+
 int main(int __ac, char *__av[])
 {
 	int 				__socket_fd, __connection, __poll_res = 0, __recv_res;
@@ -56,9 +93,8 @@ int main(int __ac, char *__av[])
 	char __buffer[1024] = {0};
 	struct sockaddr_in	__server_addr = {};
 	struct pollfd	__poll_fds[MAX_FD] = {};
-
-	string __response = string(GRN) + "Connected with the irc server successfully\n" + string(RESET);
 	string __confirmation  = string(GRN) + "the message was successfully sent\n" + string(RESET);
+
 	if (__ac != 3)
 	{
 		cerr << RED << "Bad command : usage : ./ircserv <port> <password>" << RESET << endl;
@@ -107,6 +143,7 @@ int main(int __ac, char *__av[])
 	while(true) 
 	{
 		__poll_res = poll(__poll_fds, MAX_FD, 0); //try to decrease time complexity in MAX_FD
+
 		if ( __poll_res  == -1)
 		{
 			cerr << RED << "poll error : failed to poll on socket " << __socket_fd << RESET << endl;
@@ -128,12 +165,18 @@ int main(int __ac, char *__av[])
 							cerr << RED << "accept error : failed to acceot connection on socket " << __socket_fd << RESET << endl;
 							break;
 						}
-						if (send(__connection, __response.c_str(), __response.size(), 0) == -1)
+						//request password
+						// if (send(__connection, __response.c_str(), __response.size(), 0) == -1)
+						// {
+						// 	cerr << RED << "send error : failed to send response to " << __connection << RESET << endl;
+						// 	break;
+						// }
+						add_to_poll(__poll_fds, __connection);
+						if (password_autontification(__password, __connection) == -1)
 						{
-							cerr << RED << "send error : failed to send response to " << __connection << RESET << endl;
+							close(__connection);
 							break;
 						}
-						add_to_poll(__poll_fds, __connection);
 					}
 					else
 					{
@@ -141,7 +184,6 @@ int main(int __ac, char *__av[])
 						if (__recv_res == -1)
 						{
 							cerr << RED << "recv error : failed to receiven request from client " << RESET << endl;
-							close(__poll_fds[i].fd);
 							break;
 						}
 						if (__recv_res == 0) 
@@ -151,17 +193,12 @@ int main(int __ac, char *__av[])
 							remove_from_poll(__poll_fds, __poll_fds[i].fd);
 						}
 						//parse the message
-						cout << GRN << "=> " << RESET << __buffer << endl;
+						cout << GRN << "➜ " << RESET << __buffer << endl;
 						memset(__buffer, 0, sizeof(__buffer));
 					}
 				}
 			}
 		}
 	}
-	for(size_t i  = 0; i < __clients.size(); i++)
-	{
-		close(__clients[i]);
-	}
-	close(__socket_fd);
 	return (0);
 }
