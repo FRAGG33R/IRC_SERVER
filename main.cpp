@@ -20,7 +20,7 @@ void	add_to_poll(struct pollfd *__poll_fds, int __fd)
 		if (__poll_fds[i].fd == -1)
 		{
 			__poll_fds[i].fd =  __fd;
-			fcntl(__poll_fds[i].fd, F_SETFL, O_NONBLOCK);
+			// fcntl(__poll_fds[i].fd, F_SETFL, O_NONBLOCK);
 			return ;
 		}
 		i++;
@@ -48,22 +48,72 @@ void	full_close(struct pollfd *__poll_fd)
 			close(__poll_fd[i].fd);
 }
 
-int	password_autontification(string __server_password, int __client_fd)
+int	is_command(string __request)
+{
+	string str[15] = {"PASS", "NICK", "USER", "OPER", "MODE", "QUIT", "JOIN", "PART", "TOPIC", "KICK", "PRIVMSG", "NOTICE", "SENDFILE", "GETFILE", "DEEZNUTS"};
+	for (int i = 0; i < 15; i++){
+		if (str[i] == __request)
+            return 1;
+	}
+	return (0);
+}
+
+int	password_autontification(string __server_password, int __client_fd, struct pollfd *__poll_fds)
 {
 	int		__bytes = 0;
 	char	__buffer[1024] = {0};
 	string	__client_password;
 	string	__response = string(GRN) + "Connected with the irc server successfully\n" + string(RESET);
 	string	__try_password = string(RED) + "Password incorrect please try again.\n" + string(RESET);
+	string	__request;
+	int i = 0;
 
-	if (send(__client_fd, "password ➜ ", 12, 0) == -1) {
+	while (i < MAX_FD)
+    {
+		 if (__poll_fds[i].fd == __client_fd)
+		 	break;
+		i++;
+	}
+	if (send(__poll_fds[i].fd, "password ➜ ", 12, 0) == -1)
+	{
 		cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
 		return (-1);
 	}
-	__bytes = recv(__client_fd, __buffer, sizeof(__buffer), 0);
-	if (__bytes == -1) {
-		cerr << RED << "recv error : failed to recive a request from client " << __client_fd << RESET << endl;
-		return (-1);
+	while (true)
+	{
+		__bytes = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
+		// cout << __bytes << endl;
+		if (__bytes > 0)
+		{
+			__request = __buffer;
+			cout << __server_password << endl;
+			if (__request.substr(0, __request.size() - 1) == __server_password)
+			{
+				if (send(__poll_fds[i].fd, __response.c_str(), __response.size(), 0) == -1)
+				{
+					cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
+					return (-1);
+				}
+				return (1);
+			}
+			else
+			{
+				if (send(__poll_fds[i].fd, __try_password.c_str(), __try_password.size(), 0) == -1)
+				{
+					cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
+					return (-1);
+				}
+				if (send(__poll_fds[i].fd, "password ➜ ", 12, 0) == -1)
+				{
+					cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
+					return (-1);
+				}
+				memset(__buffer, 0, sizeof(__buffer));
+				continue;
+			}
+			memset(__buffer, 0, sizeof(__buffer));
+		}
+
 	}
 	__client_password = __buffer;
 	if (__server_password == __client_password)
@@ -78,11 +128,11 @@ int	password_autontification(string __server_password, int __client_fd)
 	{
 		if (send(__client_fd, __try_password.c_str(), __try_password.size(), 0) == -1) {
 			cerr << RED <<  "send error : failed to send response to " << __client_fd << RESET << endl;
-			password_autontification(__server_password, __client_fd);
-			// return (-1);
+			// password_autontification(__server_password, __client_fd, __poll_fds);
+			return (-1);
 		}
-		return (-1);
 	}
+	return (1);
 }
 
 int main(int __ac, char *__av[])
@@ -138,6 +188,7 @@ int main(int __ac, char *__av[])
 		__poll_fds[i].events |= POLLIN;
 	}
 	__poll_fds[0].fd = __socket_fd;
+	fcntl(__poll_fds[0].fd, F_SETFL, O_NONBLOCK);
 	__poll_fds[0].events = 0;
 	__poll_fds[0].events |= POLLIN;
 	while(true) 
@@ -165,6 +216,7 @@ int main(int __ac, char *__av[])
 							cerr << RED << "accept error : failed to acceot connection on socket " << __socket_fd << RESET << endl;
 							break;
 						}
+						fcntl(__connection, F_SETFL, O_NONBLOCK);
 						//request password
 						// if (send(__connection, __response.c_str(), __response.size(), 0) == -1)
 						// {
@@ -172,10 +224,9 @@ int main(int __ac, char *__av[])
 						// 	break;
 						// }
 						add_to_poll(__poll_fds, __connection);
-						if (password_autontification(__password, __connection) == -1)
+						if (password_autontification(__password, __connection, __poll_fds) == -1)
 						{
-							close(__connection);
-							break;
+							cout << "Im here\n";
 						}
 					}
 					else
