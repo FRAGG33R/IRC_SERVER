@@ -82,11 +82,9 @@ int	password_autontification(string __server_password, int __client_fd, struct p
 	while (true)
 	{
 		__bytes = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
-		// cout << __bytes << endl;
 		if (__bytes > 0)
 		{
 			__request = __buffer;
-			cout << __server_password << endl;
 			if (__request.substr(0, __request.size() - 1) == __server_password)
 			{
 				if (send(__poll_fds[i].fd, __response.c_str(), __response.size(), 0) == -1)
