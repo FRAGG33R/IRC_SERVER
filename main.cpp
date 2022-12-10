@@ -71,7 +71,7 @@ int	password_autontification(string __server_password, int __client_fd, struct p
 	while (i < MAX_FD)
     {
 		 if (__poll_fds[i].fd == __client_fd)
-		 	break;
+		 	break ;
 		i++;
 	}
 	if (send(__poll_fds[i].fd, "password ➜ ", 12, 0) == -1)
@@ -82,10 +82,20 @@ int	password_autontification(string __server_password, int __client_fd, struct p
 	while (true)
 	{
 		__bytes = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
+		cout << __buffer << " | " << __request << endl;
+		if (__bytes == 0) {
+		
+		// if (__request.empty()) {
+
+		// }
+			// cout <<" desconnected" << endl;
+			//check whether the command is successfully received or not
+			// return (-1);
+		}
 		if (__bytes > 0)
 		{
 			__request = __buffer;
-			if (__request.substr(0, __request.size() - 1) == __server_password)
+			if (__request == __server_password || __request.substr(0, __request.size() - 1) == __server_password)
 			{
 				if (send(__poll_fds[i].fd, __response.c_str(), __response.size(), 0) == -1)
 				{
@@ -109,26 +119,8 @@ int	password_autontification(string __server_password, int __client_fd, struct p
 				memset(__buffer, 0, sizeof(__buffer));
 				continue;
 			}
-			memset(__buffer, 0, sizeof(__buffer));
 		}
 
-	}
-	__client_password = __buffer;
-	if (__server_password == __client_password)
-	{
-		if (send(__client_fd, __response.c_str(), __response.size(), 0) == -1) {
-			cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
-			return (-1);
-		}
-		return (1);
-	}
-	else
-	{
-		if (send(__client_fd, __try_password.c_str(), __try_password.size(), 0) == -1) {
-			cerr << RED <<  "send error : failed to send response to " << __client_fd << RESET << endl;
-			// password_autontification(__server_password, __client_fd, __poll_fds);
-			return (-1);
-		}
 	}
 	return (1);
 }
@@ -223,9 +215,7 @@ int main(int __ac, char *__av[])
 						// }
 						add_to_poll(__poll_fds, __connection);
 						if (password_autontification(__password, __connection, __poll_fds) == -1)
-						{
-							cout << "Im here\n";
-						}
+							continue;
 					}
 					else
 					{
