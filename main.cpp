@@ -66,8 +66,8 @@ int	password_autontification(string __server_password, int __client_fd, struct p
 	string	__response = string(GRN) + "Connected with the irc server successfully\n" + string(RESET);
 	string	__try_password = string(RED) + "Password incorrect please try again.\n" + string(RESET);
 	string	__request;
+	string	__interpret;
 	int i = 0;
-
 	while (i < MAX_FD)
     {
 		 if (__poll_fds[i].fd == __client_fd)
@@ -82,42 +82,47 @@ int	password_autontification(string __server_password, int __client_fd, struct p
 	while (true)
 	{
 		__bytes = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
-		cout << __buffer << " | " << __request << endl;
 		if (__bytes == 0) {
-		
-		// if (__request.empty()) {
-
-		// }
-			// cout <<" desconnected" << endl;
-			//check whether the command is successfully received or not
-			// return (-1);
+			// cout << RED << "Client " << __client_fd << " disconnected" << RESET << endl;
+			return (1);
 		}
 		if (__bytes > 0)
 		{
 			__request = __buffer;
-			if (__request == __server_password || __request.substr(0, __request.size() - 1) == __server_password)
-			{
-				if (send(__poll_fds[i].fd, __response.c_str(), __response.size(), 0) == -1)
+			cout << "The request " << __request << endl << "the buffer " << __buffer << endl;
+			if (__request[__request.size() - 1] == '\n') {
+				if (!__interpret.empty())
 				{
-					cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
-					return (-1);
+					__interpret += __request;
+					__request = __interpret;
 				}
-				return (1);
+				if (__request.substr(0, __request.size() - 1) == __server_password)
+				{
+					if (send(__poll_fds[i].fd, __response.c_str(), __response.size(), 0) == -1)
+					{
+						cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
+						return (-1);
+					}
+					return (1);
+				}
+				else {
+					if (send(__poll_fds[i].fd, __try_password.c_str(), __try_password.size(), 0) == -1)
+					{
+						cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
+						return (-1);
+					}
+					if (send(__poll_fds[i].fd, "password ➜ ", 12, 0) == -1)
+					{
+						cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
+						return (-1);
+					}
+					memset(__buffer, 0, sizeof(__buffer));
+					continue ;
+				}
 			}
-			else
-			{
-				if (send(__poll_fds[i].fd, __try_password.c_str(), __try_password.size(), 0) == -1)
-				{
-					cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
-					return (-1);
-				}
-				if (send(__poll_fds[i].fd, "password ➜ ", 12, 0) == -1)
-				{
-					cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
-					return (-1);
-				}
+			else {
+				__interpret  = __interpret + __request;
 				memset(__buffer, 0, sizeof(__buffer));
-				continue;
 			}
 		}
 
@@ -219,6 +224,7 @@ int main(int __ac, char *__av[])
 					}
 					else
 					{
+						//there are an error the process should not enter here
 						__recv_res = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
 						if (__recv_res == -1)
 						{

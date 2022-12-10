@@ -18,7 +18,7 @@ INCLUDE = includes/main.hpp includes/Class.client.hpp
 
 CC = c++
 
-CFLAGS = -Wall -Wextra -Werror -std=c++98
+CFLAGS = -Wextra  -std=c++98
 
 all:$(NAME)
 
