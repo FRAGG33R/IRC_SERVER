@@ -14,7 +14,7 @@ RESET = \033[0m
 
 GREEN=\033[0;32m
 
-INCLUDE = includes/main.hpp includes/Class.client.hpp
+INCLUDE = includes/*
 
 CC = c++
 

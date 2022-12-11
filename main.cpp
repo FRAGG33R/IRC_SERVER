@@ -1,6 +1,7 @@
 # include "includes/main.hpp"
 
-bool is_str_digit(const string &__s) {
+bool is_str_digit(const string &__s) 
+{
 	return __s.find_first_not_of("0123456789") == string::npos;
 }
 
@@ -20,12 +21,11 @@ void	add_to_poll(struct pollfd *__poll_fds, int __fd)
 		if (__poll_fds[i].fd == -1)
 		{
 			__poll_fds[i].fd =  __fd;
-			// fcntl(__poll_fds[i].fd, F_SETFL, O_NONBLOCK);
+			fcntl(__poll_fds[i].fd, F_SETFL, O_NONBLOCK);
 			return ;
 		}
 		i++;
 	}
-	//failed to add the client file descriptor the server rich his max limit
 }
 
 void	remove_from_poll(struct pollfd *__poll_fds, int __fd) {
@@ -82,14 +82,11 @@ int	password_autontification(string __server_password, int __client_fd, struct p
 	while (true)
 	{
 		__bytes = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
-		if (__bytes == 0) {
-			// cout << RED << "Client " << __client_fd << " disconnected" << RESET << endl;
+		if (__bytes == 0)
 			return (1);
-		}
 		if (__bytes > 0)
 		{
 			__request = __buffer;
-			cout << "The request " << __request << endl << "the buffer " << __buffer << endl;
 			if (__request[__request.size() - 1] == '\n') {
 				if (!__interpret.empty())
 				{
@@ -125,7 +122,6 @@ int	password_autontification(string __server_password, int __client_fd, struct p
 				memset(__buffer, 0, sizeof(__buffer));
 			}
 		}
-
 	}
 	return (1);
 }
@@ -141,17 +137,15 @@ int main(int __ac, char *__av[])
 	string __confirmation  = string(GRN) + "the message was successfully sent\n" + string(RESET);
 
 	if (__ac != 3)
-	{
-		cerr << RED << "Bad command : usage : ./ircserv <port> <password>" << RESET << endl;
-		exit (1);
-	}
+		return (cerr << RED << "Bad command : usage : ./ircserv <port> <password>" << RESET << endl, 1);
 	string __port(__av[1]), __password(__av[2]);
 	if (parse_arguments(__port, __password) == -1)
 	{
 		cerr << RED << "Bad arguments : please enter a valid arguments" << RESET << endl;
 	    exit (1);
 	}
-	if ((__socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1 ) {
+	if ((__socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
+	{
 		cerr << RED << "Socket error : could not creat socket" << RESET << endl;
 		exit (1);
 	}
@@ -183,13 +177,11 @@ int main(int __ac, char *__av[])
 		__poll_fds[i].events |= POLLIN;
 	}
 	__poll_fds[0].fd = __socket_fd;
-	fcntl(__poll_fds[0].fd, F_SETFL, O_NONBLOCK);
 	__poll_fds[0].events = 0;
 	__poll_fds[0].events |= POLLIN;
 	while(true) 
 	{
-		__poll_res = poll(__poll_fds, MAX_FD, 0); //try to decrease time complexity in MAX_FD
-
+		__poll_res = poll(__poll_fds, MAX_FD, 0);
 		if ( __poll_res  == -1)
 		{
 			cerr << RED << "poll error : failed to poll on socket " << __socket_fd << RESET << endl;
@@ -211,16 +203,9 @@ int main(int __ac, char *__av[])
 							cerr << RED << "accept error : failed to acceot connection on socket " << __socket_fd << RESET << endl;
 							break;
 						}
-						fcntl(__connection, F_SETFL, O_NONBLOCK);
-						//request password
-						// if (send(__connection, __response.c_str(), __response.size(), 0) == -1)
-						// {
-						// 	cerr << RED << "send error : failed to send response to " << __connection << RESET << endl;
-						// 	break;
-						// }
 						add_to_poll(__poll_fds, __connection);
 						if (password_autontification(__password, __connection, __poll_fds) == -1)
-							continue;
+							continue ;
 					}
 					else
 					{
@@ -236,6 +221,7 @@ int main(int __ac, char *__av[])
 							cerr << RED << "The client " << __poll_fds[i].fd <<  " disconnected !" << RESET << endl;
 							close(__poll_fds[i].fd);
 							remove_from_poll(__poll_fds, __poll_fds[i].fd);
+							// break ;
 						}
 						//parse the message
 						cout << GRN << "➜ " << RESET << __buffer << endl;
