@@ -1,13 +1,13 @@
-#include "../includes/Class.error.hpp"
+#include "../includes/main.hpp"
 
 Error::Error()
 {
-	this->__message = "an error has been occurred";
+	this->__message = string(RED) + "an error has been occurred" + string(RESET);
 }
 
 Error::Error(const std::string& message)
 {
-	this->__message = message;
+	this->__message = string(RED) + message + string(RESET);
 }
 
 const char *Error::what() const throw()

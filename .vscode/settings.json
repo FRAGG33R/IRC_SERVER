@@ -30,6 +30,7 @@
 		"unordered_map": "cpp",
 		"utility": "cpp",
 		"vector": "cpp",
-		"__bit_reference": "cpp"
+		"__bit_reference": "cpp",
+		"iosfwd": "cpp"
 	}
 }

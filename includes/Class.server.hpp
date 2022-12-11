@@ -1,6 +1,6 @@
 #include "main.hpp"
 
-class Server 
+class Server
 {
 	private:
 		int					__socket_fd;
@@ -17,3 +17,9 @@ class Server
 		~Server(){};
 		void	start_server();
 };
+
+
+void	add_to_poll(struct pollfd *__poll_fds, int __fd);
+void	remove_from_poll(struct pollfd *__poll_fds, int __fd);
+void	full_close(struct pollfd *__poll_fd);
+int		password_autontification(string __server_password, int __client_fd, struct pollfd *__poll_fds);
