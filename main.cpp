@@ -177,8 +177,6 @@ int main(int __ac, char *__av[])
 		__poll_fds[i].events |= POLLIN;
 	}
 	__poll_fds[0].fd = __socket_fd;
-	__poll_fds[0].events = 0;
-	__poll_fds[0].events |= POLLIN;
 	while(true) 
 	{
 		__poll_res = poll(__poll_fds, MAX_FD, 0);

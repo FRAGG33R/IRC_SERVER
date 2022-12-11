@@ -1,4 +1,4 @@
-SRC_FILE = main.cpp src/Client.cpp src/Channel.cpp
+SRC_FILE = main.cpp src/Client.cpp src/Channel.cpp src/Server.cpp
 
 OBJ_FILE = $(SRC_FILE:.cpp=.o)
 
@@ -14,7 +14,7 @@ RESET = \033[0m
 
 GREEN=\033[0;32m
 
-INCLUDE = includes/*
+INCLUDE = $(wildcard includes/*.hpp)
 
 CC = c++
 

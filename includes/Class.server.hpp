@@ -7,11 +7,13 @@ class Server
 		int					__poll_res;
 		struct sockaddr_in	__server_addr;
 		struct pollfd		__poll_fds[MAX_FD];
-		int                	__address_len;
+		unsigned long		__address_len;
 		string				__password;
-		int					__port;
+		string              __server_name;
+		in_port_t			__port;
 	public:
 		Server();
 		~Server();
-		Server(int __socket_fd, int __poll_res, string __password, int __port);
+		Server(int socket_fd, string password, int port);
+		void	start_server();
 };
