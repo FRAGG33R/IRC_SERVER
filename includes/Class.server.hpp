@@ -13,7 +13,7 @@ class Server
 		in_port_t			__port;
 	public:
 		Server();
-		~Server();
-		Server(int socket_fd, string password, int port);
+		Server(int socket_fd, string password, int port, string name);
+		~Server(){};
 		void	start_server();
 };

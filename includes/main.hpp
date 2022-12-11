@@ -30,7 +30,8 @@ using std::string;
 using std::endl;
 using std::cerr;
 
-#include "Class.client.hpp"
-
+# include "Class.client.hpp"
+# include "Class.server.hpp"
+# include "Class.error.hpp"
 
 #endif

@@ -1,4 +1,4 @@
-# include "../includes/Class.server.hpp"
+# include "../includes/main.hpp"
 
 Server::Server()
 {
@@ -37,12 +37,7 @@ Server::Server(int socket_fd, string password, int port, string name = "CW9")
 	
 }
 
-Server::~Server()
-{
-
-}
-
-Server::start_server()
+void	Server::start_server()
 {
 	
 }
