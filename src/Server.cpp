@@ -29,6 +29,7 @@ Server::Server(int socket_fd, string password, int port, string name = "CW9")
 		__poll_fds[i].events = 0;
 		__poll_fds[i].events |= POLLIN;
 	}
+	this->__poll_fds[0].fd = socket_fd;
 	this->__address_len = sizeof(this->__server_addr);
 	this->__password = password;
 	this->__port = port;
@@ -36,7 +37,7 @@ Server::Server(int socket_fd, string password, int port, string name = "CW9")
 	
 }
 
-void	add_to_poll(struct pollfd *__poll_fds, int __fd)
+void	Server::add_to_poll(struct pollfd *__poll_fds, int __fd)
 {
 	int i = 0;
 	while (i < MAX_FD)
@@ -51,7 +52,7 @@ void	add_to_poll(struct pollfd *__poll_fds, int __fd)
 	}
 }
 
-void	remove_from_poll(struct pollfd *__poll_fds, int __fd) {
+void	Server::remove_from_poll(struct pollfd *__poll_fds, int __fd) {
 	int i = 0;
 	while  (i < MAX_FD)
 	{
@@ -64,14 +65,14 @@ void	remove_from_poll(struct pollfd *__poll_fds, int __fd) {
 	}
 }
 
-void	full_close(struct pollfd *__poll_fd)
+void	Server::full_close(struct pollfd *__poll_fd)
 {
 	for(int i = 0; i < MAX_FD; i++)
 		if (__poll_fd[i].fd != -1)
 			close(__poll_fd[i].fd);
 }
 
-int	password_autontification(string __server_password, int __client_fd, struct pollfd *__poll_fds)
+int	Server::password_autontification(string __server_password, int __client_fd, struct pollfd *__poll_fds)
 {
 	int		__bytes = 0;
 	char	__buffer[1024] = {0};
@@ -141,7 +142,42 @@ int	password_autontification(string __server_password, int __client_fd, struct p
 
 void	Server::start_server()
 {
+	int		__connection;
+
 	if ((this->__socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 		throw Error("Socket error : could not open socket");
-	//...
+	if (fcntl(this->__socket_fd, F_SETFL, O_NONBLOCK) == -1)
+		throw Error("fcntl error : could not set socket in non-blocking mode");
+	if (bind(this->__socket_fd, (struct sockaddr *)&this->__server_addr, sizeof(this->__server_addr)) == -1)
+		throw Error("bind error : could not bind socket");
+	if (listen(this->__socket_fd, MAX_FD) == -1)
+		throw Error("listen error : could not listen on socket");
+	while (true)
+	{
+		this->__poll_res = poll(this->__poll_fds, MAX_FD, 0);
+		if (__poll_res == -1)
+			throw Error("poll error : failed to poll on socket " + std::to_string(this->__socket_fd));
+		else if (this->__poll_res > 0)
+		{
+			for (int i = 0; i < MAX_FD; i++)
+			{
+				if (this->__poll_fds[i].revents & POLLIN)
+				{
+					if (this->__poll_fds[i].fd == this->__socket_fd)
+					{
+						cout << GRN << "New request from " << this->__poll_fds[i].fd << RESET << endl;
+						__connection = accept(this->__socket_fd, (struct sockaddr *)&this->__server_addr, (socklen_t *)&this->__address_len);
+						if (__connection == -1)
+                        {
+							cerr << RED << "accept error : could not accept clinet at socket " << this->__socket_fd <<  RESET << endl;
+							break;
+						}
+						add_to_poll(this->__poll_fds, __connection);
+						if (password_autontification(this->__password, __connection, __poll_fds) == -1)
+							throw Error("send error : could not send response to " + std::to_string(__connection));
+					}
+				}
+			}
+		}
+	}
 }
