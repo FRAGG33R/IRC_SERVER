@@ -20,7 +20,7 @@ class Server
 		void	add_to_poll(struct pollfd *__poll_fds, int __fd);
 		void	remove_from_poll(struct pollfd *__poll_fds, int __fd);
 		void	full_close(struct pollfd *__poll_fd);
-		int		password_authentication(string __server_password, int __client_fd, struct pollfd *__poll_fds);
+		int		password_authentication(int __client_fd, int index);
 		void	print(void);
 		void	create_server(void);
 };
