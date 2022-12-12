@@ -83,7 +83,7 @@ void Server::print(void)
 	cout << "	███████████████████████████████████" << RESET << endl;
 }
 
-int	Server::password_autontification(string __server_password, int __client_fd, struct pollfd *__poll_fds)
+int	Server::password_authentication(string __server_password, int __client_fd, struct pollfd *__poll_fds)
 {
 	int		__bytes = 0;
 	char	__buffer[1024] = {0};
@@ -168,7 +168,7 @@ void	Server::run()
 	int		__connection;
 	int		__recv_res;
 	char	__buffer[MAX_FD];
-	//CREATE SERVER FUNCTION
+
 	this->print();
 	while (true)
 	{
@@ -191,10 +191,11 @@ void	Server::run()
 							break;
 						}
 						add_to_poll(this->__poll_fds, __connection);
-						if (password_autontification(this->__password, __connection, __poll_fds) == -1)
-							throw Error("send error : could not send response to " + std::to_string(__connection));
+						//create user
+						// if (password_authentication(this->__password, __connection, __poll_fds) == -1)
+						// 	throw Error("send error : could not send response to " + std::to_string(__connection));
 					}
-					else
+					else if (this->__poll_fds[i].fd != this->__socket_fd)
 					{
 						__recv_res = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
 						if (__recv_res == -1)
@@ -217,3 +218,4 @@ void	Server::run()
 		}
 	}
 }
+//remove autontication
