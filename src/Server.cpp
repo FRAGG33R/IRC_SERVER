@@ -83,73 +83,84 @@ void Server::print(void)
 	cout << "	███████████████████████████████████" << RESET << endl;
 }
 
-int	Server::password_authentication(string __server_password, int __client_fd, struct pollfd *__poll_fds)
-{
-	int		__bytes = 0;
-	char	__buffer[1024] = {0};
-	string	__client_password;
-	string	__response = string(GRN) + "Connected with the irc server successfully\n" + string(RESET);
-	string	__try_password = string(RED) + "Password incorrect please try again.\n" + string(RESET);
-	string	__request;
-	string	__interpret;
-	int i = 0;
-	while (i < MAX_FD)
-    {
-		 if (__poll_fds[i].fd == __client_fd)
-		 	break ;
-		i++;
-	}
-	if (send(__poll_fds[i].fd, "password ➜ ", 12, 0) == -1)
-	{
-		cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
-		return (-1);
-	}
-	while (true)
-	{
-		__bytes = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
-		if (__bytes == 0)
-			return (1);
-		if (__bytes > 0)
-		{
-			__request = __buffer;
-			if (__request[__request.size() - 1] == '\n') {
-				if (!__interpret.empty())
-				{
-					__interpret += __request;
-					__request = __interpret;
-				}
-				if (__request.substr(0, __request.size() - 1) == __server_password)
-				{
-					if (send(__poll_fds[i].fd, __response.c_str(), __response.size(), 0) == -1)
-					{
-						cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
-						return (-1);
-					}
-					return (1);
-				}
-				else {
-					if (send(__poll_fds[i].fd, __try_password.c_str(), __try_password.size(), 0) == -1)
-					{
-						cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
-						return (-1);
-					}
-					if (send(__poll_fds[i].fd, "password ➜ ", 12, 0) == -1)
-					{
-						cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
-						return (-1);
-					}
-					memset(__buffer, 0, sizeof(__buffer));
-					continue ;
-				}
-			}
-			else {
-				__interpret  = __interpret + __request;
-				memset(__buffer, 0, sizeof(__buffer));
-			}
-		}
-	}
-	return (1);
-}
+// int	Server::password_authentication(string __server_password, int __client_fd, struct pollfd *__poll_fds)
+// {
+// 	int		__bytes = 0;
+// 	char	__buffer[1024] = {0};
+// 	string	__client_password;
+// 	string	__response = string(GRN) + "Connected with the irc server successfully\n" + string(RESET);
+// 	string	__try_password = string(RED) + "Password incorrect please try again.\n" + string(RESET);
+// 	string	__request;
+// 	string	__interpret;
+// 	// int		i = 0;
+
+// 	// while (i < MAX_FD)
+//     // {
+// 	// 	 if (__poll_fds[i].fd == __client_fd)
+// 	// 	 	break ;
+// 	// 	i++;
+// 	// }
+// 	if (send(__client_fd, "password ➜ ", 12, 0) == -1)
+// 	{
+// 		cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
+// 		return (-1);
+// 	}
+
+// 	//here
+// 	// while (true)
+// 	// {
+// 	// 	__bytes = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
+// 	// 	if (__bytes == 0)
+// 	// 		return (1);
+// 	// 	if (__bytes > 0)
+// 	// 	{
+// 	// 		__request = __buffer;
+// 	// 		if (__request[__request.size() - 1] == '\n') {
+// 	// 			if (!__interpret.empty())
+// 	// 			{
+// 	// 				__interpret += __request;
+// 	// 				__request = __interpret;
+// 	// 			}
+// 	// 			if (__request.substr(0, __request.size() - 1) == __server_password)
+// 	// 			{
+// 	// 				if (send(__poll_fds[i].fd, __response.c_str(), __response.size(), 0) == -1)
+// 	// 				{
+// 	// 					cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
+// 	// 					return (-1);
+// 	// 				}
+// 	// 				return (1);
+// 	// 			}
+// 	// 			else {
+// 	// 				if (send(__poll_fds[i].fd, __try_password.c_str(), __try_password.size(), 0) == -1)
+// 	// 				{
+// 	// 					cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
+// 	// 					return (-1);
+// 	// 				}
+// 	// 				if (send(__poll_fds[i].fd, "password ➜ ", 12, 0) == -1)
+// 	// 				{
+// 	// 					cerr << RED <<  "send error : failed to send response  to " << __client_fd << RESET << endl;
+// 	// 					return (-1);
+// 	// 				}
+// 	// 				memset(__buffer, 0, sizeof(__buffer));
+// 	// 				continue ;
+// 	// 			}
+// 	// 		}
+// 	// 		else {
+// 	// 			__interpret  = __interpret + __request;
+// 	// 			memset(__buffer, 0, sizeof(__buffer));
+// 	// 		}
+// 	// 	}
+// 	// }
+// 	// __bytes = recv(__client_fd, __buffer, sizeof(__buffer), 0);
+// 	// if (__bytes == 0)
+// 	// 	return (-1);
+// 	// if (__bytes > 0)
+// 	// {
+// 	// 	__req
+// 	// }
+
+// 	return (1);
+// }
 
 void	Server::create_server(void)
 {
@@ -168,6 +179,10 @@ void	Server::run()
 	int				__connection;
 	int				__recv_res;
 	char			__buffer[MAX_FD];
+	string	__response = string(GRN) + "Connected with the irc server successfully\n" + string(RESET);
+	string	__try_password = string(RED) + "Password incorrect please try again.\n" + string(RESET);
+	string	__request;
+	string	__interpret;
 
 	this->print();
 	while (true)
@@ -191,31 +206,84 @@ void	Server::run()
 							break;
 						}
 						add_to_poll(this->__poll_fds, __connection);
-						//  create user
-						//  if (password_authentication(this->__password, __connection, __poll_fds) == -1)
-						// 	throw Error("send error : could not send response to " + std::to_string(__connection));
+						this->__clients.push_back(Client(__connection));
+						if (send(__connection, "password ➜ ", 12, 0) == -1)
+								throw Error("send error : could not send response to " + std::to_string(__connection));
 					}
-					else if (this->__poll_fds[i].fd != this->__socket_fd)
+					else
 					{
-						__recv_res = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
-						if (__recv_res == -1)
+						cout << "client \n";
+						size_t j = 0;
+						for (; j < this->__clients.size(); j++)
 						{
-							cerr << RED << "recv error : failed to receiven request from client " << RESET << endl;
-							break;
+							if (this->__clients[j].get_fd() == this->__poll_fds[i].fd)
+								break;
 						}
-						if (__recv_res == 0) 
+						if (!this->__clients[j].is_authenticate())
 						{
-							cerr << RED << "The client " << __poll_fds[i].fd <<  " disconnected !" << RESET << endl;
-							close(__poll_fds[i].fd);
-							remove_from_poll(__poll_fds, __poll_fds[i].fd);
-							break ;
+							cout << "The client is not authenticated" << endl;
+							__recv_res = recv(this->__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
+							if (__recv_res == 0)
+							{
+								cout << RED << "Clinet " << __poll_fds[i].fd << "Disconnected" << RESET << std::endl;
+								break ;
+							}
+							if (__recv_res > 0)
+							{
+								__request = __buffer;
+								if (__request[__request.size() - 1] == '\n')
+								{
+									if (!__interpret.empty())
+									{
+										__interpret += __request;
+										__request = __interpret;
+									}
+									if (__request.substr(0, __request.size() - 1) == this->__password)
+									{
+										if (send(__poll_fds[i].fd, __response.c_str(), __response.size(), 0) == -1)
+											throw Error("send error : could not send response to " + std::to_string(__poll_fds[i].fd));
+										this->__clients[j].set_authentication(true);
+										__request.clear();
+										__interpret.clear();
+										break ;
+									}
+									else
+									{
+										if (send(__poll_fds[i].fd, __try_password.c_str(), __try_password.size(), 0) == -1)
+											throw Error("send error : could not send response to " + std::to_string(__poll_fds[i].fd));
+										if (send(__poll_fds[i].fd, "password ➜ ", 12, 0) == -1)
+											throw Error("send error : could not send response to " + std::to_string(__poll_fds[i].fd));
+										memset(__buffer, 0, sizeof(__buffer));
+										__request.clear();
+										__interpret.clear();
+									// 		if (send(__poll_fds[i].fd, "password ➜ ", 12, 0) == -1)
+									// 			throw Error("send error : could not send response to " + std::to_string(__connection));
+									}
+								}
+								else
+									__interpret  = __interpret + __request;
+								// password_authentication(this->__password, this->__clients[i].get_fd(), __poll_fds);
+							}
 						}
-						cout << GRN << "➜ " << RESET << __buffer << endl;
-						memset(__buffer, 0, sizeof(__buffer));
+						else
+						{
+							__recv_res = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
+							if (__recv_res == 0) 
+							{
+								cerr << RED << "The client " << __poll_fds[i].fd <<  " disconnected !" << RESET << endl;
+								close(__poll_fds[i].fd);
+								remove_from_poll(__poll_fds, __poll_fds[i].fd);
+								this->__clients.erase(this->__clients.begin() + i);
+								break ;
+							}
+							cout << GRN << "➜ " << RESET << __buffer << endl;
+							memset(__buffer, 0, sizeof(__buffer));
+						}
 					}
 				}
 			}
 		}
 	}
 }
+
 //remove autontication
