@@ -165,9 +165,9 @@ void	Server::create_server(void)
 
 void	Server::run()
 {
-	int		__connection;
-	int		__recv_res;
-	char	__buffer[MAX_FD];
+	int				__connection;
+	int				__recv_res;
+	char			__buffer[MAX_FD];
 
 	this->print();
 	while (true)
@@ -191,8 +191,8 @@ void	Server::run()
 							break;
 						}
 						add_to_poll(this->__poll_fds, __connection);
-						//create user
-						// if (password_authentication(this->__password, __connection, __poll_fds) == -1)
+						//  create user
+						//  if (password_authentication(this->__password, __connection, __poll_fds) == -1)
 						// 	throw Error("send error : could not send response to " + std::to_string(__connection));
 					}
 					else if (this->__poll_fds[i].fd != this->__socket_fd)
