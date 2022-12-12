@@ -10,12 +10,11 @@ int main(int __ac, char *__av[])
 	// struct pollfd	__poll_fds[MAX_FD] = {};
 	// string __confirmation  = string(GRN) + "the message was successfully sent\n" + string(RESET);
 
-	// if (__ac != 3)
-	// 	return (cerr << RED << "Bad command : usage : ./ircserv <port> <password>" << RESET << endl, 1);
-	// string __port(__av[1]), __password(__av[2]);
-
-	// if (parse_arguments(__port, __password) == -1)
-	// 	return (cerr << RED << "Bad arguments : please enter a valid arguments" << RESET << endl, 1);
+	if (__ac != 3)
+		return (cerr << RED << "Bad command : usage : ./ircserv <port> <password>" << RESET << endl, 1);
+	string __port(__av[1]), __password(__av[2]);
+	if (parse_arguments(__port, __password) == -1)
+		return (cerr << RED << "Bad arguments : please enter a valid arguments" << RESET << endl, 1);
 	// if ((__socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
 	// {
 	// 	cerr << RED << "Socket error : could not creat socket" << RESET << endl;
@@ -101,11 +100,15 @@ int main(int __ac, char *__av[])
 	// 		}
 	// 	}
 	// }
-	Server CW9;
+	Server CW9(__password, stoi(__port), "CW9");
+	cout << "server password : " << __password << endl << "server port : " << __port << endl;
 	try {
+		cout << "server started" << endl;
 		CW9.start_server();
+
 	}
 	catch (std::exception &e) {
+		cout << "error occurred" << endl;
 		cerr << e.what() << endl;
         exit (EXIT_FAILURE);
 	}

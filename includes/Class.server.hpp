@@ -13,7 +13,7 @@ class Server
 		in_port_t			__port;
 	public:
 		Server();
-		Server(int socket_fd, string password, int port, string name);
+		Server(string password, int port, string name);
 		~Server(){};
 		void	start_server();
 		void	add_to_poll(struct pollfd *__poll_fds, int __fd);
