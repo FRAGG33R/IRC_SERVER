@@ -93,10 +93,9 @@ int	Server::password_authentication(int __client_fd, int index)
 	string	__request;
 	string	__interpret;
 
-
 	__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
 	if (__recv_res == 0)
-		return (cout << RED << "Clinet " << __client_fd << " Disconnected" << RESET << std::endl, -1);
+		return (-1);
 	if (__recv_res > 0)
 	{
 		__request = __buffer;
@@ -191,47 +190,12 @@ void	Server::run()
 						}
 						if (!this->__clients[j].is_authenticate())
 						{
-							// __recv_res = recv(this->__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
-							// if (__recv_res == 0)
-							// {
-							// 	cout << RED << "Clinet " << __poll_fds[i].fd << "Disconnected" << RESET << std::endl;
-							// 	break ;
-							// }
-							// if (__recv_res > 0)
-							// {
-							// 	__request = __buffer;
-							// 	if (__request[__request.size() - 1] == '\n')
-							// 	{
-							// 		if (!__interpret.empty())
-							// 		{
-							// 			__interpret += __request;
-							// 			__request = __interpret;
-							// 		}
-							// 		if (__request.substr(0, __request.size() - 1) == this->__password)
-							// 		{
-							// 			if (send(__poll_fds[i].fd, __response.c_str(), __response.size(), 0) == -1)
-							// 				throw Error("send error : could not send response to " + std::to_string(__poll_fds[i].fd));
-							// 			this->__clients[j].set_authentication(true);
-							// 			__request.clear();
-							// 			__interpret.clear();
-							// 			break ;
-							// 		}
-							// 		else
-							// 		{
-							// 			if (send(__poll_fds[i].fd, __try_password.c_str(), __try_password.size(), 0) == -1)
-							// 				throw Error("send error : could not send response to " + std::to_string(__poll_fds[i].fd));
-							// 			if (send(__poll_fds[i].fd, "password ➜ ", 12, 0) == -1)
-							// 				throw Error("send error : could not send response to " + std::to_string(__poll_fds[i].fd));
-							// 			memset(__buffer, 0, sizeof(__buffer));
-							// 			__request.clear();
-							// 			__interpret.clear();
-							// 		}
-							// 	}
-							// 	else
-							// 		__interpret  = __interpret + __request;
-							// }
 							if (this->password_authentication(this->__clients[j].get_fd(), j) == -1) {
-								cout << "The  client " << this->__clients[j].get_fd() << " Disconnected" << endl;
+								cout << RED << "Clinet " << this->__clients[j].get_fd() << " Disconnected" << RESET << std::endl;
+								remove_from_poll(__poll_fds, __poll_fds[i].fd);
+								this->__clients.erase(this->__clients.begin() + j);
+								close(__poll_fds[i].fd);
+								close(this->__clients[j].get_fd());
 								break;
 							}
 						}
@@ -255,5 +219,3 @@ void	Server::run()
 		}
 	}
 }
-
-//remove autontication
