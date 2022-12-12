@@ -243,7 +243,7 @@ void	Server::run()
 								cerr << RED << "The client " << __poll_fds[i].fd <<  " disconnected !" << RESET << endl;
 								close(__poll_fds[i].fd);
 								remove_from_poll(__poll_fds, __poll_fds[i].fd);
-								this->__clients.erase(this->__clients.begin() + i);
+								this->__clients.erase(this->__clients.begin() + j);
 								break ;
 							}
 							cout << GRN << "➜ " << RESET << __buffer << endl;
