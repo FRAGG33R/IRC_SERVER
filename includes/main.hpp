@@ -15,6 +15,7 @@
 # include <fcntl.h>
 # include <string.h>
 # include <errno.h>
+# include <iomanip>
 
 //Colors
 #define GRN "\e[1;32m"

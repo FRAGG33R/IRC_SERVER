@@ -100,15 +100,12 @@ int main(int __ac, char *__av[])
 	// 		}
 	// 	}
 	// }
-	Server CW9(__password, stoi(__port), "CW9");
-	cout << "server password : " << __password << endl << "server port : " << __port << endl;
-	try {
-		cout << "server started" << endl;
+	Server CW9(__password, stoi(__port), "FRAGGER");
+	try
+	{
 		CW9.start_server();
-
 	}
 	catch (std::exception &e) {
-		cout << "error occurred" << endl;
 		cerr << e.what() << endl;
         exit (EXIT_FAILURE);
 	}

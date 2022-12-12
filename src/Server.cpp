@@ -69,6 +69,19 @@ void	Server::full_close(struct pollfd *__poll_fd)
 		if (__poll_fd[i].fd != -1)
 			close(__poll_fd[i].fd);
 }
+void Server::print(void)
+{
+	cout << GRN << "	███████████████████████████████████" << endl;
+	cout << "	█" <<  RESET << "     Server name ➜ " << GRN<< this->__server_name << "   	  █" <<  endl;
+	cout << "	█                                 █" << endl;
+	cout << "	█" << RESET <<"     Server port ➜ "<< GRN << this->__port
+	<< ( this->__port > 9 && this->__port < 100 ? std::setw(15)
+		: this->__port >= 100 && this->__port < 1000 ? std::setw(14)
+		: this->__port >= 1000 && this->__port < 10000 ? std::setw(13)
+		: this->__port > 10000 ? std::setw(12)
+		: std::setw(16)) << "█" << endl;
+	cout << "	███████████████████████████████████" << RESET << endl;
+}
 
 int	Server::password_autontification(string __server_password, int __client_fd, struct pollfd *__poll_fds)
 {
@@ -152,18 +165,10 @@ void	Server::start_server()
 		throw Error("bind error : could not bind socket");
 	if (listen(this->__socket_fd, MAX_FD) == -1)
 		throw Error("listen error : could not listen on socket");
-
-	cout << "Socket descriptor : " << __socket_fd << endl;
-	cout << "The password is : " << this->__password << endl;
-	cout << "THe server name : " << this->__server_name << endl;
-	cout << "The port : " << this->__port << endl;
-	cout << "socket descriptor in poll array : " << this->__poll_fds[0].fd << endl;
-	cout << "the socket event : " << this->__poll_fds[0].events << endl;
+	this->print();
 	while (true)
 	{
-		// cout << "loading.." << endl;
 		this->__poll_res = poll(this->__poll_fds, MAX_FD, 0);
-		// cout << __poll_res << endl;
 		if (__poll_res == -1)
 			throw Error("poll error : failed to poll on socket " + std::to_string(this->__socket_fd));
 		else if (this->__poll_res > 0)
