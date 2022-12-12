@@ -151,12 +151,8 @@ int	Server::password_autontification(string __server_password, int __client_fd, 
 	return (1);
 }
 
-void	Server::start_server()
+void	Server::create_server(void)
 {
-	int		__connection;
-	int		__recv_res;
-	char	__buffer[MAX_FD];
-	//CREATE SERVER FUNCTION
 	if ((this->__poll_fds[0].fd = this->__socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 		throw Error("Socket error : could not open socket");
 	if (fcntl(this->__socket_fd, F_SETFL, O_NONBLOCK) == -1)
@@ -165,6 +161,14 @@ void	Server::start_server()
 		throw Error("bind error : could not bind socket");
 	if (listen(this->__socket_fd, MAX_FD) == -1)
 		throw Error("listen error : could not listen on socket");
+}
+
+void	Server::run()
+{
+	int		__connection;
+	int		__recv_res;
+	char	__buffer[MAX_FD];
+	//CREATE SERVER FUNCTION
 	this->print();
 	while (true)
 	{

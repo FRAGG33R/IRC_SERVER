@@ -15,12 +15,13 @@ class Server
 		Server();
 		Server(string password, int port, string name);
 		~Server(){};
-		void	start_server();
+		void	run();
 		void	add_to_poll(struct pollfd *__poll_fds, int __fd);
 		void	remove_from_poll(struct pollfd *__poll_fds, int __fd);
 		void	full_close(struct pollfd *__poll_fd);
 		int		password_autontification(string __server_password, int __client_fd, struct pollfd *__poll_fds);
 		void	print(void);
+		void	create_server(void);
 };
 
 

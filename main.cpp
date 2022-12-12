@@ -103,7 +103,8 @@ int main(int __ac, char *__av[])
 	Server CW9(__password, stoi(__port), "FRAGGER");
 	try
 	{
-		CW9.start_server();
+		CW9.create_server();
+		CW9.run();
 	}
 	catch (std::exception &e) {
 		cerr << e.what() << endl;
