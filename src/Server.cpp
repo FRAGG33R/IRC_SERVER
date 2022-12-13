@@ -90,12 +90,8 @@ int	Server::password_authentication(int __client_fd, int index)
 	string	__client_password;
 	string	__response = string(GRN) + "Connected with the irc server successfully\n" + string(RESET);
 	string	__try_password = string(RED) + "Password incorrect please try again.\n" + string(RESET);
-	string	__request;
-	string	__interpret;
 
 	__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
-	if (__recv_res == 0)
-		return (-1);
 	if (__recv_res > 0)
 	{
 		__request = __buffer;
@@ -106,6 +102,8 @@ int	Server::password_authentication(int __client_fd, int index)
 				__interpret += __request;
 				__request = __interpret;
 			}
+			cout << "The request " << __request << endl;
+			cout << "The interpret " << __interpret << endl;
 			if (__request.substr(0, __request.size() - 1) == this->__password)
 			{
 				if (send(__client_fd, __response.c_str(), __response.size(), 0) == -1)
@@ -202,7 +200,7 @@ void	Server::run()
 						else
 						{
 							__recv_res = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
-							if (__recv_res == 0) 
+							if (__recv_res == 0)
 							{
 								cerr << RED << "The client " << __poll_fds[i].fd <<  " disconnected !" << RESET << endl;
 								close(__poll_fds[i].fd);

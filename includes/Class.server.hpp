@@ -12,6 +12,8 @@ class Server
 		string              __server_name;
 		in_port_t			__port;
 		vector<Client>		__clients;
+		string				__request;
+		string				__interpret;
 	public:
 		Server();
 		Server(string password, int port, string name);
