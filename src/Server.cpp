@@ -94,7 +94,7 @@ int	Server::password_authentication(int __client_fd, int index)
 	__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
 	if (__recv_res > 0)
 	{
-		__request = __buffer;
+	__request = __buffer;
 		if (__request[__request.size() - 1] == '\n')
 		{
 			if (!__interpret.empty())
@@ -132,8 +132,11 @@ int	Server::password_authentication(int __client_fd, int index)
 
 void	Server::create_server(void)
 {
+	 int n = 1;
 	if ((this->__poll_fds[0].fd = this->__socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 		throw Error("Socket error : could not open socket");
+	if (setsockopt(this->__socket_fd, SOL_SOCKET, SO_REUSEADDR, &n, sizeof(n)) == -1)
+		throw Error("setsockopt error : could not set SO_REUSEADDR");
 	if (fcntl(this->__socket_fd, F_SETFL, O_NONBLOCK) == -1)
 		throw Error("fcntl error : could not set socket in non-blocking mode");
 	if (bind(this->__socket_fd, (struct sockaddr *)&this->__server_addr, sizeof(this->__server_addr)) == -1)
