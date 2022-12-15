@@ -135,7 +135,7 @@ void	Server::create_server(void)
 	 int n = 1;
 	if ((this->__poll_fds[0].fd = this->__socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 		throw Error("Socket error : could not open socket");
-	if (setsockopt(this->__socket_fd, SOL_SOCKET, SO_REUSEADDR, &n, sizeof(n)) == -1)
+	if (setsockopt(this->__socket_fd, SOL_SOCKET, SO_REUSEADDR, &n, sizeof(n)) == -1) // to bind multiple times to the same port.
 		throw Error("setsockopt error : could not set SO_REUSEADDR");
 	if (fcntl(this->__socket_fd, F_SETFL, O_NONBLOCK) == -1)
 		throw Error("fcntl error : could not set socket in non-blocking mode");
@@ -187,17 +187,18 @@ void	Server::run()
 						for (; j < this->__clients.size(); j++)
 						{
 							if (this->__clients[j].get_fd() == this->__poll_fds[i].fd)
-								break;
+								break ;
 						}
 						if (!this->__clients[j].is_authenticate())
 						{
-							if (this->password_authentication(this->__clients[j].get_fd(), j) == -1) {
+							if (this->password_authentication(this->__clients[j].get_fd(), j) == -1) 
+							{
 								cout << RED << "Clinet " << this->__clients[j].get_fd() << " Disconnected" << RESET << std::endl;
 								remove_from_poll(__poll_fds, __poll_fds[i].fd);
 								this->__clients.erase(this->__clients.begin() + j);
 								close(__poll_fds[i].fd);
 								close(this->__clients[j].get_fd());
-								break;
+								break ;
 							}
 						}
 						else
