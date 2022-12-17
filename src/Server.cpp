@@ -130,6 +130,20 @@ int	Server::password_authentication(int __client_fd, int index)
 	return (1);
 }
 
+int		Server::client_register(int __client_fd, int index)
+{
+	int		__rcev_result;
+	char	__buffer[1024] = {};
+	if (send(__client_fd, "Please create an account", 25, 0) == -1)
+		return (-1);
+	if (send(__client_fd, "Username : ", 12, 0) == -1)
+		return (-1);
+	__rcev_result = recv(__client_fd, __buffer, sizeof(__buffer), 0);
+	if (__rcev_result == 0)
+		return (1);
+	else if (__rcev_result > 0)
+	this->__clients[index].set_username(string(__buffer));
+}
 void	Server::create_server(void)
 {
 	 int n = 1;
@@ -200,6 +214,10 @@ void	Server::run()
 								close(this->__clients[j].get_fd());
 								break ;
 							}
+						}
+						else if (this->__clients[j].is_authenticate() && !this->__clients[j].is_registred())
+						{
+							client_register(this->__clients[j].get_fd(), j);
 						}
 						else
 						{
