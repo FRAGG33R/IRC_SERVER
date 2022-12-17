@@ -22,3 +22,11 @@ int	is_command(string __request)
 	}
 	return (0);
 }
+
+int parse_username(string __username)
+{
+	if (__username.length() < 3)
+        return -1;
+	else if (std::isdigit(__username[0])
+		return (1);
+}

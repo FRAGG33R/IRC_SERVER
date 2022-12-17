@@ -132,18 +132,37 @@ int	Server::password_authentication(int __client_fd, int index)
 
 int		Server::client_register(int __client_fd, int index)
 {
-	int		__rcev_result;
+	int		__recv_res;
 	char	__buffer[1024] = {};
+
 	if (send(__client_fd, "Please create an account", 25, 0) == -1)
 		return (-1);
 	if (send(__client_fd, "Username : ", 12, 0) == -1)
 		return (-1);
-	__rcev_result = recv(__client_fd, __buffer, sizeof(__buffer), 0);
-	if (__rcev_result == 0)
-		return (1);
-	else if (__rcev_result > 0)
-	this->__clients[index].set_username(string(__buffer));
+	__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
+	if (__recv_res == 0)
+		return (-2);
+	else if (__recv_res > 0)
+		this->__clients[index].set_username(string(__buffer));
+	memset(__buffer, 0, sizeof(__buffer));
+	if (send(__client_fd, "Nickname : ", 12, 0) == -1)
+		return (-1);
+	__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
+	if (__recv_res == 0)
+		return (-2);
+	else if (__recv_res > 0)
+		this->__clients[index].set_nickname(string(__buffer));
+	memset(__buffer, 0, sizeof(__buffer));
+	if (send(__client_fd, "Operator : ", 12, 0) == -1)
+		return (-1);
+	__recv_res = recv(__client_fd, __buffer, sizeof(__buffer),0);
+	if (__recv_res == 0)
+        return (-2);
+	else if (__recv_res > 0)
+		this->__clients[index].set_is_operator(true);
+	return (0);
 }
+
 void	Server::create_server(void)
 {
 	 int n = 1;
@@ -217,7 +236,8 @@ void	Server::run()
 						}
 						else if (this->__clients[j].is_authenticate() && !this->__clients[j].is_registred())
 						{
-							client_register(this->__clients[j].get_fd(), j);
+							if (client_register(this->__clients[j].get_fd(), j) == -1)
+								throw Error("send error : could not send response to " + std::to_string(this->__clients[j].get_fd()));
 						}
 						else
 						{
