@@ -132,34 +132,49 @@ int	Server::password_authentication(int __client_fd, int index)
 
 int		Server::client_register(int __client_fd, int index)
 {
-	int		__recv_res;
+	int		__recv_res, __parsing_res;
 	char	__buffer[1024] = {};
 
-	if (send(__client_fd, "Please create an account", 25, 0) == -1)
-		return (-1);
+	if (send(__client_fd, "Create an account", 25, 0) == -1)
+		throw Error ("send error : could not send response");
 	if (send(__client_fd, "Username : ", 12, 0) == -1)
-		return (-1);
+		throw Error ("send error : could not send response");
 	__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
 	if (__recv_res == 0)
-		return (-2);
+		throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
 	else if (__recv_res > 0)
-		this->__clients[index].set_username(string(__buffer));
+	{
+		__parsing_res = this->parse_input(string(__buffer), 1);
+		__parsing_res == 0 	? throw Error ("Invalid username")
+		: __parsing_res == -1 ? throw Error ("Username already exist")
+		: this->__clients[index].set_username(string(__buffer));
+	}
 	memset(__buffer, 0, sizeof(__buffer));
 	if (send(__client_fd, "Nickname : ", 12, 0) == -1)
-		return (-1);
+		throw Error ("send error : could not send response");
 	__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
 	if (__recv_res == 0)
-		return (-2);
+		throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
 	else if (__recv_res > 0)
-		this->__clients[index].set_nickname(string(__buffer));
+	{
+		__parsing_res = this->parse_input(string(__buffer), 2);
+		__parsing_res == 0 	? throw Error ("Invalid nickname")
+		: __parsing_res == -1 ? throw Error ("Nickname already exist") // if nickname failed shoudl I remove the client
+		: this->__clients[index].set_nickname(string(__buffer));
+	}
 	memset(__buffer, 0, sizeof(__buffer));
 	if (send(__client_fd, "Operator : ", 12, 0) == -1)
-		return (-1);
+		throw Error ("send error : could not send response");
 	__recv_res = recv(__client_fd, __buffer, sizeof(__buffer),0);
 	if (__recv_res == 0)
-        return (-2);
+		throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
 	else if (__recv_res > 0)
-		this->__clients[index].set_is_operator(true);
+	{
+		__parsing_res = this->parse_input(string(__buffer), 3);
+		__parsing_res == -1	? throw Error ("Invalid input")
+		: __parsing_res == 0 ? this->__clients[index].set_is_operator(true)
+		: this->__clients[index].set_is_operator(false);
+	}
 	return (0);
 }
 

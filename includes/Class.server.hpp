@@ -26,6 +26,7 @@ class Server
 		void	print(void);
 		void	create_server(void);
 		int 	client_register(int __client_fd, int index);
+		int		parse_input(string __input, int flag);
 };
 
 
