@@ -7,10 +7,16 @@ Client::Client(string username, string nickname, bool is_operator, bool authenti
 	this->__is_operator = is_operator;
     this->__is_authenticated = authentication;
 	this->__is_registred = is_registred;
+	this->__username_filled = false;
+	this->__nickname_filled = false;
 	this->__fd = fd;
 }
 
-Client::Client(int fd) : __fd(fd), __is_authenticated(false), __is_registred(false) {}
+Client::Client(int fd) : __fd(fd), __is_authenticated(false), __is_registred(false)
+{
+	this->__username_filled = false;
+	this->__nickname_filled = false;
+}
 
 int	Client::get_fd() const
 {
@@ -60,6 +66,7 @@ string Client::get_username() const
 void Client::set_username(string username)
 {
 	this->__username = username;
+	this->__username_filled = true;
 }
 
 string Client::get_nickname() const
@@ -70,6 +77,7 @@ string Client::get_nickname() const
 void Client::set_nickname(string nickname)
 {
 	this->__nickname = nickname;
+	this->__nickname_filled = true;
 }
 
 Client::~Client() {}

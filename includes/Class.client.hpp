@@ -2,13 +2,19 @@
 class Client
 {
 	private :
+
 		string	__username;
 		string	__nickname;
 		bool	__is_operator;
 		bool	__is_authenticated;
 		bool	__is_registred;
 		int		__fd;
+
 	public :
+
+		bool	__username_filled;
+		bool    __nickname_filled;
+
 		~Client();
 		Client(string username, string nickname, bool is_operator, bool authentication,  bool is_registred, int fd);
 		Client(int fd);

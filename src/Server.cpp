@@ -137,7 +137,7 @@ void	Server::fill_username(int __client_fd, int index)
 	int		__recv_res, __parsing_res;
 	char	__buffer[1024] = {};
 
-	if (this->__clients[index].get_username().empty())
+	if (this->__clients[index].__username_filled == false)
 	{
 		cout << "the code enter to fill username function " << endl;
 		if (send(__client_fd, "Username : ", 12, 0) == -1)
@@ -153,7 +153,7 @@ void	Server::fill_username(int __client_fd, int index)
 			std::cout << __parsing_res << std::endl;
 			__parsing_res == 0 	? throw Error ("Invalid username")
 			: __parsing_res == -1 ? throw Error ("Username already exist")
-			: cout << "helloworld " << endl, this->__clients[index].set_username(string(__buffer));
+			: this->__clients[index].set_username(string(__buffer));
 			// this->__clients[index].set_username(string(__buffer));
 		}
 		cout << "done" << std::endl;
@@ -165,7 +165,8 @@ void    Server::fill_nickname(int __client_fd, int index)
 	int		__recv_res, __parsing_res;
 	char	__buffer[1024] = {};
 
-	if (this->__clients[index].get_nickname().empty() && !this->__clients[index].get_username().empty()) {
+	if (this->__clients[index].__nickname_filled == false)
+	{
 		cout << "the code enter to fill nickname function " << endl;
 		if (send(__client_fd, "Nickname : ", 12, 0) == -1)
 			throw Error ("send error : could not send response");
@@ -179,7 +180,7 @@ void    Server::fill_nickname(int __client_fd, int index)
 			std::cout << __parsing_res << std::endl;
 			__parsing_res == 0 	? throw Error ("Invalid nickname")
 			: __parsing_res == -1 ? throw Error ("Nickname already exist") // if nickname failed shoudl I remove the client
-			: cout << "hello" << endl, this->__clients[index].set_nickname(string(__buffer));
+			: this->__clients[index].set_nickname(string(__buffer));
 		}
 	}
 }
@@ -278,21 +279,17 @@ void	Server::run()
 								close(this->__clients[j].get_fd());
 								break ;
 							}
-							
 						}
 						if (this->__clients[j].is_authenticate() && !this->__clients[j].is_registred())
 						{
 							try
 							{
-								if (this->__clients[j].get_username().empty()){
-									cout << "HELLO WORLD!" << endl;
+								if (this->__clients[j].__username_filled == false)
 									this->fill_username(this->__clients[j].get_fd(), j);
-								}
-								else if (this->__clients[j].get_nickname().empty() && !this->__clients[j].get_username().empty())
+								else if (this->__clients[j].__nickname_filled == false)
 									this->fill_nickname(this->__clients[j].get_fd(), j);
-								if (!this->__clients[j].get_username().empty() && !this->__clients[j].get_nickname().empty())
+								if (this->__clients[j].__username_filled == true && this->__clients[j].__nickname_filled == true)
 									this->__clients[j].set_is_registred(true);
-								cout << this->__clients[j].get_username() << " " << endl;
 								// this->fill_operator(this->__clients[j].get_fd(), j);
 								// this->__clients[j].set_is_registred(true);
 							}
