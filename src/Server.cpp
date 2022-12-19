@@ -92,6 +92,8 @@ int	Server::password_authentication(int __client_fd, int index)
 	string	__try_password = string(RED) + "Password incorrect please try again.\n" + string(RESET);
 
 	__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
+	if(__recv_res == 0)
+		throw Error (" Client " + std::to_string(__client_fd) + " disconnected");
 	if (__recv_res > 0)
 	{
 	__request = __buffer;
@@ -111,7 +113,7 @@ int	Server::password_authentication(int __client_fd, int index)
 				this->__clients[index].set_authentication(true);
 				__request.clear();
 				__interpret.clear();
-				return (1);
+				return (0);
 			}
 			else
 			{
@@ -127,7 +129,7 @@ int	Server::password_authentication(int __client_fd, int index)
 		else
 			__interpret  = __interpret + __request;
 	}
-	return (1);
+	return (0);
 }
 
 void	Server::fill_username(int __client_fd, int index)
@@ -135,9 +137,12 @@ void	Server::fill_username(int __client_fd, int index)
 	int		__recv_res, __parsing_res;
 	char	__buffer[1024] = {};
 
-	if (this->__clients[index].get_username().empty()) {
+	if (this->__clients[index].get_username().empty())
+	{
+		cout << "the code enter to fill username function " << endl;
 		if (send(__client_fd, "Username : ", 12, 0) == -1)
 			throw Error ("send error : could not send response");
+		cout << "waiting for enternit the  username... " << endl;
 		__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
 		printf("[%d]\n", __recv_res);
 		if (__recv_res == 0)
@@ -148,8 +153,10 @@ void	Server::fill_username(int __client_fd, int index)
 			std::cout << __parsing_res << std::endl;
 			__parsing_res == 0 	? throw Error ("Invalid username")
 			: __parsing_res == -1 ? throw Error ("Username already exist")
-			: this->__clients[index].set_username(string(__buffer));
+			: cout << "helloworld " << endl, this->__clients[index].set_username(string(__buffer));
+			// this->__clients[index].set_username(string(__buffer));
 		}
+		cout << "done" << std::endl;
 	}
 }
 
@@ -159,17 +166,20 @@ void    Server::fill_nickname(int __client_fd, int index)
 	char	__buffer[1024] = {};
 
 	if (this->__clients[index].get_nickname().empty() && !this->__clients[index].get_username().empty()) {
+		cout << "the code enter to fill nickname function " << endl;
 		if (send(__client_fd, "Nickname : ", 12, 0) == -1)
 			throw Error ("send error : could not send response");
 		__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
+		printf("[%d]\n", __recv_res);
 		if (__recv_res == 0)
 			throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
 		else if (__recv_res > 0)
 		{
 			__parsing_res = this->parse_input(string(__buffer), 2);
+			std::cout << __parsing_res << std::endl;
 			__parsing_res == 0 	? throw Error ("Invalid nickname")
 			: __parsing_res == -1 ? throw Error ("Nickname already exist") // if nickname failed shoudl I remove the client
-			: this->__clients[index].set_nickname(string(__buffer));
+			: cout << "hello" << endl, this->__clients[index].set_nickname(string(__buffer));
 		}
 	}
 }
@@ -237,7 +247,7 @@ void	Server::run()
 						if (__connection == -1)
                         {
 							cerr << RED << "accept error : could not accept clinet at socket " << this->__socket_fd <<  RESET << endl;
-							break;
+							break ;
 						}
 						add_to_poll(this->__poll_fds, __connection);
 						this->__clients.push_back(Client(__connection));
@@ -254,8 +264,13 @@ void	Server::run()
 						}
 						if (!this->__clients[j].is_authenticate())
 						{
-							if (this->password_authentication(this->__clients[j].get_fd(), j) == -1) 
+							try
 							{
+								this->password_authentication(this->__clients[j].get_fd(), j);
+							}
+							catch(const std::exception& e)
+							{
+								std::cerr << e.what() << '\n';
 								cout << RED << "Clinet " << this->__clients[j].get_fd() << " Disconnected" << RESET << std::endl;
 								remove_from_poll(__poll_fds, __poll_fds[i].fd);
 								this->__clients.erase(this->__clients.begin() + j);
@@ -263,14 +278,21 @@ void	Server::run()
 								close(this->__clients[j].get_fd());
 								break ;
 							}
-							cout << "Loading ..." << std::endl;
+							
 						}
 						if (this->__clients[j].is_authenticate() && !this->__clients[j].is_registred())
 						{
 							try
 							{
-								this->fill_username(this->__clients[j].get_fd(), j);
-								this->fill_nickname(this->__clients[j].get_fd(), j);
+								if (this->__clients[j].get_username().empty()){
+									cout << "HELLO WORLD!" << endl;
+									this->fill_username(this->__clients[j].get_fd(), j);
+								}
+								else if (this->__clients[j].get_nickname().empty() && !this->__clients[j].get_username().empty())
+									this->fill_nickname(this->__clients[j].get_fd(), j);
+								if (!this->__clients[j].get_username().empty() && !this->__clients[j].get_nickname().empty())
+									this->__clients[j].set_is_registred(true);
+								cout << this->__clients[j].get_username() << " " << endl;
 								// this->fill_operator(this->__clients[j].get_fd(), j);
 								// this->__clients[j].set_is_registred(true);
 							}
@@ -280,20 +302,20 @@ void	Server::run()
 								continue ;
 							}
 						}
-						else if (this->__clients[j].is_registred())
-						{
-							__recv_res = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
-							if (__recv_res == 0)
-							{
-								cerr << RED << "The client " << __poll_fds[i].fd <<  " disconnected !" << RESET << endl;
-								close(__poll_fds[i].fd);
-								remove_from_poll(__poll_fds, __poll_fds[i].fd);
-								this->__clients.erase(this->__clients.begin() + j);
-								break ;
-							}
-							cout << GRN << "➜ " << RESET << __buffer << endl;
-							memset(__buffer, 0, sizeof(__buffer));
-						}
+						// else if (this->__clients[j].is_registred())
+						// {
+						// 	__recv_res = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
+						// 	if (__recv_res == 0)
+						// 	{
+						// 		cerr << RED << "The client " << __poll_fds[i].fd <<  " disconnected !" << RESET << endl;
+						// 		close(__poll_fds[i].fd);
+						// 		remove_from_poll(__poll_fds, __poll_fds[i].fd);
+						// 		this->__clients.erase(this->__clients.begin() + j);
+						// 		break ;
+						// 	}
+						// 	cout << GRN << "➜ " << RESET << __buffer << endl;
+						// 	memset(__buffer, 0, sizeof(__buffer));
+						// }
 					}
 				}
 			}

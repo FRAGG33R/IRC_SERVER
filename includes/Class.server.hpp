@@ -31,5 +31,3 @@ class Server
 		void    fill_nickname(int __client_fd, int index);
 		void	fill_operator(int __client_fd, int index);
 };
-
-
