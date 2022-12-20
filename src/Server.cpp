@@ -193,9 +193,8 @@ void    Server::fill_nickname(int __client_fd, int index)
 			}
 			this->__clients[index].__nickname_filled  = true;
 			this->__clients[index].set_nickname(string(__buffer));
-			// if (send(__client_fd, "Nickname : ", 12, 0) == -1)
-			// 	throw Error ("send error : could not send response");
-			this->__clients[index].set_is_registred(true);
+			if (write(__client_fd, "operator : ", 12) == -1)
+					throw Error ("send error : could not send response");
 			return ;
 		}
 	}
@@ -206,18 +205,25 @@ void	Server::fill_operator(int __client_fd, int index)
 	int		__recv_res, __parsing_res;
 	char	__buffer[1024] = {};
 
-	if (send(__client_fd, "Operator : ", 12, 0) == -1)
-		throw Error ("send error : could not send response");
-	__recv_res = recv(__client_fd, __buffer, sizeof(__buffer),0);
-	if (__recv_res == 0)
-		throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
-	else if (__recv_res > 0)
-	{
-		__parsing_res = this->parse_input(string(__buffer), 3);
-		__parsing_res == -1	? throw Error ("Invalid input")
-		: __parsing_res == 0 ? this->__clients[index].set_is_operator(true)
-		: this->__clients[index].set_is_operator(false);
-	}
+		__recv_res = recv(__client_fd, __buffer, sizeof(__buffer),0);
+		if (__recv_res == 0)
+			throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
+		else if (__recv_res > 0)
+		{
+			__parsing_res = this->parse_input(string(__buffer).substr(0, string(__buffer).length() - 1), 3);
+			if (__parsing_res == -1)
+			{
+				if (write(__client_fd, "operator : ", 12) == -1)
+					throw Error ("send error : could not send response");
+				throw Error("Invalid answer");
+			}
+			else if (__parsing_res == 1)
+				this->__clients[index].set_is_operator(false);
+			else if (__parsing_res == 0)
+				this->__clients[index].set_is_operator(true);
+			this->__clients[index].set_is_registred(true);
+			return ;
+		}
 }
 
 void	Server::create_server(void)
@@ -303,9 +309,7 @@ void	Server::run()
 							{
 								this->fill_username(this->__clients[j].get_fd(), j);
 								this->fill_nickname(this->__clients[j].get_fd(), j);
-								// if (this->__clients[j].__username_filled == true && this->__clients[j].__nickname_filled == true)
-								// 	this->__clients[j].set_is_registred(true);
-								// this->fill_operator(this->__clients[j].get_fd(), j);
+								this->fill_operator(this->__clients[j].get_fd(), j);
 								// this->__clients[j].set_is_registred(true);
 							}
 							catch(const std::exception& e)
@@ -327,6 +331,7 @@ void	Server::run()
 						// 	cout << GRN << "➜ " << RESET << __buffer << endl;
 						// 	memset(__buffer, 0, sizeof(__buffer));
 						// }
+
 					}
 				}
 			}

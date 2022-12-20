@@ -5,6 +5,7 @@ class Client
 
 		string	__username;
 		string	__nickname;
+
 		bool	__is_operator;
 		bool	__is_authenticated;
 		bool	__is_registred;
