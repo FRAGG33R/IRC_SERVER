@@ -111,6 +111,8 @@ int	Server::password_authentication(int __client_fd, int index)
 				if (send(__client_fd, "Create an account\n", 19, 0) == -1)
 					throw Error ("send error : could not send response to "+ std::to_string(__client_fd));
 				this->__clients[index].set_authentication(true);
+				if (write(__client_fd, "Username : ", 12) == -1)
+					throw Error ("send error : could not send response");
 				__request.clear();
 				__interpret.clear();
 				return (0);
@@ -139,8 +141,8 @@ void	Server::fill_username(int __client_fd, int index)
 
 	if (this->__clients[index].__username_filled == false)
 	{
-		if (write(__client_fd, "Username : ", 12) == -1)
-			throw Error ("send error : could not send response");
+		// if (write(__client_fd, "Username : ", 12) == -1)
+		// 	throw Error ("send error : could not send response");
 		__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
 		if (__recv_res == 0)
 			throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
@@ -151,8 +153,11 @@ void	Server::fill_username(int __client_fd, int index)
 			// __parsing_res == 0 	? throw Error ("Invalid username")
 			// : __parsing_res == -1 ? throw Error ("Username already exist")
 			// : this->__clients[index].set_username(string(__buffer));
-			if (__parsing_res == 0)
+			if (__parsing_res == 0){
+				if (write(__client_fd, "Username : ", 12) == -1)
+					throw Error ("send error : could not send response");
 				throw Error("Invalid username");
+			}
 			this->__clients[index].__username_filled  = true;
 			this->__clients[index].set_username(string(__buffer));
 			this->__clients[index].set_is_registred(true);
@@ -282,7 +287,7 @@ void	Server::run()
 								break ;
 							}
 						}
-						else if (!this->__clients[j].is_registred())
+						if (!this->__clients[j].is_registred())
 						{
 							try
 							{
