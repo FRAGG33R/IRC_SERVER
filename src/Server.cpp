@@ -139,24 +139,25 @@ void	Server::fill_username(int __client_fd, int index)
 
 	if (this->__clients[index].__username_filled == false)
 	{
-		cout << "the code enter to fill username function " << endl;
-		if (send(__client_fd, "Username : ", 12, 0) == -1)
+		if (write(__client_fd, "Username : ", 12) == -1)
 			throw Error ("send error : could not send response");
-		cout << "waiting for enternit the  username... " << endl;
 		__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
-		printf("[%d]\n", __recv_res);
 		if (__recv_res == 0)
 			throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
-		else if (__recv_res > 0)
+		if (__recv_res > 0)
 		{
 			__parsing_res = this->parse_input(string(__buffer), 1);
-			std::cout << __parsing_res << std::endl;
-			__parsing_res == 0 	? throw Error ("Invalid username")
-			: __parsing_res == -1 ? throw Error ("Username already exist")
-			: this->__clients[index].set_username(string(__buffer));
-			// this->__clients[index].set_username(string(__buffer));
+			// std::cout << __parsing_res << std::endl;
+			// __parsing_res == 0 	? throw Error ("Invalid username")
+			// : __parsing_res == -1 ? throw Error ("Username already exist")
+			// : this->__clients[index].set_username(string(__buffer));
+			if (__parsing_res == 0)
+				throw Error("Invalid username");
+			this->__clients[index].__username_filled  = true;
+			this->__clients[index].set_username(string(__buffer));
+			this->__clients[index].set_is_registred(true);
+			return ;
 		}
-		cout << "done" << std::endl;
 	}
 }
 
@@ -268,6 +269,7 @@ void	Server::run()
 							try
 							{
 								this->password_authentication(this->__clients[j].get_fd(), j);
+
 							}
 							catch(const std::exception& e)
 							{
@@ -280,25 +282,29 @@ void	Server::run()
 								break ;
 							}
 						}
-						if (this->__clients[j].is_authenticate() && !this->__clients[j].is_registred())
+						else if (!this->__clients[j].is_registred())
 						{
 							try
 							{
+								cout << "Im here " << endl;
+								cout << (this->__clients[j].__username_filled ? "treu" : "false") << endl;
 								if (this->__clients[j].__username_filled == false)
+								{
 									this->fill_username(this->__clients[j].get_fd(), j);
-								else if (this->__clients[j].__nickname_filled == false)
-									this->fill_nickname(this->__clients[j].get_fd(), j);
-								if (this->__clients[j].__username_filled == true && this->__clients[j].__nickname_filled == true)
-									this->__clients[j].set_is_registred(true);
+								}
+								// else if (this->__clients[j].__nickname_filled == false)
+								// 	this->fill_nickname(this->__clients[j].get_fd(), j);
+								// if (this->__clients[j].__username_filled == true && this->__clients[j].__nickname_filled == true)
+								// 	this->__clients[j].set_is_registred(true);
 								// this->fill_operator(this->__clients[j].get_fd(), j);
 								// this->__clients[j].set_is_registred(true);
 							}
 							catch(const std::exception& e)
 							{
 								std::cerr << e.what() << '\n';
-								continue ;
 							}
-						}
+							cout << "The usernme is " << this->__clients[j].get_username() << endl;
+ 						}
 						// else if (this->__clients[j].is_registred())
 						// {
 						// 	__recv_res = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);

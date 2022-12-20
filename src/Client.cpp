@@ -66,7 +66,7 @@ string Client::get_username() const
 void Client::set_username(string username)
 {
 	this->__username = username;
-	this->__username_filled = true;
+	// this->__username_filled = true;
 }
 
 string Client::get_nickname() const
