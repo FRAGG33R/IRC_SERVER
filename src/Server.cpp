@@ -141,26 +141,27 @@ void	Server::fill_username(int __client_fd, int index)
 
 	if (this->__clients[index].__username_filled == false)
 	{
-		// if (write(__client_fd, "Username : ", 12) == -1)
-		// 	throw Error ("send error : could not send response");
 		__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
 		if (__recv_res == 0)
 			throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
 		if (__recv_res > 0)
 		{
 			__parsing_res = this->parse_input(string(__buffer), 1);
-			// std::cout << __parsing_res << std::endl;
-			// __parsing_res == 0 	? throw Error ("Invalid username")
-			// : __parsing_res == -1 ? throw Error ("Username already exist")
-			// : this->__clients[index].set_username(string(__buffer));
 			if (__parsing_res == 0){
 				if (write(__client_fd, "Username : ", 12) == -1)
 					throw Error ("send error : could not send response");
 				throw Error("Invalid username");
 			}
+			else if (__parsing_res == -1)
+			{
+				if (write(__client_fd, "Username : ", 12) == -1)
+					throw Error ("send error : could not send response");
+				throw Error("the username already exist");
+			}
 			this->__clients[index].__username_filled  = true;
 			this->__clients[index].set_username(string(__buffer));
-			this->__clients[index].set_is_registred(true);
+			if (send(__client_fd, "Nickname : ", 12, 0) == -1)
+				throw Error ("send error : could not send response");
 			return ;
 		}
 	}
@@ -173,20 +174,29 @@ void    Server::fill_nickname(int __client_fd, int index)
 
 	if (this->__clients[index].__nickname_filled == false)
 	{
-		cout << "the code enter to fill nickname function " << endl;
-		if (send(__client_fd, "Nickname : ", 12, 0) == -1)
-			throw Error ("send error : could not send response");
 		__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
-		printf("[%d]\n", __recv_res);
 		if (__recv_res == 0)
 			throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
 		else if (__recv_res > 0)
 		{
 			__parsing_res = this->parse_input(string(__buffer), 2);
-			std::cout << __parsing_res << std::endl;
-			__parsing_res == 0 	? throw Error ("Invalid nickname")
-			: __parsing_res == -1 ? throw Error ("Nickname already exist") // if nickname failed shoudl I remove the client
-			: this->__clients[index].set_nickname(string(__buffer));
+			if (__parsing_res == 0) {
+				if (write(__client_fd, "Nickname : ", 12) == -1)
+					throw Error ("send error : could not send response");
+				throw Error("Invalid nickname");
+			}
+			else if (__parsing_res == -1)
+			{
+				if (write(__client_fd, "Nickname : ", 12) == -1)
+					throw Error ("send error : could not send response");
+				throw Error("the Nickname already exist");
+			}
+			this->__clients[index].__nickname_filled  = true;
+			this->__clients[index].set_nickname(string(__buffer));
+			// if (send(__client_fd, "Nickname : ", 12, 0) == -1)
+			// 	throw Error ("send error : could not send response");
+			this->__clients[index].set_is_registred(true);
+			return ;
 		}
 	}
 }
@@ -291,14 +301,8 @@ void	Server::run()
 						{
 							try
 							{
-								cout << "Im here " << endl;
-								cout << (this->__clients[j].__username_filled ? "treu" : "false") << endl;
-								if (this->__clients[j].__username_filled == false)
-								{
-									this->fill_username(this->__clients[j].get_fd(), j);
-								}
-								// else if (this->__clients[j].__nickname_filled == false)
-								// 	this->fill_nickname(this->__clients[j].get_fd(), j);
+								this->fill_username(this->__clients[j].get_fd(), j);
+								this->fill_nickname(this->__clients[j].get_fd(), j);
 								// if (this->__clients[j].__username_filled == true && this->__clients[j].__nickname_filled == true)
 								// 	this->__clients[j].set_is_registred(true);
 								// this->fill_operator(this->__clients[j].get_fd(), j);
@@ -308,7 +312,6 @@ void	Server::run()
 							{
 								std::cerr << e.what() << '\n';
 							}
-							cout << "The usernme is " << this->__clients[j].get_username() << endl;
  						}
 						// else if (this->__clients[j].is_registred())
 						// {
