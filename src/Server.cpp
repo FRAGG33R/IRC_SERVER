@@ -1,21 +1,6 @@
 # include "../includes/main.hpp"
 
-Server::Server()
-{
-	this->__socket_fd = -1;
-	this->__poll_res = 0;
-	this->__server_addr.sin_family = AF_INET;
-	this->__server_addr.sin_addr.s_addr = INADDR_ANY;
-	this->__server_addr.sin_port = htons(this->__port);
-	for (int i = 0; i < MAX_FD; i++) {
-		__poll_fds[i].fd = -1;
-		__poll_fds[i].events = 0;
-		__poll_fds[i].events |= POLLIN;
-	}
-	this->__address_len = sizeof(this->__server_addr);
-	this->__port = 3000;
-	this->__server_name = "CW9";
-}
+Server	*Server::__instance = nullptr;
 
 Server::Server(string password, int port, string name = "CW9")
 {
@@ -33,6 +18,15 @@ Server::Server(string password, int port, string name = "CW9")
 	this->__password = password;
 	this->__port = port;
 	this->__server_name = name;
+}
+
+Server *Server::getInstance(string password, int port, string name )
+{
+	if (__instance == nullptr){
+		cout << "instance is null" << endl;
+		__instance = new Server(password, port, name);
+	}
+	return __instance;
 }
 
 void	Server::add_to_poll(struct pollfd *__poll_fds, int __fd)
@@ -111,7 +105,7 @@ int	Server::password_authentication(int __client_fd, int index)
 				if (send(__client_fd, "Create an account\n", 19, 0) == -1)
 					throw Error ("send error : could not send response to "+ std::to_string(__client_fd));
 				this->__clients[index].set_authentication(true);
-				if (write(__client_fd, "Username : ", 12) == -1)
+				if (send(__client_fd, "Username : ", 12, 0) == -1)
 					throw Error ("send error : could not send response");
 				__request.clear();
 				__interpret.clear();
@@ -148,13 +142,13 @@ void	Server::fill_username(int __client_fd, int index)
 		{
 			__parsing_res = this->parse_input(string(__buffer), 1);
 			if (__parsing_res == 0){
-				if (write(__client_fd, "Username : ", 12) == -1)
+				if (send(__client_fd, "Username : ", 12, 0) == -1)
 					throw Error ("send error : could not send response");
 				throw Error("Invalid username");
 			}
 			else if (__parsing_res == -1)
 			{
-				if (write(__client_fd, "Username : ", 12) == -1)
+				if (send(__client_fd, "Username : ", 12, 0) == -1)
 					throw Error ("send error : could not send response");
 				throw Error("the username already exist");
 			}
@@ -181,19 +175,19 @@ void    Server::fill_nickname(int __client_fd, int index)
 		{
 			__parsing_res = this->parse_input(string(__buffer), 2);
 			if (__parsing_res == 0) {
-				if (write(__client_fd, "Nickname : ", 12) == -1)
+				if (send(__client_fd, "Nickname : ", 12, 0) == -1)
 					throw Error ("send error : could not send response");
 				throw Error("Invalid nickname");
 			}
 			else if (__parsing_res == -1)
 			{
-				if (write(__client_fd, "Nickname : ", 12) == -1)
+				if (send(__client_fd, "Nickname : ", 12, 0) == -1)
 					throw Error ("send error : could not send response");
 				throw Error("the Nickname already exist");
 			}
 			this->__clients[index].__nickname_filled  = true;
 			this->__clients[index].set_nickname(string(__buffer));
-			if (write(__client_fd, "operator : ", 12) == -1)
+			if (send(__client_fd, "Are you an operator ? yes/no", 29, 0) == -1)
 					throw Error ("send error : could not send response");
 			return ;
 		}
@@ -213,7 +207,7 @@ void	Server::fill_operator(int __client_fd, int index)
 			__parsing_res = this->parse_input(string(__buffer).substr(0, string(__buffer).length() - 1), 3);
 			if (__parsing_res == -1)
 			{
-				if (write(__client_fd, "operator : ", 12) == -1)
+				if (send(__client_fd, "Are you an operator ? (yes/no) ", 29, 0) == -1)
 					throw Error ("send error : could not send response");
 				throw Error("Invalid answer");
 			}
@@ -310,27 +304,26 @@ void	Server::run()
 								this->fill_username(this->__clients[j].get_fd(), j);
 								this->fill_nickname(this->__clients[j].get_fd(), j);
 								this->fill_operator(this->__clients[j].get_fd(), j);
-								// this->__clients[j].set_is_registred(true);
 							}
 							catch(const std::exception& e)
 							{
 								std::cerr << e.what() << '\n';
 							}
  						}
-						// else if (this->__clients[j].is_registred())
-						// {
-						// 	__recv_res = recv(__poll_fds[i].fd, __buffer, sizeof(__buffer), 0);
-						// 	if (__recv_res == 0)
-						// 	{
-						// 		cerr << RED << "The client " << __poll_fds[i].fd <<  " disconnected !" << RESET << endl;
-						// 		close(__poll_fds[i].fd);
-						// 		remove_from_poll(__poll_fds, __poll_fds[i].fd);
-						// 		this->__clients.erase(this->__clients.begin() + j);
-						// 		break ;
-						// 	}
-						// 	cout << GRN << "➜ " << RESET << __buffer << endl;
-						// 	memset(__buffer, 0, sizeof(__buffer));
-						// }
+						if (this->__clients[j].is_registred())
+						{
+							__recv_res = recv(this->__clients[j].get_fd(), __buffer, sizeof(__buffer), 0);
+							if (__recv_res == 0)
+							{
+								cerr << RED << "The client " << this->__clients[j].get_fd() <<  " disconnected !" << RESET << endl;
+								close(this->__clients[j].get_fd());
+								remove_from_poll(__poll_fds, this->__clients[j].get_fd());
+								this->__clients.erase(this->__clients.begin() + j);
+								break ;
+							}
+							cout << GRN << "➜ " << RESET << __buffer << endl;
+							memset(__buffer, 0, sizeof(__buffer));
+						}
 
 					}
 				}

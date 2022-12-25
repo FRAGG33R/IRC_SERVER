@@ -5,12 +5,12 @@ class Client
 
 		string	__username;
 		string	__nickname;
+		string	__channel_name;
 
 		bool	__is_operator;
 		bool	__is_authenticated;
 		bool	__is_registred;
 		int		__fd;
-
 	public :
 
 		bool	__username_filled;
