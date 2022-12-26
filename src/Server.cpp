@@ -138,8 +138,6 @@ void	Server::fill_username(int __client_fd, int index)
 		__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
 		if (__recv_res == 0){
 			close(this->__clients[index].get_fd());
-			cout << "The index is " << index << endl;
-			cout << "Hello world !" << endl;
 			this->__clients.erase(this->__clients.begin() + index); 
 			throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
 		}
@@ -200,8 +198,6 @@ void	Server::fill_nickname(int __client_fd, int index)
 		__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
 		if (__recv_res == 0){
 			close(this->__clients[index].get_fd());
-			cout << "The index is " << index << endl;
-			cout << "Hello world !" << endl;
 			this->__clients.erase(this->__clients.begin() + index); 
 			throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
 		}
@@ -260,8 +256,6 @@ void	Server::fill_operator(int __client_fd, int index)
 	__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
 	if (__recv_res == 0){
 		close(this->__clients[index].get_fd());
-		cout << "The index is " << index << endl;
-		cout << "Hello world !" << endl;
 		this->__clients.erase(this->__clients.begin() + index); 
 		throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
 	}
@@ -276,7 +270,7 @@ void	Server::fill_operator(int __client_fd, int index)
 				__request = __interpret;
 			}
 			__request = __request.substr(0, __request.size() - 1);
-			__parsing_res = this->parse_input(__request, 2);
+			__parsing_res = this->parse_input(__request, 3);
 			if (__parsing_res == -1) {
 				__request.clear();
 				__interpret.clear();
@@ -390,7 +384,7 @@ void	Server::run()
 								{
 									this->fill_username(this->__clients[j].get_fd(), j);
 									this->fill_nickname(this->__clients[j].get_fd(), j);
-									// this->fill_operator(this->__clients[j].get_fd(), j);
+									this->fill_operator(this->__clients[j].get_fd(), j);
 								}
 								catch(const std::exception& e)
 								{
