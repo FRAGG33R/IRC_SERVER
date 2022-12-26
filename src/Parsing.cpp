@@ -30,9 +30,11 @@ int Server::parse_input(string __input, int flag)
 	{
 		if (__input.length() < 4 || std::isdigit(__input[0]))
 			return  0;
-		for (unsigned int  i = 0; i < this->__clients.size(); i++)
+		for (unsigned int  i = 0; i < this->__clients.size(); i++) {
+			cout << "Username : " << this->__clients[i].get_username() << endl;
 			if (this->__clients[i].get_username() == __input)
 				return (-1); //username already exist
+		}
 		return (1);
 	}
 	if (flag == 2)
