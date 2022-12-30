@@ -28,7 +28,7 @@ int Server::parse_input(string __input, int flag)
 {
 	if (flag == 1)
 	{
-		if (__input.length() < 4 || std::isdigit(__input[0]))
+		if (__input.length() < 5 || std::isdigit(__input[0]))
 			return  0;
 		for (unsigned int  i = 0; i < this->__clients.size(); i++) {
 			if (this->__clients[i].get_username() == __input)
@@ -38,7 +38,7 @@ int Server::parse_input(string __input, int flag)
 	}
 	if (flag == 2)
 	{
-		if (__input.length() < 4 || std::isdigit(__input[0]))
+		if ((__input.length() < 5  || __input.length() > 9 ) || std::isdigit(__input[0]))
 			return  0;
 		for (unsigned int  i = 0; i < this->__clients.size(); i++)
 			if (this->__clients[i].get_nickname() == __input)

@@ -88,7 +88,7 @@ int	Server::password_authentication(int __client_fd, int index)
 		throw Error (" Client " + std::to_string(__client_fd) + " disconnected");
 	if (__recv_res > 0)
 	{
-	__request = __buffer;
+		__request = __buffer;
 		if (__request[__request.size() - 1] == '\n')
 		{
 			if (!__interpret.empty())
@@ -304,7 +304,7 @@ void	Server::create_server(void)
 	 int n = 1;
 	if ((this->__poll_fds[0].fd = this->__socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 		throw Error("Socket error : could not open socket");
-	if (setsockopt(this->__socket_fd, SOL_SOCKET, SO_REUSEADDR, &n, sizeof(n)) == -1) // to bind multiple times to the same port.
+	if (setsockopt(this->__socket_fd, SOL_SOCKET, SO_REUSEADDR, &n, sizeof(n)) == -1)
 		throw Error("setsockopt error : could not set SO_REUSEADDR");
 	if (fcntl(this->__socket_fd, F_SETFL, O_NONBLOCK) == -1)
 		throw Error("fcntl error : could not set socket in non-blocking mode");
@@ -334,6 +334,7 @@ void	Server::run()
 		{
 			for (int i = 0; i < MAX_FD; i++)
 			{
+
 				if (this->__poll_fds[i].revents & POLLIN)
 				{
 					if (this->__poll_fds[i].fd == this->__socket_fd)
@@ -353,7 +354,6 @@ void	Server::run()
 					else
 					{
 						if (this->__clients.size() != 0) {
-
 							size_t j = 0;
 							for (; j < this->__clients.size(); j++)
 							{
@@ -370,7 +370,6 @@ void	Server::run()
 								catch(const std::exception& e)
 								{
 									std::cerr << e.what() << '\n';
-									cout << RED << "Clinet " << this->__clients[j].get_fd() << " Disconnected" << RESET << std::endl;
 									remove_from_poll(__poll_fds, __poll_fds[i].fd);
 									this->__clients.erase(this->__clients.begin() + j);
 									close(__poll_fds[i].fd);
@@ -391,23 +390,21 @@ void	Server::run()
 									std::cerr << e.what() << '\n';
 								}
 							}
+							else
+							{
+								__recv_res = recv(this->__clients[j].get_fd(), __buffer, sizeof(__buffer), 0);
+								if (__recv_res == 0)
+								{
+									cerr << RED << "The client " << this->__clients[j].get_fd() <<  " disconnected !" << RESET << endl;
+									close(this->__clients[j].get_fd());
+									remove_from_poll(__poll_fds, this->__clients[j].get_fd());
+									this->__clients.erase(this->__clients.begin() + j);
+									break ;
+								}
+								cout << GRN << "➜ " << RESET << __buffer << endl;
+								memset(__buffer, 0, sizeof(__buffer));
+							}
 						}
-						
-						// if (this->__clients[j].is_registred())
-						// {
-						// 	__recv_res = recv(this->__clients[j].get_fd(), __buffer, sizeof(__buffer), 0);
-						// 	if (__recv_res == 0)
-						// 	{
-						// 		cerr << RED << "The client " << this->__clients[j].get_fd() <<  " disconnected !" << RESET << endl;
-						// 		close(this->__clients[j].get_fd());
-						// 		remove_from_poll(__poll_fds, this->__clients[j].get_fd());
-						// 		this->__clients.erase(this->__clients.begin() + j);
-						// 		break ;
-						// 	}
-						// 	cout << GRN << "➜ " << RESET << __buffer << endl;
-						// 	memset(__buffer, 0, sizeof(__buffer));
-						// }
-
 					}
 				}
 			}
