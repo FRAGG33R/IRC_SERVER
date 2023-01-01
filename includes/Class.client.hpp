@@ -2,11 +2,9 @@
 class Client
 {
 	private :
-
 		string	__username;
 		string	__nickname;
-		string	__channel_name;
-
+		string	__channel_name;	
 		bool	__is_operator;
 		bool	__is_authenticated;
 		bool	__is_registred;
@@ -15,6 +13,8 @@ class Client
 
 		bool	__username_filled;
 		bool    __nickname_filled;
+		string	__request;
+		string	__interpret;
 
 		~Client();
 		Client(string username, string nickname, bool is_operator, bool authentication,  bool is_registred, int fd);

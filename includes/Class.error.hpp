@@ -7,7 +7,7 @@ class Error : public std::exception
 		std::string	__message;
 	public:
 		Error();
-	    Error(const std::string& message);
+		Error(const std::string& message);
 		const char *what() const throw();
 		~Error() throw(){};
 };

@@ -10,10 +10,9 @@ class Server
 		unsigned long		__address_len;
 		string				__password;
 		string              __server_name;
+
 		in_port_t			__port;
 		vector<Client>		__clients;
-		string				__request;
-		string				__interpret;
 		Server(string password, int port, string name);
 		static Server		*__instance;
 	public:

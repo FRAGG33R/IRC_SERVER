@@ -88,15 +88,15 @@ int	Server::password_authentication(int __client_fd, int index)
 		throw Error (" Client " + std::to_string(__client_fd) + " disconnected");
 	if (__recv_res > 0)
 	{
-		__request = __buffer;
-		if (__request[__request.size() - 1] == '\n')
+		this->__clients[index].__request = __buffer;
+		if (this->__clients[index].__request[this->__clients[index].__request.size() - 1] == '\n')
 		{
-			if (!__interpret.empty())
+			if (!this->__clients[index].__interpret.empty())
 			{
-				__interpret += __request;
-				__request = __interpret;
+				this->__clients[index].__interpret += this->__clients[index].__request;
+				this->__clients[index].__request = this->__clients[index].__interpret;
 			}
-			if (__request.substr(0, __request.size() - 1) == this->__password)
+			if (this->__clients[index].__request.substr(0, this->__clients[index].__request.size() - 1) == this->__password)
 			{
 				if (send(__client_fd, __response.c_str(), __response.size(), 0) == -1)
 					throw Error("send error : could not send response to " + std::to_string(__client_fd));
@@ -105,8 +105,8 @@ int	Server::password_authentication(int __client_fd, int index)
 				this->__clients[index].set_authentication(true);
 				if (send(__client_fd, "Username : ", 12, 0) == -1)
 					throw Error ("send error : could not send response");
-				__request.clear();
-				__interpret.clear();
+				this->__clients[index].__request.clear();
+				this->__clients[index].__interpret.clear();
 				return (0);
 			}
 			else
@@ -116,12 +116,12 @@ int	Server::password_authentication(int __client_fd, int index)
 				if (send(__client_fd, "password ➜ ", 12, 0) == -1)
 					throw Error("send error : could not send response to " + std::to_string(__client_fd));
 				memset(__buffer, 0, sizeof(__buffer));
-				__request.clear();
-				__interpret.clear();
+				this->__clients[index].__request.clear();
+				this->__clients[index].__interpret.clear();
 			}
 		}
 		else
-			__interpret  = __interpret + __request;
+			this->__clients[index].__interpret  = this->__clients[index].__interpret + this->__clients[index].__request;
 	}
 	return (0);
 }
@@ -143,19 +143,19 @@ void	Server::fill_username(int __client_fd, int index)
 		}
 		if (__recv_res > 0)
 		{
-			__request = __buffer;
-			if (__request[__request.size() - 1] == '\n') 
+			this->__clients[index].__request = __buffer;
+			if (this->__clients[index].__request[this->__clients[index].__request.size() - 1] == '\n') 
 			{
-				if (!__interpret.empty())
+				if (!this->__clients[index].__interpret.empty())
 				{
-					__interpret += __request;
-					__request = __interpret;
+					this->__clients[index].__interpret += this->__clients[index].__request;
+					this->__clients[index].__request = this->__clients[index].__interpret;
 				}
-				__request = __request.substr(0, __request.size() - 1);
-				__parsing_res = this->parse_input(__request, 1);
+				this->__clients[index].__request = this->__clients[index].__request.substr(0, this->__clients[index].__request.size() - 1);
+				__parsing_res = this->parse_input(this->__clients[index].__request, 1);
 				if (__parsing_res == 0) {
-					__request.clear();
-					__interpret.clear();
+					this->__clients[index].__request.clear();
+					this->__clients[index].__interpret.clear();
 					if (send(__client_fd, __invalid_username_msg.c_str(), __invalid_username_msg.length(), 0) == -1)
 						throw Error ("send error : could not send response");
 					if (send(__client_fd, "Username : ", 12, 0) == -1)
@@ -164,8 +164,8 @@ void	Server::fill_username(int __client_fd, int index)
 				}
 				else if (__parsing_res == -1)
 				{
-					__request.clear();
-					__interpret.clear();
+					this->__clients[index].__request.clear();
+					this->__clients[index].__interpret.clear();
 					if (send(__client_fd, __duplicated__username.c_str(), __duplicated__username.length(), 0) == -1)
 						throw Error ("send error : could not send response");
 					if (send(__client_fd, "Username : ", 12, 0) == -1)
@@ -173,15 +173,15 @@ void	Server::fill_username(int __client_fd, int index)
 					throw Error("the username already exist");
 				}
 				this->__clients[index].__username_filled  = true;
-				this->__clients[index].set_username(__request);
-				__request.clear();
-				__interpret.clear();
+				this->__clients[index].set_username(this->__clients[index].__request);
+				this->__clients[index].__request.clear();
+				this->__clients[index].__interpret.clear();
 				if (send(__client_fd, "Nickname : ", 12, 0) == -1)
 					throw Error ("send error : could not send response");
 				return ;
 			}
 			else
-			__interpret  = __interpret + __request;
+			this->__clients[index].__interpret  = this->__clients[index].__interpret + this->__clients[index].__request;
 		}
 	}
 }
@@ -203,19 +203,19 @@ void	Server::fill_nickname(int __client_fd, int index)
 		}
 		if (__recv_res > 0)
 		{
-			__request = __buffer;
-			if (__request[__request.size() - 1] == '\n') 
+			this->__clients[index].__request = __buffer;
+			if (this->__clients[index].__request[this->__clients[index].__request.size() - 1] == '\n') 
 			{
-				if (!__interpret.empty())
+				if (!this->__clients[index].__interpret.empty())
 				{
-					__interpret += __request;
-					__request = __interpret;
+					this->__clients[index].__interpret += this->__clients[index].__request;
+					this->__clients[index].__request = this->__clients[index].__interpret;
 				}
-				__request = __request.substr(0, __request.size() - 1);
-				__parsing_res = this->parse_input(__request, 2);
+				this->__clients[index].__request = this->__clients[index].__request.substr(0, this->__clients[index].__request.size() - 1);
+				__parsing_res = this->parse_input(this->__clients[index].__request, 2);
 				if (__parsing_res == 0) {
-					__request.clear();
-					__interpret.clear();
+					this->__clients[index].__request.clear();
+					this->__clients[index].__interpret.clear();
 					if (send(__client_fd, __invalid_nickname.c_str(), __invalid_nickname.length(), 0) == -1)
 						throw Error ("send error : could not send response");
 					if (send(__client_fd, "Nickname : ", 12, 0) == -1)
@@ -224,8 +224,8 @@ void	Server::fill_nickname(int __client_fd, int index)
 				}
 				else if (__parsing_res == -1)
 				{
-					__request.clear();
-					__interpret.clear();
+					this->__clients[index].__request.clear();
+					this->__clients[index].__interpret.clear();
 					if (send(__client_fd, __duplicated__nickname.c_str(), __duplicated__nickname.length(), 0) == -1)
 						throw Error ("send error : could not send response");
 					if (send(__client_fd, "Nickname : ", 12, 0) == -1)
@@ -233,15 +233,15 @@ void	Server::fill_nickname(int __client_fd, int index)
 					throw Error("the nickname already exist");
 				}
 				this->__clients[index].__nickname_filled  = true;
-				this->__clients[index].set_nickname(__request);
-				__request.clear();
-				__interpret.clear();
+				this->__clients[index].set_nickname(this->__clients[index].__request);
+				this->__clients[index].__request.clear();
+				this->__clients[index].__interpret.clear();
 				if (send(__client_fd, "Are you an operator ? yes/no ", 30, 0) == -1)
 					throw Error ("send error : could not send response");
 				return ;
 			}
 			else
-			__interpret  = __interpret + __request;
+			this->__clients[index].__interpret  = this->__clients[index].__interpret + this->__clients[index].__request;
 		}
 	}
 }
@@ -261,19 +261,19 @@ void	Server::fill_operator(int __client_fd, int index)
 	}
 	if (__recv_res > 0)
 	{
-		__request = __buffer;
-		if (__request[__request.size() - 1] == '\n') 
+		this->__clients[index].__request = __buffer;
+		if (this->__clients[index].__request[this->__clients[index].__request.size() - 1] == '\n') 
 		{
-			if (!__interpret.empty())
+			if (!this->__clients[index].__interpret.empty())
 			{
-				__interpret += __request;
-				__request = __interpret;
+				this->__clients[index].__interpret += this->__clients[index].__request;
+				this->__clients[index].__request = this->__clients[index].__interpret;
 			}
-			__request = __request.substr(0, __request.size() - 1);
-			__parsing_res = this->parse_input(__request, 3);
+			this->__clients[index].__request =this->__clients[index].__request.substr(0, this->__clients[index].__request.size() - 1);
+			__parsing_res = this->parse_input(this->__clients[index].__request, 3);
 			if (__parsing_res == -1) {
-				__request.clear();
-				__interpret.clear();
+				this->__clients[index].__request.clear();
+				this->__clients[index].__interpret.clear();
 				if (send(__client_fd, __invalid_answer.c_str(), __invalid_answer.length(), 0) == -1)
 					throw Error ("send error : could not send response");
 				if (send(__client_fd, "Are you an operator ? (yes/no) ", 30, 0) == -1)
@@ -282,20 +282,20 @@ void	Server::fill_operator(int __client_fd, int index)
 			}
 			else if (__parsing_res == 1)
 			{
-				__request.clear();
-				__interpret.clear();
+				this->__clients[index].__request.clear();
+				this->__clients[index].__interpret.clear();
 				this->__clients[index].set_is_operator(false);
 			}
 			else if (__parsing_res == 0)
 			{
-				__request.clear();
-				__interpret.clear();
+				this->__clients[index].__request.clear();
+				this->__clients[index].__interpret.clear();
 				this->__clients[index].set_is_operator(true);
 			}
 			this->__clients[index].set_is_registred(true);
 		}
 		else
-		__interpret  = __interpret + __request;
+		this->__clients[index].__interpret  = this->__clients[index].__interpret + this->__clients[index].__request;
 	}
 }
 
@@ -365,7 +365,6 @@ void	Server::run()
 								try
 								{
 									this->password_authentication(this->__clients[j].get_fd(), j);
-
 								}
 								catch(const std::exception& e)
 								{
@@ -401,7 +400,17 @@ void	Server::run()
 									this->__clients.erase(this->__clients.begin() + j);
 									break ;
 								}
-								cout << GRN << "➜ " << RESET << __buffer << endl;
+								static string __fullCmdl;
+
+								__fullCmdl += string(__buffer);
+								if (__fullCmdl.find('\n') != std::string::npos)
+								{
+									cout << "<<" << __fullCmdl << ">>\n";
+									__fullCmdl.erase();
+								}
+								else
+									cout << "not complete\n";
+								// cout << GRN << "➜ " << RESET << __buffer << endl;
 								memset(__buffer, 0, sizeof(__buffer));
 							}
 						}
