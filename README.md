@@ -42,6 +42,7 @@
 - PRIVMSG: This command allows a user to send a message to another user or a channel.
 - NICK: This command allows a user to change their nickname.
 - WHOIS: This command allows a user to request information about another user, such as their real name, hostname, and so on.
+- SENDFILE: This command allows a user to send files to another user.
 
 ## for operator users :
 
