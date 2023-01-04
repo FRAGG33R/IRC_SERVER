@@ -103,8 +103,6 @@ int	Server::password_authentication(int __client_fd, int index)
 				if (send(__client_fd, "Create an account\n", 19, 0) == -1)
 					throw Error ("send error : could not send response to "+ std::to_string(__client_fd));
 				this->__clients[index].set_authentication(true);
-				if (send(__client_fd, "Username : ", 12, 0) == -1)
-					throw Error ("send error : could not send response");
 				this->__clients[index].__request.clear();
 				this->__clients[index].__interpret.clear();
 				return (0);
@@ -348,8 +346,6 @@ void	Server::run()
 						}
 						add_to_poll(this->__poll_fds, __connection);
 						this->__clients.push_back(Client(__connection));
-						if (send(__connection, "password ➜ ", 12, 0) == -1)
-								throw Error("send error : could not send response to " + std::to_string(__connection));
 					}
 					else
 					{
@@ -360,59 +356,27 @@ void	Server::run()
 								if (this->__clients[j].get_fd() == this->__poll_fds[i].fd)
 									break ;
 							}
-							if (!this->__clients[j].is_authenticate())
+							__recv_res = recv(this->__clients[j].get_fd(), __buffer, sizeof(__buffer), 0);
+							if (__recv_res == 0)
 							{
-								try
-								{
-									this->password_authentication(this->__clients[j].get_fd(), j);
-								}
-								catch(const std::exception& e)
-								{
-									std::cerr << e.what() << '\n';
-									remove_from_poll(__poll_fds, __poll_fds[i].fd);
-									this->__clients.erase(this->__clients.begin() + j);
-									close(__poll_fds[i].fd);
-									close(this->__clients[j].get_fd());
-									break ;
-								}
+								cerr << RED << "The client " << this->__clients[j].get_fd() <<  " disconnected !" << RESET << endl;
+								close(this->__clients[j].get_fd());
+								remove_from_poll(__poll_fds, this->__clients[j].get_fd());
+								this->__clients.erase(this->__clients.begin() + j);
+								break ;
 							}
-							if (!this->__clients[j].is_registred())
+							static string __fullCmdl;
+
+							__fullCmdl += string(__buffer);
+							if (__fullCmdl.find('\n') != std::string::npos)
 							{
-								try
-								{
-									this->fill_username(this->__clients[j].get_fd(), j);
-									this->fill_nickname(this->__clients[j].get_fd(), j);
-									this->fill_operator(this->__clients[j].get_fd(), j);
-								}
-								catch(const std::exception& e)
-								{
-									std::cerr << e.what() << '\n';
-								}
+								cout << "<<" << __fullCmdl << ">>\n";
+								__fullCmdl.erase();
 							}
 							else
-							{
-								__recv_res = recv(this->__clients[j].get_fd(), __buffer, sizeof(__buffer), 0);
-								if (__recv_res == 0)
-								{
-									cerr << RED << "The client " << this->__clients[j].get_fd() <<  " disconnected !" << RESET << endl;
-									close(this->__clients[j].get_fd());
-									remove_from_poll(__poll_fds, this->__clients[j].get_fd());
-									this->__clients.erase(this->__clients.begin() + j);
-									break ;
-								}
-								static string __fullCmdl;
-
-								__fullCmdl += string(__buffer);
-								if (__fullCmdl.find('\n') != std::string::npos)
-								{
-									cout << "<<" << __fullCmdl << ">>\n";
-									__fullCmdl.erase();
-								}
-								else
-									cout << "not complete\n";
-								// cout << GRN << "➜ " << RESET << __buffer << endl;
-								memset(__buffer, 0, sizeof(__buffer));
-							}
+								cout << "not complete\n";
+							cout << GRN << "➜ " << RESET << __buffer << endl;
+							memset(__buffer, 0, sizeof(__buffer));
 						}
 					}
 				}
