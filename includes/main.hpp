@@ -35,6 +35,7 @@ using std::cerr;
 # include "Class.client.hpp"
 # include "Class.server.hpp"
 # include "Class.error.hpp"
+#include "Class.parser.hpp"
 // # include "Class.channel.hpp"
 
 //Functions

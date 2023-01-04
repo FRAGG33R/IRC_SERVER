@@ -1,16 +1,19 @@
 #include "main.hpp"
+#include "Class.parser.hpp"
+
 class Client
 {
 	private :
 		string	__username;
 		string	__nickname;
-		string	__channel_name;	
+		string	__channel_name; 
 		bool	__is_operator;
 		bool	__is_authenticated;
 		bool	__is_registred;
 		int		__fd;
 	public :
 
+		Parser	__command;
 		bool	__username_filled;
 		bool    __nickname_filled;
 		string	__request;

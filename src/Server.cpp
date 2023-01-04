@@ -400,17 +400,15 @@ void	Server::run()
 									this->__clients.erase(this->__clients.begin() + j);
 									break ;
 								}
-								static string __fullCmdl;
 
-								__fullCmdl += string(__buffer);
-								if (__fullCmdl.find('\n') != std::string::npos)
+								this->__clients[j].__command.command += string(__buffer);
+								if (this->__clients[j].__command.command[0] != '\\')
+									write(this->__clients[j].get_fd(), "every command starts with /\n", sizeof("every command starts with /"));
+								else if (this->__clients[j].__command.command.find('\n') != std::string::npos)
 								{
-									cout << "<<" << __fullCmdl << ">>\n";
-									__fullCmdl.erase();
+									cout << "the rntred command : <<" << this->__clients[j].__command.command << ">>\n";
+									this->__clients[j].__command.command.erase();
 								}
-								else
-									cout << "not complete\n";
-								// cout << GRN << "➜ " << RESET << __buffer << endl;
 								memset(__buffer, 0, sizeof(__buffer));
 							}
 						}

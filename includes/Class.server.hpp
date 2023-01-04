@@ -10,7 +10,6 @@ class Server
 		unsigned long		__address_len;
 		string				__password;
 		string              __server_name;
-
 		in_port_t			__port;
 		vector<Client>		__clients;
 		Server(string password, int port, string name);

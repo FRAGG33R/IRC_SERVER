@@ -1,0 +1,4 @@
+*/*.o
+.vscode
+a.out
+ircserv
