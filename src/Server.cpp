@@ -75,57 +75,6 @@ void Server::print(void)
 	cout << "	███████████████████████████████████" << RESET << endl;
 }
 
-int	Server::password_authentication(int __client_fd, int index)
-{
-	int		__bytes = 0, __recv_res = 0;
-	char	__buffer[1024] = {0};
-	string	__client_password;
-	string	__response = string(GRN) + "Connected with the irc server successfully\n" + string(RESET);
-	string	__try_password = string(RED) + "Password incorrect please try again.\n" + string(RESET);
-
-	__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
-	if(__recv_res == 0)
-		throw Error (" Client " + std::to_string(__client_fd) + " disconnected");
-	if (__recv_res > 0)
-	{
-		this->__clients[index].__request = __buffer;
-		if (this->__clients[index].__request[this->__clients[index].__request.size() - 1] == '\n')
-		{
-			if (!this->__clients[index].__interpret.empty())
-			{
-				this->__clients[index].__interpret += this->__clients[index].__request;
-				this->__clients[index].__request = this->__clients[index].__interpret;
-			}
-			if (this->__clients[index].__request.substr(0, this->__clients[index].__request.size() - 1) == this->__password)
-			{
-				if (send(__client_fd, __response.c_str(), __response.size(), 0) == -1)
-					throw Error("send error : could not send response to " + std::to_string(__client_fd));
-				if (send(__client_fd, "Create an account\n", 19, 0) == -1)
-					throw Error ("send error : could not send response to "+ std::to_string(__client_fd));
-				this->__clients[index].set_authentication(true);
-				if (send(__client_fd, "Username : ", 12, 0) == -1)
-					throw Error ("send error : could not send response");
-				this->__clients[index].__request.clear();
-				this->__clients[index].__interpret.clear();
-				return (0);
-			}
-			else
-			{
-				if (send(__client_fd, __try_password.c_str(), __try_password.size(), 0) == -1)
-					throw Error("send error : could not send response to " + std::to_string(__client_fd));
-				if (send(__client_fd, "password ➜ ", 12, 0) == -1)
-					throw Error("send error : could not send response to " + std::to_string(__client_fd));
-				memset(__buffer, 0, sizeof(__buffer));
-				this->__clients[index].__request.clear();
-				this->__clients[index].__interpret.clear();
-			}
-		}
-		else
-			this->__clients[index].__interpret  = this->__clients[index].__interpret + this->__clients[index].__request;
-	}
-	return (0);
-}
-
 void	Server::fill_username(int __client_fd, int index)
 {
 	int		__recv_res, __parsing_res;
@@ -348,8 +297,6 @@ void	Server::run()
 						}
 						add_to_poll(this->__poll_fds, __connection);
 						this->__clients.push_back(Client(__connection));
-						if (send(__connection, "password ➜ ", 12, 0) == -1)
-								throw Error("send error : could not send response to " + std::to_string(__connection));
 					}
 					else
 					{
@@ -360,61 +307,102 @@ void	Server::run()
 								if (this->__clients[j].get_fd() == this->__poll_fds[i].fd)
 									break ;
 							}
-							if (!this->__clients[j].is_authenticate())
+							__recv_res = recv(this->__clients[j].get_fd(), __buffer, sizeof(__buffer), 0);
+							if (__recv_res == 0)
 							{
-								try
-								{
-									this->password_authentication(this->__clients[j].get_fd(), j);
-								}
-								catch(const std::exception& e)
-								{
-									std::cerr << e.what() << '\n';
-									remove_from_poll(__poll_fds, __poll_fds[i].fd);
-									this->__clients.erase(this->__clients.begin() + j);
-									close(__poll_fds[i].fd);
-									close(this->__clients[j].get_fd());
-									break ;
-								}
+								cerr << RED << "The client " << this->__clients[j].get_fd() <<  " disconnected !" << RESET << endl;
+								close(this->__clients[j].get_fd());
+								remove_from_poll(__poll_fds, this->__clients[j].get_fd());
+								this->__clients.erase(this->__clients.begin() + j);
+								break ;
 							}
-							if (!this->__clients[j].is_registred())
+							this->__clients[j].__command.set_command(this->__clients[j].__command.get_command() + string(__buffer));
+
+
+
+							if (this->__clients[j].__command.get_command().find('\n') != std::string::npos)
 							{
-								try
+								if (!this->__clients[j].__command.get_registration().get_pass() && !this->__clients[j].__command.check_registration())
+									send(this->__clients[j].get_fd(), "you have to enter PASS\n", strlen("you have to enter PASS\n"), 0);
+								else if (!this->__clients[j].__command.get_registration().get_pass())
 								{
-									this->fill_username(this->__clients[j].get_fd(), j);
-									this->fill_nickname(this->__clients[j].get_fd(), j);
-									this->fill_operator(this->__clients[j].get_fd(), j);
-								}
-								catch(const std::exception& e)
-								{
-									std::cerr << e.what() << '\n';
-								}
-							}
-							else
-							{
-								__recv_res = recv(this->__clients[j].get_fd(), __buffer, sizeof(__buffer), 0);
-								if (__recv_res == 0)
-								{
-									cerr << RED << "The client " << this->__clients[j].get_fd() <<  " disconnected !" << RESET << endl;
-									close(this->__clients[j].get_fd());
-									remove_from_poll(__poll_fds, this->__clients[j].get_fd());
-									this->__clients.erase(this->__clients.begin() + j);
-									break ;
+									if (this->__clients[j].__command.get_command() != this->__password)
+										send(this->__clients[j].get_fd(), "sir te7wa\n", strlen("sir te7wa\n"), 0);
+									else
+										this->__clients[j].__command.set_pass_registration(true);
 								}
 
-								this->__clients[j].__command.command += string(__buffer);
-								if (this->__clients[j].__command.command[0] != '\\')
-									write(this->__clients[j].get_fd(), "every command starts with /\n", sizeof("every command starts with /"));
-								else if (this->__clients[j].__command.command.find('\n') != std::string::npos)
+
+								else if (this->__clients[j].__command.get_registration().get_pass() && !this->__clients[j].__command.get_registration().get_nick() && !this->__clients[j].__command.check_registration())
+									send(this->__clients[j].get_fd(), "you have to enter NICK\n", strlen("you have to enter NICK\n"), 0);
+								else if (this->__clients[j].__command.get_registration().get_pass() && !this->__clients[j].__command.get_registration().get_nick())
 								{
-									cout << "the rntred command : <<" << this->__clients[j].__command.command << ">>\n";
-									this->__clients[j].__command.command.erase();
+									if (this->parse_input(this->__clients[j].__command.get_command(), 2) <= 0)
+										send(this->__clients[j].get_fd(), "dakhel nick name aaaaaa wld l9a7ba\n", strlen("dakhel nick name aaaaaa wld l9a7ba\n"), 0);
+									else
+										this->__clients[j].__command.set_nick_registration(true);
 								}
-								memset(__buffer, 0, sizeof(__buffer));
+
+
+
+								else if (this->__clients[j].__command.get_registration().get_nick() && !this->__clients[j].__command.get_registration().get_user() && !this->__clients[j].__command.check_registration())
+									send(this->__clients[j].get_fd(), "you have to enter USER\n", strlen("you have to enter USER\n"), 0);
+								else if(this->__clients[j].__command.get_registration().get_pass() && this->__clients[j].__command.get_registration().get_nick() && !this->__clients[j].__command.get_registration().get_user())
+								{
+									if (this->parse_input(this->__clients[j].__command.get_command(), 1) <= 0)
+										send(this->__clients[j].get_fd(), "dakhel user name aaaaaa wld l9a7ba\n", strlen("dakhel user name aaaaaa wld l9a7ba\n"), 0);
+									else
+										this->__clients[j].__command.set_user_registration(true);
+								}
+								this->__clients[j].__command.erase_command();
 							}
+							else
+								cout << "not complete\n";
+							// cout << GRN << "➜ " << RESET << __buffer << endl;
+							memset(__buffer, 0, sizeof(__buffer));
 						}
 					}
 				}
 			}
 		}
 	}
+}
+
+void	Server::connect_client(int nb_client)
+{
+	try
+	{
+		if (!this->__clients[nb_client].__command.get_registration().get_pass() && !this->__clients[nb_client].__command.check_registration())
+			this->__clients[nb_client].__command.send_error(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
+		else if (!this->__clients[nb_client].__command.get_registration().get_pass())
+		{
+			if (this->__clients[nb_client].__command.get_command() != this->__password)
+				send(this->__clients[nb_client].get_fd(), "sir te7wa\n", strlen("sir te7wa\n"), 0);//TODO close the connection
+			else
+				this->__clients[nb_client].__command.set_pass_registration(true);
+		}
+		else if (this->__clients[nb_client].__command.get_registration().get_pass() && !this->__clients[nb_client].__command.get_registration().get_nick())
+		{
+			if (this->__clients[nb_client].__command.chack_already_registred())
+				this->__clients[nb_client].__command.send_error(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
+			if (!this->__clients[nb_client].__command.check_registration())
+				this->__clients[nb_client].__command.send_error(ERR_NONICKNAMEGIVEN, this->__clients[nb_client].get_fd());
+			if (this->parse_input(this->__clients[nb_client].__command.get_command(), 2) == 0)
+				this->__clients[nb_client].__command.send_error(ERR_ERRONEUSNICKNAME, this->__clients[nb_client].get_fd());//TODO continue from hear (check the already in use ERR_NICKNAMEINUSE)
+			
+		}
+		else if (this->__clients[nb_client].__command.get_registration().get_nick() && !this->__clients[nb_client].__command.get_registration().get_user())
+		{
+			if (this->__clients[nb_client].__command.chack_already_registred())
+				this->__clients[nb_client].__command.send_error(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
+			if (!this->__clients[nb_client].__command.check_registration())
+				send(this->__clients[nb_client].get_fd(), "you have to enter USER\n", strlen("you have to enter USER\n"), 0);
+		}
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	
+
 }

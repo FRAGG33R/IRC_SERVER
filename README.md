@@ -41,7 +41,10 @@
 - PART: This command allows a user to leave a channel on the server.
 - PRIVMSG: This command allows a user to send a message to another user or a channel.
 - NICK: This command allows a user to change their nickname.
+- PASS: This command allows a user to enter the password.
+- USER: This command allows a user to enter username.
 - WHOIS: This command allows a user to request information about another user, such as their real name, hostname, and so on.
+- SENDFILE: This command allows a user to send files to another user.
 
 ## for operator users :
 
