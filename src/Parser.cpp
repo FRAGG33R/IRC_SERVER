@@ -64,8 +64,9 @@ bool	Parser::check_registration()
 bool	Parser::chack_already_registred()
 {
 	string copy(this->command);
-	if (copy.find(PASS_COMMAND) == string::npos)
+	if (copy.find(PASS_COMMAND) != string::npos)
 		return (true);
+	return (false);
 }
 
 void	Parser::set_pass_registration(bool __bool)
@@ -89,22 +90,37 @@ void	Parser::send_error(int __err, int fd)
 	{
 		case  ERR_NEEDMOREPARAMS : 
 		{
-			(send(fd, MSG_461, strlen(MSG_461), 0) == -1)?/* throw Error("failling to send msg") */0:1;
+			(send(fd, MSG_461, strlen(MSG_461), 0) == -1)?throw Error("failling to send msg"):1;
 			break;
 		}
 		case ERR_ALREADYREGISTRED : 
 		{
-			(send(fd, MSG_462, strlen(MSG_462), 0) == -1)?/* throw Error("failling to send msg") */0:1;
+			(send(fd, MSG_462, strlen(MSG_462), 0) == -1)?throw Error("failling to send msg"):1;
 			break;
 		}
 		case ERR_NONICKNAMEGIVEN :
 		{
-			(send(fd, MSG_431, strlen(MSG_431), 0) == -1)?/* throw Error("failling to send msg") */0:1;
+			(send(fd, MSG_431, strlen(MSG_431), 0) == -1)?throw Error("failling to send msg"):1;
 			break;
 		}
 		case ERR_ERRONEUSNICKNAME : 
 		{
-			(send(fd, MSG_432, strlen(MSG_432), 0) == -1)?/* throw Error("failling to send msg") */0:1;
+			(send(fd, MSG_432, strlen(MSG_432), 0) == -1)?throw Error("failling to send msg"):1;
+			break;
+		}
+		case ERR_NICKNAMEINUSE : 
+		{
+			(send(fd, MSG_433, strlen(MSG_433), 0) == -1)?throw Error("failling to send msg"):1;
+			break;
+		}
+		case ERR_WRONGPASSWORD : 
+		{
+			(send(fd, MSG_666, strlen(MSG_666), 0) == -1)?throw Error("failling to send msg"):1;
+			break;
+		}
+		case ERR_UNKNOWNCOMMAND : 
+		{
+			(send(fd, MSG_421, strlen(MSG_421), 0) == -1)?throw Error("failling to send msg"):1;
 			break;
 		}
 	}

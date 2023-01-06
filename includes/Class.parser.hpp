@@ -10,17 +10,27 @@ using std::string;
 #define NICK_COMMAND "NICK "
 #define USER_COMMAND "USER "
 
-#define ERR_NEEDMOREPARAMS 461 //if user send a PASS command without password
-#define MSG_461 "PASS :Not enough parameters"//if user send a PASS command without password
+#define ERR_NEEDMOREPARAMS 461
+#define MSG_461 "PASS :Not enough parameters\n"
 
-#define ERR_ALREADYREGISTRED 462 //if the user already registred and want to register a gain
-#define MSG_462 ":You may not reregister"//if user send a PASS command without password
+#define ERR_ALREADYREGISTRED 462
+#define MSG_462 ":You may not reregister\n"
 
 #define ERR_NONICKNAMEGIVEN 431
-#define MSG_431 ":No nickname given"//if user send a PASS command without password
+#define MSG_431 ":No nickname given\n"
 
 #define ERR_ERRONEUSNICKNAME 432
-#define MSG_432 ":NICK :Erroneus nickname"//if user send a PASS command without password
+#define MSG_432 ":NICK :Erroneus nickname\n"
+
+#define ERR_NICKNAMEINUSE 433
+#define MSG_433 "NICK :Nickname is already in use\n"
+
+#define ERR_WRONGPASSWORD 666
+#define MSG_666 "PASS :Wrong pass word\n"
+
+#define ERR_UNKNOWNCOMMAND 421
+#define MSG_421 ":Unknown command\n"
+
 
 class Parser
 {
@@ -36,6 +46,7 @@ class Parser
 		void			set_command(string);
 		string			get_command();
 		void			erase_command();
+		bool			check_cmmand_registration();
 		bool			check_registration();
 		bool			chack_already_registred();
 		Registration	get_registration() const;

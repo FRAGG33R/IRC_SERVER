@@ -19,7 +19,7 @@ int	is_command(string __request)
 	for (int i = 0; i < 15; i++)
 	{
 		if (__commands[i] == __request)
-            return 1;
+			return 1;
 	}
 	return (0);
 }

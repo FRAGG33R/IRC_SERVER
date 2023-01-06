@@ -322,38 +322,7 @@ void	Server::run()
 
 							if (this->__clients[j].__command.get_command().find('\n') != std::string::npos)
 							{
-								if (!this->__clients[j].__command.get_registration().get_pass() && !this->__clients[j].__command.check_registration())
-									send(this->__clients[j].get_fd(), "you have to enter PASS\n", strlen("you have to enter PASS\n"), 0);
-								else if (!this->__clients[j].__command.get_registration().get_pass())
-								{
-									if (this->__clients[j].__command.get_command() != this->__password)
-										send(this->__clients[j].get_fd(), "sir te7wa\n", strlen("sir te7wa\n"), 0);
-									else
-										this->__clients[j].__command.set_pass_registration(true);
-								}
-
-
-								else if (this->__clients[j].__command.get_registration().get_pass() && !this->__clients[j].__command.get_registration().get_nick() && !this->__clients[j].__command.check_registration())
-									send(this->__clients[j].get_fd(), "you have to enter NICK\n", strlen("you have to enter NICK\n"), 0);
-								else if (this->__clients[j].__command.get_registration().get_pass() && !this->__clients[j].__command.get_registration().get_nick())
-								{
-									if (this->parse_input(this->__clients[j].__command.get_command(), 2) <= 0)
-										send(this->__clients[j].get_fd(), "dakhel nick name aaaaaa wld l9a7ba\n", strlen("dakhel nick name aaaaaa wld l9a7ba\n"), 0);
-									else
-										this->__clients[j].__command.set_nick_registration(true);
-								}
-
-
-
-								else if (this->__clients[j].__command.get_registration().get_nick() && !this->__clients[j].__command.get_registration().get_user() && !this->__clients[j].__command.check_registration())
-									send(this->__clients[j].get_fd(), "you have to enter USER\n", strlen("you have to enter USER\n"), 0);
-								else if(this->__clients[j].__command.get_registration().get_pass() && this->__clients[j].__command.get_registration().get_nick() && !this->__clients[j].__command.get_registration().get_user())
-								{
-									if (this->parse_input(this->__clients[j].__command.get_command(), 1) <= 0)
-										send(this->__clients[j].get_fd(), "dakhel user name aaaaaa wld l9a7ba\n", strlen("dakhel user name aaaaaa wld l9a7ba\n"), 0);
-									else
-										this->__clients[j].__command.set_user_registration(true);
-								}
+								this->connect_client(j);
 								this->__clients[j].__command.erase_command();
 							}
 							else
@@ -368,41 +337,64 @@ void	Server::run()
 	}
 }
 
+bool	check_command(string command)
+{
+	if (command.find(" ") != string::npos)
+		command = command.substr(0, command.find(" "));
+	else
+		command = command.substr(0, command.find("\n"));
+	if (!is_command(command))
+		return (false);
+	return (true);
+}
+
 void	Server::connect_client(int nb_client)
 {
 	try
 	{
-		if (!this->__clients[nb_client].__command.get_registration().get_pass() && !this->__clients[nb_client].__command.check_registration())
-			this->__clients[nb_client].__command.send_error(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
+		if (!check_command(this->__clients[nb_client].__command.get_command()))
+			this->__clients[nb_client].__command.send_error(ERR_UNKNOWNCOMMAND, this->__clients[nb_client].get_fd());
 		else if (!this->__clients[nb_client].__command.get_registration().get_pass())
 		{
-			if (this->__clients[nb_client].__command.get_command() != this->__password)
-				send(this->__clients[nb_client].get_fd(), "sir te7wa\n", strlen("sir te7wa\n"), 0);//TODO close the connection
-			else
+			if (!this->__clients[nb_client].__command.check_registration())
+				this->__clients[nb_client].__command.send_error(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
+			else if (this->__clients[nb_client].__command.get_command() != this->__password)
+				this->__clients[nb_client].__command.send_error(ERR_WRONGPASSWORD, this->__clients[nb_client].get_fd());
+			else 
 				this->__clients[nb_client].__command.set_pass_registration(true);
 		}
 		else if (this->__clients[nb_client].__command.get_registration().get_pass() && !this->__clients[nb_client].__command.get_registration().get_nick())
 		{
 			if (this->__clients[nb_client].__command.chack_already_registred())
 				this->__clients[nb_client].__command.send_error(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
-			if (!this->__clients[nb_client].__command.check_registration())
+			else if (!this->__clients[nb_client].__command.check_registration())
 				this->__clients[nb_client].__command.send_error(ERR_NONICKNAMEGIVEN, this->__clients[nb_client].get_fd());
-			if (this->parse_input(this->__clients[nb_client].__command.get_command(), 2) == 0)
-				this->__clients[nb_client].__command.send_error(ERR_ERRONEUSNICKNAME, this->__clients[nb_client].get_fd());//TODO continue from hear (check the already in use ERR_NICKNAMEINUSE)
-			
+			else if (this->parse_input(this->__clients[nb_client].__command.get_command(), 2) == 0)
+				this->__clients[nb_client].__command.send_error(ERR_ERRONEUSNICKNAME, this->__clients[nb_client].get_fd());
+			if (this->parse_input(this->__clients[nb_client].__command.get_command(), 2) == -1)
+				this->__clients[nb_client].__command.send_error(ERR_NICKNAMEINUSE, this->__clients[nb_client].get_fd());
+			else
+			{
+				this->__clients[nb_client].set_nickname(this->__clients[nb_client].__command.get_command());
+				this->__clients[nb_client].__command.set_nick_registration(true);
+			}
 		}
 		else if (this->__clients[nb_client].__command.get_registration().get_nick() && !this->__clients[nb_client].__command.get_registration().get_user())
 		{
-			if (this->__clients[nb_client].__command.chack_already_registred())
-				this->__clients[nb_client].__command.send_error(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
 			if (!this->__clients[nb_client].__command.check_registration())
-				send(this->__clients[nb_client].get_fd(), "you have to enter USER\n", strlen("you have to enter USER\n"), 0);
+				this->__clients[nb_client].__command.send_error(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
+			if (this->__clients[nb_client].__command.chack_already_registred() || this->parse_input(this->__clients[nb_client].__command.get_command(), 1) == -1)
+				this->__clients[nb_client].__command.send_error(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
+			else
+			{
+				this->__clients[nb_client].set_username(this->__clients[nb_client].__command.get_command());
+				this->__clients[nb_client].__command.set_user_registration(true);
+			}
 		}
 	}
 	catch(const std::exception& e)
 	{
 		std::cerr << e.what() << '\n';
+		exit(1);
 	}
-	
-
 }
