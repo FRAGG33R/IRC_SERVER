@@ -348,6 +348,20 @@ bool	check_command(string command)
 	return (true);
 }
 
+bool	check_order(string command, int order)
+{
+	if (order == 1)
+		if (command.find(PASS_COMMAND) == string::npos && command.find("PASS") == string::npos)
+			return (0);
+	if (order == 2)
+		if (command.find(NICK_COMMAND) == string::npos && command.find("NICK") == string::npos)
+			return (0);
+	if (order == 3)
+		if (command.find(USER_COMMAND) == string::npos && command.find("USER") == string::npos)
+			return (0);
+	return (1);
+}
+
 void	Server::connect_client(int nb_client)
 {
 	try
@@ -356,7 +370,9 @@ void	Server::connect_client(int nb_client)
 			this->__clients[nb_client].__command.send_error(ERR_UNKNOWNCOMMAND, this->__clients[nb_client].get_fd());
 		else if (!this->__clients[nb_client].__command.get_registration().get_pass())
 		{
-			if (!this->__clients[nb_client].__command.check_registration())
+			if (!check_order(this->__clients[nb_client].__command.get_command(), 1))
+				this->__clients[nb_client].__command.send_error(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
+			else if (!this->__clients[nb_client].__command.check_registration())
 				this->__clients[nb_client].__command.send_error(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
 			else if (this->__clients[nb_client].__command.get_command() != this->__password)
 				this->__clients[nb_client].__command.send_error(ERR_WRONGPASSWORD, this->__clients[nb_client].get_fd());
@@ -365,7 +381,9 @@ void	Server::connect_client(int nb_client)
 		}
 		else if (this->__clients[nb_client].__command.get_registration().get_pass() && !this->__clients[nb_client].__command.get_registration().get_nick())
 		{
-			if (this->__clients[nb_client].__command.chack_already_registred())
+			if (!check_order(this->__clients[nb_client].__command.get_command(), 2))
+				this->__clients[nb_client].__command.send_error(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
+			else if (this->__clients[nb_client].__command.chack_already_registred())
 				this->__clients[nb_client].__command.send_error(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
 			else if (!this->__clients[nb_client].__command.check_registration())
 				this->__clients[nb_client].__command.send_error(ERR_NONICKNAMEGIVEN, this->__clients[nb_client].get_fd());
@@ -381,9 +399,11 @@ void	Server::connect_client(int nb_client)
 		}
 		else if (this->__clients[nb_client].__command.get_registration().get_nick() && !this->__clients[nb_client].__command.get_registration().get_user())
 		{
-			if (!this->__clients[nb_client].__command.check_registration())
+			if (!check_order(this->__clients[nb_client].__command.get_command(), 3))
+				this->__clients[nb_client].__command.send_error(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
+			else if (!this->__clients[nb_client].__command.check_registration())
 				this->__clients[nb_client].__command.send_error(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
-			if (this->__clients[nb_client].__command.chack_already_registred() || this->parse_input(this->__clients[nb_client].__command.get_command(), 1) == -1)
+			else if (this->__clients[nb_client].__command.chack_already_registred() || this->parse_input(this->__clients[nb_client].__command.get_command(), 1) == -1)
 				this->__clients[nb_client].__command.send_error(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
 			else
 			{

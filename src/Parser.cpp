@@ -123,5 +123,10 @@ void	Parser::send_error(int __err, int fd)
 			(send(fd, MSG_421, strlen(MSG_421), 0) == -1)?throw Error("failling to send msg"):1;
 			break;
 		}
+		case ERR_REGIST_ORDER : 
+		{
+			(send(fd, MSG_667, strlen(MSG_667), 0) == -1)?throw Error("failling to send msg"):1;
+			break;
+		}
 	}
 }

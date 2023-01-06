@@ -31,6 +31,10 @@ using std::string;
 #define ERR_UNKNOWNCOMMAND 421
 #define MSG_421 ":Unknown command\n"
 
+#define ERR_REGIST_ORDER 667
+#define MSG_667 ":Enter PASS <password>, NICK <nickname>, USER <user>\n"
+
+
 
 class Parser
 {
