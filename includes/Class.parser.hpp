@@ -6,9 +6,13 @@ using std::string;
 
 #define CLASS_PARSER_HPP
 
-#define PASS_COMMAND "PASS "
-#define NICK_COMMAND "NICK "
-#define USER_COMMAND "USER "
+#define PASS_COMMAND "PASS"
+#define NICK_COMMAND "NICK"
+#define USER_COMMAND "USER"
+
+#define PASS_COMMAND2 "PASS "
+#define NICK_COMMAND2 "NICK "
+#define USER_COMMAND2 "USER "
 
 #define ERR_NEEDMOREPARAMS 461
 #define MSG_461 "PASS :Not enough parameters\n"
@@ -34,7 +38,14 @@ using std::string;
 #define ERR_REGIST_ORDER 667
 #define MSG_667 ":Enter PASS <password>, NICK <nickname>, USER <user>\n"
 
+#define ERR_ERRONEUSUSERNAME 668
+#define MSG_668 ":NICK :Erroneus username\n"
 
+#define ERR_ERRONEUSUSERNAME 668
+#define MSG_668 ":NICK :Erroneus username\n"
+
+#define RPL_WELCOME 1
+#define MSG_WELCOME ":\n"
 
 class Parser
 {
@@ -57,7 +68,7 @@ class Parser
 		void			set_pass_registration(bool);
 		void			set_nick_registration(bool);
 		void			set_user_registration(bool);
-		void			send_error(int __err, int fd);
+		void			send_msg(int __err, int fd);
 		Parser();
 };
 

@@ -5,10 +5,6 @@ using std::string;
 
 #define CLASS_REGISTRATION_HPP
 
-#define PASS_COMMAND "PASS "
-#define NICK_COMMAND "NICK "
-#define USER_COMMAND "USER "
-
 class Registration
 {
 	private :

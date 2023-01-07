@@ -28,5 +28,6 @@ class Server
 		void    		fill_nickname(int __client_fd, int index);
 		void			fill_operator(int __client_fd, int index);
 		void			connect_client(int nb_client);
+		static void		sent_from_registration(int nb_client);
 		~Server(){};
 };
