@@ -37,38 +37,50 @@ Registration Parser::get_registration() const
 
 bool	Parser::check_registration()
 {
+	int pos;
 	if (!this->regsitration.get_pass())
 	{
-		if (this->command.find(PASS_COMMAND) == string::npos && this->command.find(PASS_COMMAND2) == string::npos)
+		if (this->command.find(PASS_COMMAND) == string::npos)
 			return (false);
-		if (this->command.find(PASS_COMMAND2) != string::npos)
-			this->command = this->command.substr(this->command.find(PASS_COMMAND2) + strlen(PASS_COMMAND2), string::npos);
 		else
-			this->command = this->command.substr(this->command.find(PASS_COMMAND) + strlen(PASS_COMMAND), string::npos);
+		{
+			pos = this->command.find(PASS_COMMAND) + strlen(PASS_COMMAND);
+			while (this->command[pos] == ' ')
+				pos++;
+			this->command = this->command.substr(pos, string::npos);
+		}
 		if (this->command == "\n")
 			return (false);
 		this->command = this->command.substr(0, this->command.find("\n"));
 	}
 	else if (!this->regsitration.get_nick())
 	{
-		if (this->command.find(NICK_COMMAND) == string::npos && this->command.find(NICK_COMMAND2) == string::npos)
+		if (this->command.find(NICK_COMMAND) == string::npos)
 			return (false);
-		if (this->command.find(NICK_COMMAND2) != string::npos)
-			this->command = this->command.substr(this->command.find(NICK_COMMAND2) + strlen(NICK_COMMAND2), string::npos);
 		else
-			this->command = this->command.substr(this->command.find(NICK_COMMAND) + strlen(NICK_COMMAND), string::npos);
+		{
+			pos = this->command.find(NICK_COMMAND) + strlen(NICK_COMMAND);
+			while (this->command[pos] == ' ')
+				pos++;
+			this->command = this->command.substr(pos, string::npos);
+		}
 		if (this->command == "\n")
 			return (false);
 		this->command = this->command.substr(0, this->command.find("\n"));
 	}
 	else
 	{
-		if (this->command.find(USER_COMMAND) == string::npos && this->command.find(USER_COMMAND) == string::npos)
+		if (this->command.find(USER_COMMAND) == string::npos)
 			return (false);
-		if (this->command.find(USER_COMMAND2) != string::npos)
-			this->command = this->command.substr(this->command.find(USER_COMMAND2) + strlen(USER_COMMAND2), string::npos);
 		else
-			this->command = this->command.substr(this->command.find(USER_COMMAND) + strlen(USER_COMMAND), string::npos);
+		{
+			pos = this->command.find(USER_COMMAND) + strlen(USER_COMMAND);
+			while (this->command[pos] == ' ')
+				pos++;
+			this->command = this->command.substr(pos, string::npos);
+		}
+		if (this->command == "\n")
+			return (false);
 		this->command = this->command.substr(0, this->command.find("\n"));
 	}
 	return (true);

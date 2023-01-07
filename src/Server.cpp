@@ -415,15 +415,17 @@ void	Server::connect_client(int nb_client)
 	catch(const std::exception& e)
 	{
 		std::cerr << e.what() << '\n';
-		exit(1);
+		close (this->__clients[nb_client].get_fd());
+		std::cout << "Disconnet Client " << this->__clients[nb_client].get_fd() << std::endl;
+		this->__clients.erase(this->__clients.begin() + nb_client);
 	}
 }
 
-#define FORM "███████████████████████████████████████████████████\n█                 WELCOME TO CW9                  █\n█                                                 █\
-			 \n█                                                 █\n███████████████████████████████████████████████████"
-
 void	Server::sent_from_registration(int nb_client)
 {
-	string str = string(GRN) + string(FORM) + string(RESET);
-	send(nb_client, str.c_str(), str.length(), 0);
+	(void)nb_client;
+	// string str =  string(GRN) + string("█████████████████████████████████████████████\n");
+	// send(nb_client, str.c_str(), str.length(), 0);
+	// send(nb_client, std::setw(43), 43, 0);
+	// string str =  string(GRN) + string("█\n") + string(std::setw(43)) + ;
 }

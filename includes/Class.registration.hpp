@@ -1,5 +1,4 @@
-#include<iostream>
-using std::string;
+#include "main.hpp"
 
 #ifndef CLASS_REGISTRATION_HPP
 

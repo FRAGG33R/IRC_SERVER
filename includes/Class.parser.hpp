@@ -1,51 +1,9 @@
-#include<iostream>
 #include "Class.registration.hpp"
-using std::string;
+#include "main.hpp"
 
 #ifndef CLASS_PARSER_HPP
 
 #define CLASS_PARSER_HPP
-
-#define PASS_COMMAND "PASS"
-#define NICK_COMMAND "NICK"
-#define USER_COMMAND "USER"
-
-#define PASS_COMMAND2 "PASS "
-#define NICK_COMMAND2 "NICK "
-#define USER_COMMAND2 "USER "
-
-#define ERR_NEEDMOREPARAMS 461
-#define MSG_461 "PASS :Not enough parameters\n"
-
-#define ERR_ALREADYREGISTRED 462
-#define MSG_462 ":You may not reregister\n"
-
-#define ERR_NONICKNAMEGIVEN 431
-#define MSG_431 ":No nickname given\n"
-
-#define ERR_ERRONEUSNICKNAME 432
-#define MSG_432 ":NICK :Erroneus nickname\n"
-
-#define ERR_NICKNAMEINUSE 433
-#define MSG_433 "NICK :Nickname is already in use\n"
-
-#define ERR_WRONGPASSWORD 666
-#define MSG_666 "PASS :Wrong pass word\n"
-
-#define ERR_UNKNOWNCOMMAND 421
-#define MSG_421 ":Unknown command\n"
-
-#define ERR_REGIST_ORDER 667
-#define MSG_667 ":Enter PASS <password>, NICK <nickname>, USER <user>\n"
-
-#define ERR_ERRONEUSUSERNAME 668
-#define MSG_668 ":NICK :Erroneus username\n"
-
-#define ERR_ERRONEUSUSERNAME 668
-#define MSG_668 ":NICK :Erroneus username\n"
-
-#define RPL_WELCOME 1
-#define MSG_WELCOME ":\n"
 
 class Parser
 {
