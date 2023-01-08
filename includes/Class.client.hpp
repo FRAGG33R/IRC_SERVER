@@ -20,7 +20,7 @@ class Client
 		string	__interpret;
 
 		~Client();
-		Client(string username, string nickname, bool is_operator, bool authentication,  bool is_registred, int fd);
+		Client(string username, string nickname, bool is_operator, bool authentication, int fd);
 		Client(int fd);
 
 		int		get_fd() const;

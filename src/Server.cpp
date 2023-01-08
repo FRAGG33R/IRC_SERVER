@@ -61,6 +61,7 @@ void	Server::full_close(struct pollfd *__poll_fd)
 		if (__poll_fd[i].fd != -1)
 			close(__poll_fd[i].fd);
 }
+
 void Server::print(void)
 {
 	cout << GRN << "	███████████████████████████████████" << endl;
@@ -73,179 +74,6 @@ void Server::print(void)
 		: this->__port > 10000 ? std::setw(12)
 		: std::setw(16)) << "█" << endl;
 	cout << "	███████████████████████████████████" << RESET << endl;
-}
-
-void	Server::fill_username(int __client_fd, int index)
-{
-	int		__recv_res, __parsing_res;
-	char	__buffer[1024] = {};
-	string	__invalid_username_msg = string(RED) + "Invalid username\n" + string(RESET);
-	string	__duplicated__username  = string(RED) + "The username already exists\n" + string(RESET);
-
-	if (this->__clients[index].__username_filled == false)
-	{
-		__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
-		if (__recv_res == 0){
-			close(this->__clients[index].get_fd());
-			this->__clients.erase(this->__clients.begin() + index); 
-			throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
-		}
-		if (__recv_res > 0)
-		{
-			this->__clients[index].__request = __buffer;
-			if (this->__clients[index].__request[this->__clients[index].__request.size() - 1] == '\n') 
-			{
-				if (!this->__clients[index].__interpret.empty())
-				{
-					this->__clients[index].__interpret += this->__clients[index].__request;
-					this->__clients[index].__request = this->__clients[index].__interpret;
-				}
-				this->__clients[index].__request = this->__clients[index].__request.substr(0, this->__clients[index].__request.size() - 1);
-				__parsing_res = this->parse_input(this->__clients[index].__request, 1);
-				if (__parsing_res == 0) {
-					this->__clients[index].__request.clear();
-					this->__clients[index].__interpret.clear();
-					if (send(__client_fd, __invalid_username_msg.c_str(), __invalid_username_msg.length(), 0) == -1)
-						throw Error ("send error : could not send response");
-					if (send(__client_fd, "Username : ", 12, 0) == -1)
-						throw Error ("send error : could not send response");
-					throw Error("Invalid username");
-				}
-				else if (__parsing_res == -1)
-				{
-					this->__clients[index].__request.clear();
-					this->__clients[index].__interpret.clear();
-					if (send(__client_fd, __duplicated__username.c_str(), __duplicated__username.length(), 0) == -1)
-						throw Error ("send error : could not send response");
-					if (send(__client_fd, "Username : ", 12, 0) == -1)
-						throw Error ("send error : could not send response");
-					throw Error("the username already exist");
-				}
-				this->__clients[index].__username_filled  = true;
-				this->__clients[index].set_username(this->__clients[index].__request);
-				this->__clients[index].__request.clear();
-				this->__clients[index].__interpret.clear();
-				if (send(__client_fd, "Nickname : ", 12, 0) == -1)
-					throw Error ("send error : could not send response");
-				return ;
-			}
-			else
-			this->__clients[index].__interpret  = this->__clients[index].__interpret + this->__clients[index].__request;
-		}
-	}
-}
-
-void	Server::fill_nickname(int __client_fd, int index)
-{
-	int		__recv_res, __parsing_res;
-	char	__buffer[1024] = {};
-	string	__invalid_nickname = string(RED) + "Invalid nickname\n" + string(RESET);
-	string	__duplicated__nickname  = string(RED) + "The nickname already exists\n" + string(RESET);
-
-	if (this->__clients[index].__nickname_filled == false)
-	{
-		__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
-		if (__recv_res == 0){
-			close(this->__clients[index].get_fd());
-			this->__clients.erase(this->__clients.begin() + index); 
-			throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
-		}
-		if (__recv_res > 0)
-		{
-			this->__clients[index].__request = __buffer;
-			if (this->__clients[index].__request[this->__clients[index].__request.size() - 1] == '\n') 
-			{
-				if (!this->__clients[index].__interpret.empty())
-				{
-					this->__clients[index].__interpret += this->__clients[index].__request;
-					this->__clients[index].__request = this->__clients[index].__interpret;
-				}
-				this->__clients[index].__request = this->__clients[index].__request.substr(0, this->__clients[index].__request.size() - 1);
-				__parsing_res = this->parse_input(this->__clients[index].__request, 2);
-				if (__parsing_res == 0) {
-					this->__clients[index].__request.clear();
-					this->__clients[index].__interpret.clear();
-					if (send(__client_fd, __invalid_nickname.c_str(), __invalid_nickname.length(), 0) == -1)
-						throw Error ("send error : could not send response");
-					if (send(__client_fd, "Nickname : ", 12, 0) == -1)
-						throw Error ("send error : could not send response");
-					throw Error("Invalid nickname");
-				}
-				else if (__parsing_res == -1)
-				{
-					this->__clients[index].__request.clear();
-					this->__clients[index].__interpret.clear();
-					if (send(__client_fd, __duplicated__nickname.c_str(), __duplicated__nickname.length(), 0) == -1)
-						throw Error ("send error : could not send response");
-					if (send(__client_fd, "Nickname : ", 12, 0) == -1)
-						throw Error ("send error : could not send response");
-					throw Error("the nickname already exist");
-				}
-				this->__clients[index].__nickname_filled  = true;
-				this->__clients[index].set_nickname(this->__clients[index].__request);
-				this->__clients[index].__request.clear();
-				this->__clients[index].__interpret.clear();
-				if (send(__client_fd, "Are you an operator ? yes/no ", 30, 0) == -1)
-					throw Error ("send error : could not send response");
-				return ;
-			}
-			else
-			this->__clients[index].__interpret  = this->__clients[index].__interpret + this->__clients[index].__request;
-		}
-	}
-}
-
-
-void	Server::fill_operator(int __client_fd, int index)
-{
-	int		__recv_res, __parsing_res;
-	char	__buffer[1024] = {};
-	string	__invalid_answer = string(RED) + "Invalid answer\n" + string(RESET);
-
-	__recv_res = recv(__client_fd, __buffer, sizeof(__buffer), 0);
-	if (__recv_res == 0){
-		close(this->__clients[index].get_fd());
-		this->__clients.erase(this->__clients.begin() + index); 
-		throw Error(" Client " + std::to_string(__client_fd) + " disconnected");
-	}
-	if (__recv_res > 0)
-	{
-		this->__clients[index].__request = __buffer;
-		if (this->__clients[index].__request[this->__clients[index].__request.size() - 1] == '\n') 
-		{
-			if (!this->__clients[index].__interpret.empty())
-			{
-				this->__clients[index].__interpret += this->__clients[index].__request;
-				this->__clients[index].__request = this->__clients[index].__interpret;
-			}
-			this->__clients[index].__request =this->__clients[index].__request.substr(0, this->__clients[index].__request.size() - 1);
-			__parsing_res = this->parse_input(this->__clients[index].__request, 3);
-			if (__parsing_res == -1) {
-				this->__clients[index].__request.clear();
-				this->__clients[index].__interpret.clear();
-				if (send(__client_fd, __invalid_answer.c_str(), __invalid_answer.length(), 0) == -1)
-					throw Error ("send error : could not send response");
-				if (send(__client_fd, "Are you an operator ? (yes/no) ", 30, 0) == -1)
-					throw Error ("send error : could not send response");
-				throw Error("Invalid answer");
-			}
-			else if (__parsing_res == 1)
-			{
-				this->__clients[index].__request.clear();
-				this->__clients[index].__interpret.clear();
-				this->__clients[index].set_is_operator(false);
-			}
-			else if (__parsing_res == 0)
-			{
-				this->__clients[index].__request.clear();
-				this->__clients[index].__interpret.clear();
-				this->__clients[index].set_is_operator(true);
-			}
-			this->__clients[index].set_is_registred(true);
-		}
-		else
-		this->__clients[index].__interpret  = this->__clients[index].__interpret + this->__clients[index].__request;
-	}
 }
 
 void	Server::create_server(void)
@@ -320,11 +148,12 @@ void	Server::run()
 							this->__clients[j].__command.set_command(this->__clients[j].__command.get_command() + string(__buffer));
 							if (this->__clients[j].__command.get_command().find('\n') != std::string::npos)
 							{
-								this->connect_client(j);
+								if (!this->__clients[j].is_registred())
+									this->connect_client(j);
+								else
+									cout << "already registred\n";
 								this->__clients[j].__command.erase_command();
 							}
-							else
-								cout << "not complete\n";
 							memset(__buffer, 0, sizeof(__buffer));
 						}
 					}
@@ -409,6 +238,7 @@ void	Server::connect_client(int nb_client)
 				this->__clients[nb_client].set_username(this->__clients[nb_client].__command.get_command());
 				this->__clients[nb_client].__command.set_user_registration(true);
 				this->__clients[nb_client].__command.send_msg(RPL_WELCOME, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].set_is_registred(true);
 			}
 		}
 	}

@@ -1,12 +1,12 @@
 # include "../includes/main.hpp"
 
-Client::Client(string username, string nickname, bool is_operator, bool authentication, bool is_registred, int fd)
+Client::Client(string username, string nickname, bool is_operator, bool authentication, int fd)
 {
 	this->__username = username;
     this->__nickname = nickname;
 	this->__is_operator = is_operator;
     this->__is_authenticated = authentication;
-	this->__is_registred = is_registred;
+	this->__is_registred = false;
 	this->__username_filled = false;
 	this->__nickname_filled = false;
 	this->__fd = fd;
