@@ -1,5 +1,3 @@
-#include "main.hpp"
-
 #ifndef CLASS_REGISTRATION_HPP
 
 #define CLASS_REGISTRATION_HPP

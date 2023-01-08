@@ -1,8 +1,8 @@
-#include "main.hpp"
+#include "Class.client.hpp"
 
 class Server
 {
-	private:
+	protected:
 		int					__socket_fd;
 		int					__poll_res;
 		struct sockaddr_in	__server_addr;

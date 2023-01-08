@@ -81,7 +81,10 @@ bool	Parser::check_registration()
 		}
 		if (this->command == "\n")
 			return (false);
-		this->command = this->command.substr(0, this->command.find("\n"));
+		pos = 0;
+		while (this->command[pos] != ' ' && this->command[pos] != '\n')
+			pos++;
+		this->command = this->command.substr(0, pos);
 	}
 	return (true);
 }

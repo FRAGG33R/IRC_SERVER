@@ -1,9 +1,9 @@
-#include "main.hpp"
 
 #ifndef CLASS_COMMANDS_HPP
 #define CLASS_COMMANDS_HPP
+#include "main.hpp"
 
-class   command
+class   command : public Server
 {
     private:
         string  __cmd;
