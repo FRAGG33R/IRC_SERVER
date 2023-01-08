@@ -37,6 +37,7 @@ using std::cerr;
 # include "Class.error.hpp"
 #include "Class.parser.hpp"
 #include "Class.registration.hpp"
+#include "Class.commands.hpp"
 
 
 //commands

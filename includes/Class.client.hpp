@@ -1,5 +1,6 @@
-#include "main.hpp"
 #include "Class.parser.hpp"
+#include "Class.commands.hpp"
+#include "main.hpp"
 
 class Client
 {
@@ -13,7 +14,8 @@ class Client
 		int		__fd;
 	public :
 
-		Parser	__command;
+		Parser	regiteration;
+		command	__command;
 		bool	__username_filled;
 		bool    __nickname_filled;
 		string	__request;
