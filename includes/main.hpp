@@ -35,9 +35,10 @@ using std::cerr;
 // # include "Class.client.hpp"
 # include "Class.server.hpp"
 # include "Class.error.hpp"
-#include "Class.parser.hpp"
-#include "Class.registration.hpp"
-#include "Class.commands.hpp"
+# include "Class.parser.hpp"
+# include "Class.registration.hpp"
+# include "Class.commands.hpp"
+// # include "Class.channel.hpp"
 
 
 //commands
@@ -70,11 +71,11 @@ using std::cerr;
 
 #define RPL_WELCOME 1
 
-#define SERVER_NAME "machlouj\n"
+#define SERVER_NAME "machlouj"
 #define CONCAT(x, y) x ##y
 
 #define WELCOME ":* 001 * welcome to "
-#define MSG_WELCOME WELCOME SERVER_NAME
+#define MSG_WELCOME WELCOME SERVER_NAME "\n"
 
 //Functions
 bool	is_str_digit(const string &__s);

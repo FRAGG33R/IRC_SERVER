@@ -1,6 +1,7 @@
 #ifndef CLASS_PARSER_HPP
 
 #define CLASS_PARSER_HPP
+#include "main.hpp"
 #include "Class.registration.hpp"
 
 class Parser
@@ -25,6 +26,8 @@ class Parser
 		void			set_user_registration(bool);
 		void			send_msg(int __err, int fd);
 		Parser();
+		// ~Parser();
+
 };
 
 #endif

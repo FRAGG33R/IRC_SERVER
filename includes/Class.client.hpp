@@ -1,3 +1,4 @@
+#pragma once
 #include "Class.parser.hpp"
 #include "main.hpp"
 
@@ -12,7 +13,6 @@ class Client
 		bool	__is_registred;
 		int		__fd;
 	public :
-
 		Parser	regiteration;
 		bool	__username_filled;
 		bool    __nickname_filled;
@@ -22,6 +22,7 @@ class Client
 		~Client();
 		Client(string username, string nickname, bool is_operator, bool authentication, int fd);
 		Client(int fd);
+		Client(){};
 
 		int		get_fd() const;
 		string	get_username() const;

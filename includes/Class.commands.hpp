@@ -9,7 +9,9 @@ class   command : public Server
         string  __cmd;
         string  __params;
     public:
-        void    __join__();
+        // command(){}
+        // ~command(){}
+        void    __join__(string channel);
         void    __oper__();
         void    __mode__();
         void    __quit__();
