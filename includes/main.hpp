@@ -35,9 +35,10 @@ using std::cerr;
 # include "Class.client.hpp"
 # include "Class.server.hpp"
 # include "Class.error.hpp"
-#include "Class.parser.hpp"
-#include "Class.registration.hpp"
-#include "Class.commands.hpp"
+# include "Class.parser.hpp"
+# include "Class.registration.hpp"
+# include "Class.commands.hpp"
+// # include "Class.channel.hpp"
 
 
 //commands
@@ -66,7 +67,6 @@ using std::cerr;
 #define MSG_668 ":NICK :Erroneus username\n"
 #define ERR_ERRONEUSUSERNAME 668
 #define MSG_668 ":NICK :Erroneus username\n"
-// # include "Class.channel.hpp"
 
 //server informations
 

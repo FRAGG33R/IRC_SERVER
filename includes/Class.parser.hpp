@@ -28,6 +28,8 @@ class Parser
 		void			set_user_registration(bool);
 		void			send_msg(int __err, int fd);
 		Parser();
+		// ~Parser();
+
 };
 
 #endif

@@ -150,8 +150,10 @@ void	Server::run()
 							{
 								if (!this->__clients[j].is_registred())
 									this->connect_client(j);
-								else
-									cout << "already registred\n";
+								else{
+									
+								}
+									
 								this->__clients[j].regiteration.erase_command();
 							}
 							memset(__buffer, 0, sizeof(__buffer));

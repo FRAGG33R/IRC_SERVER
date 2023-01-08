@@ -1,5 +1,8 @@
+#pragma once
 #include "main.hpp"
-
+# include "Class.channel.hpp"
+class Client;
+class Channel;
 class Server
 {
 	private:
@@ -12,6 +15,7 @@ class Server
 		string				__server_name;
 		in_port_t			__port;
 		vector<Client>		__clients;
+		vector<Channel>		__channels;
 		Server(string password, int port, string name);
 		static Server		*__instance;
 	public:
