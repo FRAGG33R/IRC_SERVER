@@ -4,8 +4,9 @@
 #include "main.hpp"
 #include <string>
 
-// #include "Class.server.hpp"
-class   command
+#include "Class.server.hpp"
+class Server;
+class   command : public Server
 {
     private:
         string  __cmd;

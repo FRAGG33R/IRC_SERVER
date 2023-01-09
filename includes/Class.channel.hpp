@@ -7,17 +7,18 @@
 class Client;
 class Channel 
 {
-	protected:
-		std::vector<Client>	__clients;
-		int				__channel_id;
-		int				__clients_size;
-		std::string		__channel_name;
+	private:
+		string			__channel_name;
+		vector<string>	__clients;
 
 	public:
 		Channel();
-		Channel(std::vector<Client> users, int channel_id, int users_count, std::string channel_name);
-		// Channel(const Channel &obj);
-		std::string	setchannel();
+		Channel(std::string channel_name);
+		string	getchannelname();
 		~Channel();
+		// Channel(const Channel &obj);
+		void	add_client(string);
+		size_t	get_clients_size();
+		string	get_client(size_t i);
 };
 #endif

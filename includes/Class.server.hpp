@@ -5,11 +5,11 @@
 // #include "Class.commands.hpp"
 #include "Class.channel.hpp"
 class Client;
-// class Channel;
+class Channel;
 #include "Class.commands.hpp"
 class command;
 
-class Server : public Channel
+class Server
 {
 	protected:
 		int					__socket_fd;
@@ -22,7 +22,6 @@ class Server : public Channel
 		in_port_t			__port;
 		vector<Client>		__clients;
 		vector<Channel>		__channels;
-		command				__cmd;
 		Server(string password, int port, string name);
 		static Server		*__instance;
 	public:
@@ -40,6 +39,7 @@ class Server : public Channel
 		void			fill_operator(int __client_fd, int index);
 		void			connect_client(int nb_client);
 		static void		sent_from_registration(int nb_client);
+		void			join_client_to_channel(string nick_name, string shannel);
 		// class   command
 		// {
 		// 	private:

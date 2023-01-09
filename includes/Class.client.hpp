@@ -1,6 +1,9 @@
-#pragma once
+#ifndef CLASS_CLIENT_HPP
+ #define CLASS_CLIENT_HPP
+
 #include "Class.parser.hpp"
 #include "main.hpp"
+#include "Class.commands.hpp"
 
 class Client
 {
@@ -14,6 +17,7 @@ class Client
 		int		__fd;
 	public :
 		Parser	regiteration;
+		command	__cmd;
 		bool	__username_filled;
 		bool    __nickname_filled;
 		string	__request;
@@ -38,3 +42,4 @@ class Client
 		void    set_is_registred(bool is_registred);
 		void	set_authentication(bool authentication);
 };
+#endif

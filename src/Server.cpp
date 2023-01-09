@@ -166,6 +166,21 @@ void	Server::run()
 										backup = backup.substr(backup.find("\n") + 1, string::npos);
 									}
 								}
+								else
+								{
+									this->join_client_to_channel(this->__clients[j].get_nickname(), "shannel terma");
+									cout << "shannles exists with clients : \n";
+									for (size_t i = 0; i < this->__channels.size(); i++)
+									{
+										cout << "channel : \n" << this->__channels[i].getchannelname() << "\n";
+										cout << "clients : \n";
+										for (size_t j = 0; j < this->__channels[i].get_clients_size(); j++)
+										{
+										 	cout << this->__channels[i].get_client(j) << "\n";
+										}
+										cout << "\n";
+									}
+								}
 								this->__clients[j].regiteration.erase_command();
 							}
 							memset(__buffer, 0, sizeof(__buffer));
@@ -177,6 +192,29 @@ void	Server::run()
 	}
 }
 
+void	Server::join_client_to_channel(string nick_name, string shannel)
+{
+	bool	exist(false);
+
+	for (size_t i = 0; i < this->__channels.size(); i++)
+	{
+		if (shannel == this->__channels[i].getchannelname())
+		{
+			this->__channels[i].add_client(nick_name);
+		}
+	}
+	if (!exist)
+	{
+		this->__channels.push_back(Channel(shannel));
+		for (size_t i = 0; i < this->__channels.size(); i++)
+		{
+			if (shannel == this->__channels[i].getchannelname())
+			{
+				this->__channels[i].add_client(nick_name);
+			}
+		}
+	}
+}
 
 
 bool	check_command(string command)
@@ -275,3 +313,8 @@ void	Server::sent_from_registration(int nb_client)
 	// send(nb_client, std::setw(43), 43, 0);
 	// string str =  string(GRN) + string("█\n") + string(std::setw(43)) + ;
 }
+
+
+// void    Server::command::__join__(){
+//     std::cout << "ok\n";
+// }
