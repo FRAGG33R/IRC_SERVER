@@ -1,11 +1,17 @@
-#pragma once
+#ifndef CLASS_SERVER_HPP
+#define CLASS_SERVER_HPP
 #include "main.hpp"
-# include "Class.channel.hpp"
+// # include "Class.channel.hpp"
+// #include "Class.commands.hpp"
+#include "Class.channel.hpp"
 class Client;
-class Channel;
-class Server
+// class Channel;
+#include "Class.commands.hpp"
+class command;
+
+class Server : public Channel
 {
-	private:
+	protected:
 		int					__socket_fd;
 		int					__poll_res;
 		struct sockaddr_in	__server_addr;
@@ -16,6 +22,7 @@ class Server
 		in_port_t			__port;
 		vector<Client>		__clients;
 		vector<Channel>		__channels;
+		command				__cmd;
 		Server(string password, int port, string name);
 		static Server		*__instance;
 	public:
@@ -33,5 +40,27 @@ class Server
 		void			fill_operator(int __client_fd, int index);
 		void			connect_client(int nb_client);
 		static void		sent_from_registration(int nb_client);
+		// class   command
+		// {
+		// 	private:
+		// 		string  __cmd;
+		// 		string  __params;
+		// 	public:
+		// 		command(){};
+		// 		// ~command(){};
+		// 		void    __join__();
+		// 		void    __oper__();
+		// 		void    __mode__();
+		// 		void    __quit__();
+		// 		void    __part__();
+		// 		void    __kick__();
+		// 		void    __privmsg__();
+		// 		void    __sendfile__();
+		// 		void    __whois__(); 
+		// 		void    __kill__();
+		// 		void    __op__();
+		// };
+		Server(){};
 		~Server(){};
 };
+#endif

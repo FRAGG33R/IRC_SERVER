@@ -1,5 +1,5 @@
 #include "../includes/main.hpp"
-
+#include "../includes/Class.server.hpp"
 bool is_str_digit(const string &__s) 
 {
 	return __s.find_first_not_of("0123456789") == string::npos;

@@ -1,17 +1,19 @@
-#include "main.hpp"
 
 #ifndef CLASS_COMMANDS_HPP
 #define CLASS_COMMANDS_HPP
+#include "main.hpp"
+#include <string>
 
+// #include "Class.server.hpp"
 class   command
 {
     private:
         string  __cmd;
         string  __params;
     public:
-        // command(){}
-        // ~command(){}
-        void    __join__(string channel);
+        command(){};
+        // ~command(){};
+        void    __join__();
         void    __oper__();
         void    __mode__();
         void    __quit__();
@@ -19,7 +21,7 @@ class   command
         void    __kick__();
         void    __privmsg__();
         void    __sendfile__();
-        void    __whois__();
+        void    __whois__(); 
         void    __kill__();
         void    __op__();
 };

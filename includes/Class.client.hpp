@@ -24,7 +24,7 @@ class Client
 		~Client();
 		Client(string username, string nickname, bool is_operator, bool authentication, int fd);
 		Client(int fd);
-		Client(){};
+		// Client(){};
 
 		int		get_fd() const;
 		string	get_username() const;

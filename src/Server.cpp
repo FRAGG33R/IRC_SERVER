@@ -1,5 +1,5 @@
 # include "../includes/main.hpp"
-
+# include "../includes/Class.server.hpp"
 Server	*Server::__instance = nullptr;
 
 Server::Server(string password, int port, string name = "CW9")
@@ -151,7 +151,9 @@ void	Server::run()
 								if (!this->__clients[j].is_registred())
 									this->connect_client(j);
 								else{
-									
+									// std::cout << j << "\n";
+									this->__channels.push_back(Channel());
+									this->__clients[j].__command.__join__();
 								}
 									
 								this->__clients[j].regiteration.erase_command();
@@ -239,7 +241,7 @@ void	Server::connect_client(int nb_client)
 			{
 				this->__clients[nb_client].set_username(this->__clients[nb_client].regiteration.get_command());
 				this->__clients[nb_client].regiteration.set_user_registration(true);
-				this->__clients[nb_client].regiteration.send_msg(RPL_WELCOME, this->__clients[nb_client].get_fd());
+				// this->__clients[nb_client].regiteration.send_msg(RPL_WELCOME, this->__clients[nb_client].get_fd());
 				this->__clients[nb_client].set_is_registred(true);
 			}
 		}

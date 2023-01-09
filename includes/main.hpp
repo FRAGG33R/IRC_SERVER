@@ -33,11 +33,11 @@ using std::cerr;
 
 // Classes
 # include "Class.client.hpp"
-# include "Class.server.hpp"
+// # include "Class.server.hpp"
 # include "Class.error.hpp"
 # include "Class.parser.hpp"
 # include "Class.registration.hpp"
-# include "Class.commands.hpp"
+// # include "Class.commands.hpp"
 // # include "Class.channel.hpp"
 
 

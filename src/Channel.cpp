@@ -19,6 +19,14 @@ Channel::Channel(){
 // 	this->__clients_size  = users_count;
 // }
 
+std::string	Channel::setchannel(){
+	
+	// this->__channel_name = name;
+
+	return __channel_name;
+	// std::cout << "1\n";
+}
+
 Channel::~Channel()
 {
 

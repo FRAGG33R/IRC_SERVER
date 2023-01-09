@@ -1,4 +1,5 @@
 # include "includes/main.hpp"
+# include "includes/Class.server.hpp"
 
 int main(int __ac, char *__av[])
 {
