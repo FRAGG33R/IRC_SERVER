@@ -145,17 +145,27 @@ void	Server::run()
 								this->__clients.erase(this->__clients.begin() + j);
 								break ;
 							}
+							string	backup;
+							size_t	first_space;
+
 							this->__clients[j].regiteration.set_command(this->__clients[j].regiteration.get_command() + string(__buffer));
-							if (this->__clients[j].regiteration.get_command().find('\n') != std::string::npos)
+							if (this->__clients[j].regiteration.get_command().find_last_of("\n") != std::string::npos || this->__clients[j].regiteration.get_command().find_last_of("\r"))
 							{
 								if (!this->__clients[j].is_registred())
-									this->connect_client(j);
-								else{
-									// std::cout << j << "\n";
-									this->__channels.push_back(Channel());
-									this->__clients[j].__command.__join__();
+								{
+									backup = this->__clients[j].regiteration.get_command();
+									while (backup.find("\r") != string::npos)
+									{
+										size_t j = backup.find("\r");
+										backup.erase(j, 1);
+									}
+									while (!backup.empty())
+									{
+										this->__clients[j].regiteration.set_command(backup.substr(0, backup.find("\n") + 1));
+										this->connect_client(j);
+										backup = backup.substr(backup.find("\n") + 1, string::npos);
+									}
 								}
-									
 								this->__clients[j].regiteration.erase_command();
 							}
 							memset(__buffer, 0, sizeof(__buffer));
@@ -166,6 +176,8 @@ void	Server::run()
 		}
 	}
 }
+
+
 
 bool	check_command(string command)
 {

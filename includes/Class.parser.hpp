@@ -1,9 +1,8 @@
-#include "Class.registration.hpp"
-#include "main.hpp"
-
 #ifndef CLASS_PARSER_HPP
 
 #define CLASS_PARSER_HPP
+#include "main.hpp"
+#include "Class.registration.hpp"
 
 class Parser
 {
@@ -15,7 +14,6 @@ class Parser
 	public :
 		int		get_nb_command() const;
 		void	increment_nb_command();
-
 		void			set_command(string);
 		string			get_command();
 		void			erase_command();
