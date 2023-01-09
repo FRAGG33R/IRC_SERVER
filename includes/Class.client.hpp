@@ -34,7 +34,7 @@ class Client
 		bool    is_operator() const;
 		bool	is_registred() const;
 		bool    is_authenticate() const;
-
+	
 		void	set_fd(int fd);
         void    set_username(string username);
 		void    set_nickname(string nickname);

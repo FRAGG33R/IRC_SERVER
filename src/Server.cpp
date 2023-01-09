@@ -171,15 +171,16 @@ void	Server::run()
 									this->join_client_to_channel(this->__clients[j].get_nickname(), "XXXXXXXXXXXXXX");
 									cout << "shannles exists with clients : \n";
 
-									for (size_t i = 0; i < this->__channels.size(); i++)
-									{
-										cout << "channel : \n" << i << this->__channels[i].getchannelname() << "\n";
-										cout << "clients : \n";
-										for (size_t j = 0; j < this->__channels[i].get_clients_size(); j++)
-										{
-										 	cout << j << this->__channels[i].get_client(j) << "\n";
-										}
-									}
+									// for (size_t i = 0; i < this->__channels.size(); i++)
+									// {
+									// 	// cout << "channel : \n" << i << this->__channels[i].getchannelname() << "\n";
+									// 	// cout << "clients : \n";
+									// 	for (size_t j = 0; j < this->__channels[i].get_clients_size(); j++)
+									// 	{
+									// 	 	cout << j << this->__channels[i].get_client(j) << "\n";
+									// 	}
+									// }
+									this->__privmsg__("allo!", "machlouj");
 								}
 								this->__clients[j].regiteration.erase_command();
 							}
@@ -319,3 +320,18 @@ void	Server::sent_from_registration(int nb_client)
 // void    Server::command::__join__(){
 //     std::cout << "ok\n";
 // }
+
+void	Server::__privmsg__(string msg, string recevier){
+	for (size_t i = 0; i < __clients.size(); i++){
+		if (recevier == __clients[i].get_nickname()){
+			std::cout << "send message to" << recevier << endl;
+			std::cout << "message: " << msg << endl;
+		}
+	}
+	for (size_t i = 0; i < __channels.size(); i++){
+		if (recevier == __channels[i].getchannelname()){
+			std::cout << "send messages to all the users in this channels #" << recevier << std::endl;
+			std::cout << "message: " << msg << endl;
+		}
+	}
+}
