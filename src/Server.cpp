@@ -168,17 +168,17 @@ void	Server::run()
 								}
 								else
 								{
-									this->join_client_to_channel(this->__clients[j].get_nickname(), "shannel terma");
+									this->join_client_to_channel(this->__clients[j].get_nickname(), "XXXXXXXXXXXXXX");
 									cout << "shannles exists with clients : \n";
+
 									for (size_t i = 0; i < this->__channels.size(); i++)
 									{
-										cout << "channel : \n" << this->__channels[i].getchannelname() << "\n";
+										cout << "channel : \n" << i << this->__channels[i].getchannelname() << "\n";
 										cout << "clients : \n";
 										for (size_t j = 0; j < this->__channels[i].get_clients_size(); j++)
 										{
-										 	cout << this->__channels[i].get_client(j) << "\n";
+										 	cout << j << this->__channels[i].get_client(j) << "\n";
 										}
-										cout << "\n";
 									}
 								}
 								this->__clients[j].regiteration.erase_command();
@@ -201,6 +201,7 @@ void	Server::join_client_to_channel(string nick_name, string shannel)
 		if (shannel == this->__channels[i].getchannelname())
 		{
 			this->__channels[i].add_client(nick_name);
+			exist = true;
 		}
 	}
 	if (!exist)
