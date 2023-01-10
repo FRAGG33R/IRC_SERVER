@@ -2,7 +2,7 @@
 
 Parser::Parser()
 {
-	this->nb_command = 0;
+
 }
 
 void	Parser::set_command(string command)
@@ -13,16 +13,6 @@ void	Parser::set_command(string command)
 string	Parser::get_command()
 {
 	return (this->command);
-}
-
-int	Parser::get_nb_command() const
-{
-	return (nb_command);
-}
-
-void	Parser::increment_nb_command()
-{
-	nb_command++;
 }
 
 void	Parser::erase_command()
@@ -167,4 +157,43 @@ void	Parser::send_msg(int __err, int fd)
 			break;
 		}
 	}
+}
+
+bool	Parser::check_command()
+{
+	if (this->command.find(" ") != string::npos)
+		this->command = this->command.substr(0, this->command.find(" "));
+	else
+		this->command = this->command.substr(0, this->command.find("\n"));
+	if (!is_command(this->command))
+		return (false);
+	return (true);
+}
+
+#define PRIVMSG "PRIVMSG"
+// void	Parser::put_cmd_params()
+// {
+// 	size_t	__first_space;
+// 	string	__backup;
+
+// 	__backup = this->command;
+// 	__first_space = this->command.find_first_not_of(" ");
+// 	if (__first_space != 0)
+// 		this->command = this->command.substr(__first_space, string::npos);
+// 	if (this->command == PRIVMSG)
+
+// 	if (this->command.find(" ") != string::npos)
+// 	{
+// 		this->command = this->command.substr(0, this->command.find(" "));
+// 		__backup = this->command.substr(0, this->command.find(" "));
+// 		while (!__backup.empty())
+// 		{
+// 			this->params.push_back(0, 1);
+// 		}
+// 	}
+// }
+
+Parser::~Parser()
+{
+
 }

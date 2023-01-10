@@ -1,8 +1,6 @@
 #ifndef CLASS_SERVER_HPP
 #define CLASS_SERVER_HPP
 #include "main.hpp"
-// # include "Class.channel.hpp"
-// #include "Class.commands.hpp"
 #include "Class.channel.hpp"
 class Client;
 class Channel;

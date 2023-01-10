@@ -16,17 +16,15 @@ class Client
 		bool	__is_registred;
 		int		__fd;
 	public :
-		Parser	regiteration;
-		command	__cmd;
+		Parser	__command;
 		bool	__username_filled;
-		bool    __nickname_filled;
+		bool	__nickname_filled;
 		string	__request;
 		string	__interpret;
 
 		~Client();
 		Client(string username, string nickname, bool is_operator, bool authentication, int fd);
 		Client(int fd);
-		// Client(){};
 
 		int		get_fd() const;
 		string	get_username() const;
@@ -34,7 +32,6 @@ class Client
 		bool    is_operator() const;
 		bool	is_registred() const;
 		bool    is_authenticate() const;
-	
 		void	set_fd(int fd);
         void    set_username(string username);
 		void    set_nickname(string nickname);

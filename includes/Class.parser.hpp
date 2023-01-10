@@ -7,15 +7,15 @@
 class Parser
 {
 	private :
-		string			type;
 		string			command;
-		int				nb_command;
+		vector<string>	params;
 		Registration	regsitration;
+
 	public :
-		int		get_nb_command() const;
-		void	increment_nb_command();
+		// void			put_cmd_params();
 		void			set_command(string);
 		string			get_command();
+		bool			check_command();
 		void			erase_command();
 		bool			check_cmmand_registration();
 		bool			check_registration();
@@ -26,8 +26,7 @@ class Parser
 		void			set_user_registration(bool);
 		void			send_msg(int __err, int fd);
 		Parser();
-		// ~Parser();
-
+		~Parser();
 };
 
 #endif
