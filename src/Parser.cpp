@@ -161,11 +161,12 @@ void	Parser::send_msg(int __err, int fd)
 
 bool	Parser::check_command()
 {
-	if (this->command.find(" ") != string::npos)
-		this->command = this->command.substr(0, this->command.find(" "));
+	string __command = this->command;
+	if (__command.find(" ") != string::npos)
+		__command = __command.substr(0, __command.find(" "));
 	else
-		this->command = this->command.substr(0, this->command.find("\n"));
-	if (!is_command(this->command))
+		__command = __command.substr(0, __command.find("\n"));
+	if (!is_command(__command))
 		return (false);
 	return (true);
 }
