@@ -310,9 +310,9 @@ void	Server::sent_from_registration(int nb_client)
 
 void	Server::__privmsg__(string msg, vector<string> recevier){
 	for (size_t i = 0; i < __clients.size(); i++){
-		for (size_t j = 0; recevier.size(); j++){
+		for (size_t j = 0; j < recevier.size(); j++){
 			if (recevier[j] == __clients[i].get_nickname()){
-				std::cout << "send message to" << recevier[i] << endl;
+				std::cout << "send message to " << recevier[i] << endl;
 				send(this->__clients[i].get_fd(), msg.c_str(), msg.size(), 0);
 			}
 		}
@@ -329,7 +329,7 @@ void	Server::__privmsg__(string msg, vector<string> recevier){
 
 void	Server::__notice__(string msg, vector<string> recevier){
 	for (size_t i = 0; i < __clients.size(); i++){
-		for (size_t j = 0; recevier.size(); j++){
+		for (size_t j = 0; j < recevier.size(); j++){
 			if (recevier[j] == __clients[i].get_nickname()){
 				std::cout << "send message to" << recevier[i] << endl;
 				send(this->__clients[i].get_fd(), msg.c_str(), msg.size(), 0);
