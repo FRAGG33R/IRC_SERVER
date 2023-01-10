@@ -40,27 +40,9 @@ class Server
 		void			connect_client(int nb_client);
 		static void		sent_from_registration(int nb_client);
 		void			join_client_to_channel(string nick_name, string shannel);
-		void			__privmsg__(string, string);
-		// class   command
-		// {
-		// 	private:
-		// 		string  __cmd;
-		// 		string  __params;
-		// 	public:
-		// 		command(){};
-		// 		// ~command(){};
-		// 		void    __join__();
-		// 		void    __oper__();
-		// 		void    __mode__();
-		// 		void    __quit__();
-		// 		void    __part__();
-		// 		void    __kick__();
-		// 		void    __privmsg__();
-		// 		void    __sendfile__();
-		// 		void    __whois__(); 
-		// 		void    __kill__();
-		// 		void    __op__();
-		// };
+		void			__privmsg__(string, vector<string>);
+		void			__notice__(string, vector<string>);
+
 		Server(){};
 		~Server(){};
 };

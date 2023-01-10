@@ -180,7 +180,7 @@ void	Server::run()
 									// 	 	cout << j << this->__channels[i].get_client(j) << "\n";
 									// 	}
 									// }
-									this->__privmsg__("allo!", "machlouj");
+									this->__privmsg__("allo!",this->__clients[j].get_nickname());
 								}
 								this->__clients[j].regiteration.erase_command();
 							}
@@ -321,17 +321,40 @@ void	Server::sent_from_registration(int nb_client)
 //     std::cout << "ok\n";
 // }
 
-void	Server::__privmsg__(string msg, string recevier){
+void	Server::__privmsg__(string msg, vector<string> recevier){
 	for (size_t i = 0; i < __clients.size(); i++){
-		if (recevier == __clients[i].get_nickname()){
-			std::cout << "send message to" << recevier << endl;
-			std::cout << "message: " << msg << endl;
+		for (size_t j = 0; recevier.size(); j++){
+			if (recevier[j] == __clients[i].get_nickname()){
+				std::cout << "send message to" << recevier[i] << endl;
+				send(this->__clients[i].get_fd(), msg.c_str(), msg.size(), 0);
+			}
 		}
 	}
 	for (size_t i = 0; i < __channels.size(); i++){
-		if (recevier == __channels[i].getchannelname()){
-			std::cout << "send messages to all the users in this channels #" << recevier << std::endl;
-			std::cout << "message: " << msg << endl;
+		if (recevier[i] == __channels[i].getchannelname()){
+			for (size_t j = 0; j < __channels[i].get_clients_size(); i++){
+				if (this->__clients[j].get_nickname() == this->__channels[i].get_client(j))
+					send(this->__clients[j].get_fd(), msg.c_str(), msg.size(), 0);
+			}
+		}
+	}
+}
+
+void	Server::__notice__(string msg, vector<string> recevier){
+	for (size_t i = 0; i < __clients.size(); i++){
+		for (size_t j = 0; recevier.size(); j++){
+			if (recevier[j] == __clients[i].get_nickname()){
+				std::cout << "send message to" << recevier[i] << endl;
+				send(this->__clients[i].get_fd(), msg.c_str(), msg.size(), 0);
+			}
+		}
+	}
+	for (size_t i = 0; i < __channels.size(); i++){
+		if (recevier[i] == __channels[i].getchannelname()){
+			for (size_t j = 0; j < __channels[i].get_clients_size(); i++){
+				if (this->__clients[j].get_nickname() == this->__channels[i].get_client(j))
+					send(this->__clients[j].get_fd(), msg.c_str(), msg.size(), 0);
+			}
 		}
 	}
 }
