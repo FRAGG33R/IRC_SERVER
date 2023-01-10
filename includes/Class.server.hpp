@@ -38,6 +38,7 @@ class Server
 		void			connect_client(int nb_client);
 		static void		sent_from_registration(int nb_client);
 		void			join_client_to_channel(string nick_name, string shannel);
+		void			__privmsg__(string, string);
 		Server(){};
 		~Server(){};
 };
