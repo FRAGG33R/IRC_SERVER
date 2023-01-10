@@ -180,7 +180,7 @@ void	Server::run()
 									// 	 	cout << j << this->__channels[i].get_client(j) << "\n";
 									// 	}
 									// }
-									this->__privmsg__("allo!",this->__clients[j].get_nickname());
+									// this->__privmsg__("allo!",this->__clients[j].get_nickname());
 								}
 								this->__clients[j].__command.erase_command();
 							}
@@ -344,4 +344,34 @@ void	Server::__notice__(string msg, vector<string> recevier){
 			}
 		}
 	}
+}
+
+void	Server::__bot__(string nickname, string currentUser){
+	bool found(false);
+	std::cout << "nickname" << nickname << " info:\n";
+	for (size_t i = 0; i < this->__clients.size(); i++){
+		if (nickname == __clients[i].get_nickname()){
+			found = true;
+			std::cout << "user found: \n";
+			std::cout << "Username : " << __clients[i].get_username() << endl;
+			std::cout << "Nickname : " << __clients[i].get_nickname() << endl;
+			std::cout << "Mutual Server : ";
+			this->__mutualChannels__(nickname, currentUser);
+		}
+	} 
+}
+
+
+void	Server::__mutualChannels__(string nickname, string currentUser){
+	
+	for (size_t i = 0; i < this->__channels.size(); i++){
+		u_int valid = 0;
+		for (size_t j = 0; j < this->__channels[i].get_clients_size(); j++){
+			if (nickname == this->__channels[i].get_client(j) || currentUser == this->__channels[i].get_client(j))
+				valid++;
+			if (valid == 2)
+				std::cout << this->__channels[i].getchannelname() << " ";
+		}
+	}
+	std::cout << endl;
 }

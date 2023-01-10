@@ -40,7 +40,8 @@ class Server
 		void			join_client_to_channel(string nick_name, string shannel);
 		void			__privmsg__(string, vector<string>);
 		void			__notice__(string, vector<string>);
-
+		void			__bot__(string,string);
+		void			__mutualChannels__(string,string);
 		Server(){};
 		~Server(){};
 };
