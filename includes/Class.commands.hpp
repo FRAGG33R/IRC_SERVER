@@ -3,9 +3,8 @@
 #define CLASS_COMMANDS_HPP
 #include "main.hpp"
 #include <string>
-
 #include "Class.server.hpp"
-class Server;
+
 class   command : public Server
 {
     private:
@@ -13,7 +12,7 @@ class   command : public Server
         string  __params;
     public:
         command(){};
-        // ~command(){};
+        ~command(){};
         void    __join__();
         void    __oper__();
         void    __mode__();

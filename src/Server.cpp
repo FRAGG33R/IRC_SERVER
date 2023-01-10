@@ -148,12 +148,12 @@ void	Server::run()
 							string	backup;
 							size_t	first_space;
 
-							this->__clients[j].regiteration.set_command(this->__clients[j].regiteration.get_command() + string(__buffer));
-							if (this->__clients[j].regiteration.get_command().find_last_of("\n") != std::string::npos || this->__clients[j].regiteration.get_command().find_last_of("\r"))
+							this->__clients[j].__command.set_command(this->__clients[j].__command.get_command() + string(__buffer));
+							if (this->__clients[j].__command.get_command().find_last_of("\n") != std::string::npos || this->__clients[j].__command.get_command().find_last_of("\r"))
 							{
 								if (!this->__clients[j].is_registred())
 								{
-									backup = this->__clients[j].regiteration.get_command();
+									backup = this->__clients[j].__command.get_command();
 									while (backup.find("\r") != string::npos)
 									{
 										size_t j = backup.find("\r");
@@ -161,27 +161,17 @@ void	Server::run()
 									}
 									while (!backup.empty())
 									{
-										this->__clients[j].regiteration.set_command(backup.substr(0, backup.find("\n") + 1));
+										this->__clients[j].__command.set_command(backup.substr(0, backup.find("\n") + 1));
 										this->connect_client(j);
 										backup = backup.substr(backup.find("\n") + 1, string::npos);
 									}
 								}
 								else
 								{
-									this->join_client_to_channel(this->__clients[j].get_nickname(), "XXXXXXXXXXXXXX");
-									cout << "shannles exists with clients : \n";
-
-									for (size_t i = 0; i < this->__channels.size(); i++)
-									{
-										cout << "channel : \n" << i << this->__channels[i].getchannelname() << "\n";
-										cout << "clients : \n";
-										for (size_t j = 0; j < this->__channels[i].get_clients_size(); j++)
-										{
-										 	cout << j << this->__channels[i].get_client(j) << "\n";
-										}
-									}
+									// this->__clients[j].__command.put_cmd_params();
+									// this->join_client_to_channel(this->__clients[j].get_nickname(), "XXXXXXXXXXXXXX");
 								}
-								this->__clients[j].regiteration.erase_command();
+								this->__clients[j].__command.erase_command();
 							}
 							memset(__buffer, 0, sizeof(__buffer));
 						}
@@ -217,18 +207,6 @@ void	Server::join_client_to_channel(string nick_name, string shannel)
 	}
 }
 
-
-bool	check_command(string command)
-{
-	if (command.find(" ") != string::npos)
-		command = command.substr(0, command.find(" "));
-	else
-		command = command.substr(0, command.find("\n"));
-	if (!is_command(command))
-		return (false);
-	return (true);
-}
-
 bool	check_order(string command, int order)
 {
 	if (order == 1)
@@ -247,52 +225,52 @@ void	Server::connect_client(int nb_client)
 {
 	try
 	{
-		if (!check_command(this->__clients[nb_client].regiteration.get_command()))
-			this->__clients[nb_client].regiteration.send_msg(ERR_UNKNOWNCOMMAND, this->__clients[nb_client].get_fd());
-		else if (!this->__clients[nb_client].regiteration.get_registration().get_pass())
+		if (!this->__clients[nb_client].__command.check_command())
+			this->__clients[nb_client].__command.send_msg(ERR_UNKNOWNCOMMAND, this->__clients[nb_client].get_fd());
+		else if (!this->__clients[nb_client].__command.get_registration().get_pass())
 		{
-			if (!check_order(this->__clients[nb_client].regiteration.get_command(), 1))
-				this->__clients[nb_client].regiteration.send_msg(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
-			else if (!this->__clients[nb_client].regiteration.check_registration())
-				this->__clients[nb_client].regiteration.send_msg(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
-			else if (this->__clients[nb_client].regiteration.get_command() != this->__password)
-				this->__clients[nb_client].regiteration.send_msg(ERR_WRONGPASSWORD, this->__clients[nb_client].get_fd());
+			if (!check_order(this->__clients[nb_client].__command.get_command(), 1))
+				this->__clients[nb_client].__command.send_msg(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
+			else if (!this->__clients[nb_client].__command.check_registration())
+				this->__clients[nb_client].__command.send_msg(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
+			else if (this->__clients[nb_client].__command.get_command() != this->__password)
+				this->__clients[nb_client].__command.send_msg(ERR_WRONGPASSWORD, this->__clients[nb_client].get_fd());
 			else 
-				this->__clients[nb_client].regiteration.set_pass_registration(true);
+				this->__clients[nb_client].__command.set_pass_registration(true);
 		}
-		else if (this->__clients[nb_client].regiteration.get_registration().get_pass() && !this->__clients[nb_client].regiteration.get_registration().get_nick())
+		else if (this->__clients[nb_client].__command.get_registration().get_pass() && !this->__clients[nb_client].__command.get_registration().get_nick())
 		{
-			if (!check_order(this->__clients[nb_client].regiteration.get_command(), 2))
-				this->__clients[nb_client].regiteration.send_msg(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
-			else if (this->__clients[nb_client].regiteration.chack_already_registred())
-				this->__clients[nb_client].regiteration.send_msg(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
-			else if (!this->__clients[nb_client].regiteration.check_registration())
-				this->__clients[nb_client].regiteration.send_msg(ERR_NONICKNAMEGIVEN, this->__clients[nb_client].get_fd());
-			else if (this->parse_input(this->__clients[nb_client].regiteration.get_command(), 2) == 0)
-				this->__clients[nb_client].regiteration.send_msg(ERR_ERRONEUSNICKNAME, this->__clients[nb_client].get_fd());
-			else if (this->parse_input(this->__clients[nb_client].regiteration.get_command(), 2) == -1)
-				this->__clients[nb_client].regiteration.send_msg(ERR_NICKNAMEINUSE, this->__clients[nb_client].get_fd());
+			if (!check_order(this->__clients[nb_client].__command.get_command(), 2))
+				this->__clients[nb_client].__command.send_msg(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
+			else if (this->__clients[nb_client].__command.chack_already_registred())
+				this->__clients[nb_client].__command.send_msg(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
+			else if (!this->__clients[nb_client].__command.check_registration())
+				this->__clients[nb_client].__command.send_msg(ERR_NONICKNAMEGIVEN, this->__clients[nb_client].get_fd());
+			else if (this->parse_input(this->__clients[nb_client].__command.get_command(), 2) == 0)
+				this->__clients[nb_client].__command.send_msg(ERR_ERRONEUSNICKNAME, this->__clients[nb_client].get_fd());
+			else if (this->parse_input(this->__clients[nb_client].__command.get_command(), 2) == -1)
+				this->__clients[nb_client].__command.send_msg(ERR_NICKNAMEINUSE, this->__clients[nb_client].get_fd());
 			else
 			{
-				this->__clients[nb_client].set_nickname(this->__clients[nb_client].regiteration.get_command());
-				this->__clients[nb_client].regiteration.set_nick_registration(true);
+				this->__clients[nb_client].set_nickname(this->__clients[nb_client].__command.get_command());
+				this->__clients[nb_client].__command.set_nick_registration(true);
 			}
 		}
-		else if (this->__clients[nb_client].regiteration.get_registration().get_nick() && !this->__clients[nb_client].regiteration.get_registration().get_user())
+		else if (this->__clients[nb_client].__command.get_registration().get_nick() && !this->__clients[nb_client].__command.get_registration().get_user())
 		{
-			if (!check_order(this->__clients[nb_client].regiteration.get_command(), 3))
-				this->__clients[nb_client].regiteration.send_msg(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
-			else if (!this->__clients[nb_client].regiteration.check_registration())
-				this->__clients[nb_client].regiteration.send_msg(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
-			else if (this->__clients[nb_client].regiteration.chack_already_registred() || (this->parse_input(this->__clients[nb_client].regiteration.get_command(), 1) == -1))
-				this->__clients[nb_client].regiteration.send_msg(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
-			else if (this->parse_input(this->__clients[nb_client].regiteration.get_command(), 1) == 0)
-				this->__clients[nb_client].regiteration.send_msg(ERR_ERRONEUSUSERNAME, this->__clients[nb_client].get_fd());
+			if (!check_order(this->__clients[nb_client].__command.get_command(), 3))
+				this->__clients[nb_client].__command.send_msg(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
+			else if (!this->__clients[nb_client].__command.check_registration())
+				this->__clients[nb_client].__command.send_msg(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
+			else if (this->__clients[nb_client].__command.chack_already_registred() || (this->parse_input(this->__clients[nb_client].__command.get_command(), 1) == -1))
+				this->__clients[nb_client].__command.send_msg(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
+			else if (this->parse_input(this->__clients[nb_client].__command.get_command(), 1) == 0)
+				this->__clients[nb_client].__command.send_msg(ERR_ERRONEUSUSERNAME, this->__clients[nb_client].get_fd());
 			else
 			{
-				this->__clients[nb_client].set_username(this->__clients[nb_client].regiteration.get_command());
-				this->__clients[nb_client].regiteration.set_user_registration(true);
-				// this->__clients[nb_client].regiteration.send_msg(RPL_WELCOME, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].set_username(this->__clients[nb_client].__command.get_command());
+				this->__clients[nb_client].__command.set_user_registration(true);
+				// this->__clients[nb_client].__command.send_msg(RPL_WELCOME, this->__clients[nb_client].get_fd());
 				this->__clients[nb_client].set_is_registred(true);
 			}
 		}
@@ -314,7 +292,6 @@ void	Server::sent_from_registration(int nb_client)
 	// send(nb_client, std::setw(43), 43, 0);
 	// string str =  string(GRN) + string("█\n") + string(std::setw(43)) + ;
 }
-
 
 // void    Server::command::__join__(){
 //     std::cout << "ok\n";

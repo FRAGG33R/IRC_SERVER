@@ -1,14 +1,14 @@
 #ifndef CLASS_CHANNEL_HPP
 #define CLASS_CHANNEL_HPP
 # include "Class.client.hpp"
-// # include "Class.server.hpp"
 # include <iostream>
 # include <vector>
-class Client;
+
 class Channel 
 {
 	private:
 		string			__channel_name;
+		string			__password;
 		vector<string>	__clients;
 
 	public:
