@@ -232,6 +232,27 @@ bool	check_order(string command, int order)
 	return (1);
 }
 
+bool	check_user_params(string command)
+{
+	int	__nb_params;
+
+	__nb_params = 0;
+	while (!command.empty())
+	{
+		__nb_params++;
+		if (command.find(" ") != string::npos)
+		{
+			command = command.substr(command.find(" ") + 1, string::npos);
+			int i = 0;
+			for (; command[i] && command[i] == ' '; i++);
+			command = command.substr(i, string::npos);
+		}
+		else
+			command.erase();
+	}
+	return (__nb_params == 4);
+}
+
 void	Server::connect_client(int nb_client)
 {
 	try
@@ -271,6 +292,8 @@ void	Server::connect_client(int nb_client)
 		{
 			if (!check_order(this->__clients[nb_client].__command.get_command(), 3))
 				this->__clients[nb_client].__command.send_msg(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
+			else if (!check_user_params(this->__clients[nb_client].__command.get_command()))
+				this->__clients[nb_client].__command.send_msg(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
 			else if (!this->__clients[nb_client].__command.check_registration())
 				this->__clients[nb_client].__command.send_msg(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
 			else if (this->__clients[nb_client].__command.chack_already_registred() || (this->parse_input(this->__clients[nb_client].__command.get_command(), 1) == -1))

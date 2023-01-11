@@ -48,7 +48,7 @@ using std::cerr;
 
 //error reply numbers
 #define ERR_NEEDMOREPARAMS 461
-#define MSG_461 ":PASS 461 * Not enough parameters\n"
+#define MSG_461 ":* 461 * Not enough parameters\n"
 #define ERR_ALREADYREGISTRED 462
 #define MSG_462 ":* 462 * You may not reregister\n"
 #define ERR_NONICKNAMEGIVEN 431
