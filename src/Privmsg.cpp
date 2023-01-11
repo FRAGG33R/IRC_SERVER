@@ -4,6 +4,9 @@ Privmsg::Privmsg()
 {
 }
 
+Privmsg::~Privmsg()
+{
+}
 
 std::vector<int> Privmsg::getReceivers() const
 {
@@ -43,4 +46,21 @@ void Privmsg::setSender(int sender)
 void Privmsg::setType(std::string &type)
 {
 	this->__type = type;
+}
+
+int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::string> __clients, std::vector<Channel> __channels)
+{
+	std::vector<std::string> substrings;
+	std::stringstream stream(__params[0]);
+	std::string temp;
+	while (getline(stream, temp, ',')) {
+		if (!temp.empty())
+			substrings.push_back(temp);
+	}
+	for (size_t i = 0; i < substrings.size(); i++)
+	{
+		
+	}
+
+	return (0);
 }

@@ -5,7 +5,6 @@
 #include "main.hpp"
 #include "Class.commands.hpp"
 #include "Class.PRIVMSG.hpp"
-
 class Client
 {
 	private :

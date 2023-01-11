@@ -174,6 +174,7 @@ void	Parser::send_msg(int __err, int fd)
 			(send(fd, MSG_401, strlen(MSG_401), 0) == -1) ? throw Error("failling to send msg") : 1;
 			break;
 		}
+		default : { break ; }
 	}
 }
 

@@ -9,17 +9,15 @@ class Channel
 	private:
 		string			__channel_name;
 		string			__password;
-		vector<string>	__clients;
-
+		vector<int>		__clients;
 	public:
 		Channel();
 		Channel(std::string channel_name);
-		string	getchannelname();
 		~Channel();
-		// Channel(const Channel &obj);
-		void	add_client(string);
-		size_t	get_clients_size();
-		string	get_client(size_t i);
-		void	remove_client(int);
+		string			getchannelname();
+		void			add_client(int);
+		size_t			get_clients_size();
+		vector<int>		get_clients(void);
+		void			remove_client(int);
 };
 #endif

@@ -2,7 +2,8 @@
 #define __PRIVMSG_HPP__
 # include <iostream>
 # include <vector>
-
+# include <sstream>
+class Channel;
 class Privmsg
 {
 	private:
@@ -12,6 +13,7 @@ class Privmsg
 		std::string			__type;
     public:
 			Privmsg();
+			~Privmsg();
 			std::string			getMessage() const;
 			std::vector<int>	getReceivers() const;
 			int                 getSender() const;
@@ -20,7 +22,7 @@ class Privmsg
 			void                setMessage(std::string &message);
 			void                setSender(int sender);
 			void                setType(std::string &type);
-			bool				parsPrivmsg(std::vector<std::string> params);
+			int					parsPrivmsg(std::vector<std::string> __params, std::vector<std::string> __clients, std::vector<Channel> __channels);
 };
 
 #endif
