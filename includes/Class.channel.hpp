@@ -20,5 +20,6 @@ class Channel
 		void	add_client(string);
 		size_t	get_clients_size();
 		string	get_client(size_t i);
+		void	remove_client(int);
 };
 #endif

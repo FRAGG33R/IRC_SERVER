@@ -375,3 +375,22 @@ void	Server::__mutualChannels__(string nickname, string currentUser){
 	}
 	std::cout << endl;
 }
+
+void	Server::__kick__(int id, string channel, string user){
+	
+	for (size_t i = 0; i < this->__channels.size(); i++){
+		if (channel == this->__channels[i].getchannelname()){
+			for (size_t j = 0; this->__channels[i].get_clients_size(); j++){
+				if(this->__clients[id].get_nickname() == this->__channels[i].get_client(j) && 
+				   this->__clients[id].is_operator()){
+					for (size_t k = 0; this->__channels[i].get_clients_size(); k++){
+						if (user == this->__channels[i].get_client(k)){
+							this->__channels[i].remove_client(k);
+						}
+					}
+				}
+
+			}
+		}
+	}
+}

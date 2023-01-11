@@ -29,6 +29,9 @@ string	Channel::get_client(size_t i)
 {
 	return (this->__clients[i]);
 }
+void	Channel::remove_client(int i){
+	this->__clients.erase(this->__clients.begin() + i);
+}
 
 Channel::~Channel()
 {

@@ -42,6 +42,8 @@ class Server
 		void			__notice__(string, vector<string>);
 		void			__bot__(string,string);
 		void			__mutualChannels__(string,string);
+		void			__kick__(int, string, string);
+		
 		Server(){};
 		~Server(){};
 };
