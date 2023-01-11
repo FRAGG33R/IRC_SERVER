@@ -16,6 +16,7 @@
 # include <string.h>
 # include <errno.h>
 # include <iomanip>
+# include <sstream>
 
 //Colors
 #define GRN "\e[1;32m"

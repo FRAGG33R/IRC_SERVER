@@ -194,6 +194,16 @@ bool	Parser::check_command()
 // 	}
 // }
 
+vector<string>	&Parser::get_params()
+{
+	return (this->params);
+}
+
+void	Parser::set_params(const vector<string> &parametters)
+{
+	this->params = parametters;
+}
+
 Parser::~Parser()
 {
 

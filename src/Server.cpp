@@ -168,19 +168,21 @@ void	Server::run()
 								}
 								else
 								{
-									// this->join_client_to_channel(this->__clients[j].get_nickname(), "XXXXXXXXXXXXXX");
-									// cout << "shannles exists with clients : \n";
-
-									// for (size_t i = 0; i < this->__channels.size(); i++)
-									// {
-									// 	// cout << "channel : \n" << i << this->__channels[i].getchannelname() << "\n";
-									// 	// cout << "clients : \n";
-									// 	for (size_t j = 0; j < this->__channels[i].get_clients_size(); j++)
-									// 	{
-									// 	 	cout << j << this->__channels[i].get_client(j) << "\n";
-									// 	}
-									// }
-									// this->__privmsg__("allo!",this->__clients[j].get_nickname());
+									this->__clients[j].__command.set_command(this->__clients[j].__command.get_command().substr(0, this->__clients[j].__command.get_command().size() - 1));
+									std::vector<std::string> substrings;
+									std::stringstream stream(this->__clients[j].__command.get_command());
+									std::string temp;
+									while (getline(stream, temp, ' ')) {
+										if (!temp.empty())
+											substrings.push_back(temp);
+									}
+									if (substrings.size() > 1)
+									{
+										this->__clients[j].__command.set_command(substrings[0]);
+										substrings.erase(substrings.begin());
+										this->__clients[j].__command.set_params(substrings);
+										substrings.clear();
+									}
 								}
 								this->__clients[j].__command.erase_command();
 							}
@@ -412,7 +414,6 @@ void	Server::__kick__(int id, string channel, string user){
 						}
 					}
 				}
-
 			}
 		}
 	}

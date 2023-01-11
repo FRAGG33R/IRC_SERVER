@@ -25,6 +25,8 @@ class Parser
 		void			set_nick_registration(bool);
 		void			set_user_registration(bool);
 		void			send_msg(int __err, int fd);
+		vector<string>	&get_params( void );
+		void			set_params(const vector<string> &parametters);
 		Parser();
 		~Parser();
 };
