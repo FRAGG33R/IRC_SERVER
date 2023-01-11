@@ -34,12 +34,10 @@ using std::cerr;
 
 // Classes
 # include "Class.client.hpp"
-// # include "Class.server.hpp"
 # include "Class.error.hpp"
 # include "Class.parser.hpp"
 # include "Class.registration.hpp"
-// # include "Class.commands.hpp"
-// # include "Class.channel.hpp"
+
 
 
 //commands
@@ -66,6 +64,15 @@ using std::cerr;
 #define MSG_667 ":* 667 * Enter PASS <password>, NICK <nickname>, USER <user>\n"
 #define ERR_ERRONEUSUSERNAME 668
 #define MSG_668 ":NICK 668 * Erroneus username\n"
+
+#define MSG_411 ":* 411 * No recipient given\n"
+#define ERR_NORECIPIENT 411
+#define MSG_412 ":* 412 * No text to send\n"
+#define ERR_NOTEXTTOSEND 412
+#define MSG_407 ":* 407 * Duplicate recipients. No message delivered\n"
+#define ERR_TOOMANYTARGETS 407
+#define MSG_401 ":* 401 * No such nick/channel\n"
+#define ERR_NOSUCHNICK 401
 // # include "Class.channel.hpp"
 
 //server informations

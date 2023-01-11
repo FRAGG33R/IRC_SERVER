@@ -151,23 +151,23 @@ void	Server::run()
 							this->__clients[j].__command.set_command(this->__clients[j].__command.get_command() + string(__buffer));
 							if (this->__clients[j].__command.get_command().find_last_of("\n") != std::string::npos || this->__clients[j].__command.get_command().find_last_of("\r"))
 							{
-								if (!this->__clients[j].is_registred())
-								{
-									backup = this->__clients[j].__command.get_command();
-									while (backup.find("\r") != string::npos)
-									{
-										size_t j = backup.find("\r");
-										backup.erase(j, 1);
-									}
-									while (!backup.empty())
-									{
-										this->__clients[j].__command.set_command(backup.substr(0, backup.find("\n") + 1));
-										this->connect_client(j);
-										backup = backup.substr(backup.find("\n") + 1, string::npos);
-									}
-								}
-								else
-								{
+								// if (!this->__clients[j].is_registred())
+								// {
+								// 	backup = this->__clients[j].__command.get_command();
+								// 	while (backup.find("\r") != string::npos)
+								// 	{
+								// 		size_t j = backup.find("\r");
+								// 		backup.erase(j, 1);
+								// 	}
+								// 	while (!backup.empty())
+								// 	{
+								// 		this->__clients[j].__command.set_command(backup.substr(0, backup.find("\n") + 1));
+										// this->connect_client(j);
+								// 		backup = backup.substr(backup.find("\n") + 1, string::npos);
+								// 	}
+								// }
+								// else
+								// {
 									this->__clients[j].__command.set_command(this->__clients[j].__command.get_command().substr(0, this->__clients[j].__command.get_command().size() - 1));
 									std::vector<std::string> substrings;
 									std::stringstream stream(this->__clients[j].__command.get_command());
@@ -183,7 +183,11 @@ void	Server::run()
 										this->__clients[j].__command.set_params(substrings);
 										substrings.clear();
 									}
-								}
+									if (this->__clients[j].__command.get_command() == "PRIVMSG")
+									{
+										this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params());
+									}
+								// }
 								this->__clients[j].__command.erase_command();
 							}
 							memset(__buffer, 0, sizeof(__buffer));
@@ -232,7 +236,7 @@ bool	check_order(string command, int order)
 		if (command.find(USER_COMMAND) == string::npos)
 			return (0);
 	return (1);
-}
+};
 
 bool	check_user_params(string command)
 {

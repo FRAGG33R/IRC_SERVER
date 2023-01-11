@@ -108,52 +108,70 @@ void	Parser::send_msg(int __err, int fd)
 	{
 		case  ERR_NEEDMOREPARAMS : 
 		{
-			(send(fd, MSG_461, strlen(MSG_461), 0) == -1)?throw Error("failling to send msg"):1;
+			(send(fd, MSG_461, strlen(MSG_461), 0) == -1) ? throw Error("failling to send msg") : 1;
 			break;
 		}
 		case ERR_ALREADYREGISTRED : 
 		{
-			(send(fd, MSG_462, strlen(MSG_462), 0) == -1)?throw Error("failling to send msg"):1;
+			(send(fd, MSG_462, strlen(MSG_462), 0) == -1 ) ? throw Error("failling to send msg") : 1;
 			break;
 		}
 		case ERR_NONICKNAMEGIVEN :
 		{
-			(send(fd, MSG_431, strlen(MSG_431), 0) == -1)?throw Error("failling to send msg"):1;
+			(send(fd, MSG_431, strlen(MSG_431), 0) == -1) ? throw Error("failling to send msg") : 1;
 			break;
 		}
 		case ERR_ERRONEUSNICKNAME : 
 		{
-			(send(fd, MSG_432, strlen(MSG_432), 0) == -1)?throw Error("failling to send msg"):1;
+			(send(fd, MSG_432, strlen(MSG_432), 0) == -1) ? throw Error("failling to send msg") : 1;
 			break;
 		}
 		case ERR_NICKNAMEINUSE : 
 		{
-			(send(fd, MSG_433, strlen(MSG_433), 0) == -1)?throw Error("failling to send msg"):1;
+			(send(fd, MSG_433, strlen(MSG_433), 0) == -1) ? throw Error("failling to send msg") : 1;
 			break;
 		}
 		case ERR_WRONGPASSWORD : 
 		{
-			(send(fd, MSG_666, strlen(MSG_666), 0) == -1)?throw Error("failling to send msg"):1;
+			(send(fd, MSG_666, strlen(MSG_666), 0) == -1) ? throw Error("failling to send msg") : 1;
 			break;
 		}
 		case ERR_UNKNOWNCOMMAND : 
 		{
-			(send(fd, MSG_421, strlen(MSG_421), 0) == -1)?throw Error("failling to send msg"):1;
+			(send(fd, MSG_421, strlen(MSG_421), 0) == -1) ? throw Error("failling to send msg") : 1;
 			break;
 		}
 		case ERR_REGIST_ORDER : 
 		{
-			(send(fd, MSG_667, strlen(MSG_667), 0) == -1)?throw Error("failling to send msg"):1;
+			(send(fd, MSG_667, strlen(MSG_667), 0) == -1) ?  throw Error("failling to send msg") : 1;
 			break;
 		}
 		case ERR_ERRONEUSUSERNAME : 
 		{
-			(send(fd, MSG_668, strlen(MSG_668), 0) == -1)?throw Error("failling to send msg"):1;
+			(send(fd, MSG_668, strlen(MSG_668), 0) == -1) ? throw Error("failling to send msg") : 1;
 			break;
 		}
 		case RPL_WELCOME : 
 		{
-			(send(fd, MSG_WELCOME, strlen(MSG_WELCOME), 0) == -1)?throw Error("failling to send msg"):1;
+			(send(fd, MSG_WELCOME, strlen(MSG_WELCOME), 0) == -1) ? throw Error("failling to send msg") : 1;
+			break;
+		}
+		case ERR_NORECIPIENT : {
+			(send(fd, MSG_411, strlen(MSG_411), 0) == -1) ? throw Error("failling to send msg") : 1;
+			break;
+
+		}
+		case ERR_NOTEXTTOSEND : {
+			(send(fd, MSG_412, strlen(MSG_412), 0) == -1) ? throw Error("failling to send msg") : 1;
+			break;
+		}
+		case ERR_TOOMANYTARGETS : {
+			(send(fd, MSG_407, strlen(MSG_407), 0) == -1) ? throw Error("failling to send msg") : 1;
+			break;
+
+		}
+		case ERR_NOSUCHNICK : {
+			(send(fd, MSG_401, strlen(MSG_401), 0) == -1) ? throw Error("failling to send msg") : 1;
 			break;
 		}
 	}

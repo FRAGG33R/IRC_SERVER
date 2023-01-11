@@ -4,6 +4,7 @@
 #include "Class.parser.hpp"
 #include "main.hpp"
 #include "Class.commands.hpp"
+#include "Class.PRIVMSG.hpp"
 
 class Client
 {
@@ -17,6 +18,7 @@ class Client
 		int		__fd;
 	public :
 		Parser	__command;
+		Privmsg	__privmsg;
 		bool	__username_filled;
 		bool	__nickname_filled;
 		string	__request;
