@@ -252,8 +252,8 @@ void	Server::run()
 											cout << "|" << substrings[x] << "|" << endl;
 									}
 									Channel c("1337");
-									c.add_client(4);
-									c.add_client(5);
+									c.add_client(std::pair<int, std::string> (4, "mohamed"));
+									c.add_client(std::pair<int, std::string> (5, "oussama"));
 									std::vector<Channel> cx;
 									cx.push_back(c);
 									if (this->__clients[j].__command.get_command()  == "PRIVMSG")
@@ -282,6 +282,15 @@ void	Server::run()
 									else if (this->__clients[j].__command.get_command()  == "JOIN")
 									{
 										// this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params());
+									}
+									else if (this->__clients[j].__command.get_command() == "MODE")
+									{
+										std::cout << "-> This is MODE command \n";
+										if (this->__clients[j].__command.get_params().size() != 3)
+											this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+										else
+											if (this->__clients[j].__mode.parseMode(this->__clients[j].__command.get_params(),  this->__channels) == -1)
+												throw Error("Failed to send message to client");
 									}
 								}
 							}

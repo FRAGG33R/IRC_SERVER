@@ -37,7 +37,7 @@ using std::cerr;
 # include "Class.error.hpp"
 # include "Class.parser.hpp"
 # include "Class.registration.hpp"
-// # include "Class.PRIVMSG.hpp"
+
 
 
 
@@ -74,6 +74,21 @@ using std::cerr;
 #define ERR_TOOMANYTARGETS 407
 #define MSG_401 ":* 401 * No such nick/channel\n"
 #define ERR_NOSUCHNICK 401
+// #define MSG_482 ":* 482 * You're not channel operator\n"
+// #define ERR_CHANOPRIVSNEEDED 482
+
+// 482     ERR_CHANOPRIVSNEEDED
+//                         "<channel> :You're not channel operator"
+// 472     ERR_UNKNOWNMODE
+//                         "<char> :is unknown mode char to me"
+
+// 502     ERR_USERSDONTMATCH
+//                         ":Cant change mode for other users"
+// 501     ERR_UMODEUNKNOWNFLAG
+//                         ":Unknown MODE flag"
+//  403     ERR_NOSUCHCHANNEL
+//                         "<channel name> :No such channel"
+
 // # include "Class.channel.hpp"
 
 //server informations
