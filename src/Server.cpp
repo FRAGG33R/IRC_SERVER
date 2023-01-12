@@ -1,5 +1,6 @@
 # include "../includes/main.hpp"
 # include "../includes/Class.server.hpp"
+
 Server	*Server::__instance = nullptr;
 
 Server::Server(string password, int port, string name = "CW9")
@@ -185,10 +186,10 @@ void	Server::run()
 								else
 								{
 									this->__clients[j].__command.set_command(this->__clients[j].__command.get_command().substr(0, this->__clients[j].__command.get_command().size() - 1));
-									std::vector<std::string> substrings;
-									std::string temp;
-									int					index;
-									int					index_separator = 0;
+									std::vector<std::string>	substrings;
+									std::string 				temp;
+									int							index;
+									int						sep_index = 0;
 
 									backup = this->__clients[j].__command.get_command();
 									if (backup.find(" ") != string::npos)
@@ -201,13 +202,13 @@ void	Server::run()
 										while (index >= 0)
 										{
 											if (backup[index] == ':')
-												index_separator = index;
+												sep_index = index;
 											index--;
 										}
-										if (index_separator > 0)
+										if (sep_index > 0)
 										{
-											temp = backup.substr(index_separator, string::npos);
-											backup = backup.substr(0, index_separator);
+											temp = backup.substr(sep_index, string::npos);
+											backup = backup.substr(0, sep_index);
 										}
 										if (!backup.empty())
 											substrings.push_back(backup);
@@ -247,8 +248,9 @@ void	Server::run()
 										if (temp != "")
 											substrings[0] = temp + substrings[0];
 										this->__clients[j].__command.set_params(substrings);
+										for (size_t x = 0; x < substrings.size(); x++)
+											cout << "|" << substrings[x] << "|" << endl;
 									}
-									cout << "Its PRIVMSG command \n";
 									Channel c("1337");
 									c.add_client(4);
 									c.add_client(5);
@@ -262,7 +264,11 @@ void	Server::run()
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 											else
 											{
-												this->__clients[j].__command.send_error(this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), cx, this->__clients[j].get_fd(), this->__clients[j].get_nickname()), this->__clients[j].get_fd());
+												int res  = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), cx, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
+												if ( res == -1)
+													throw Error("Failed to send message to client");
+												else
+													this->__clients[j].__command.send_error(res, this->__clients[j].get_fd());
 											}
 										}
 										catch(const std::exception& e)
@@ -388,8 +394,8 @@ void	Server::connect_client(int nb_client)
 		{
 			if (!check_order(this->__clients[nb_client].__command.get_command(), 3))
 				this->__clients[nb_client].__command.send_error(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
-			// else if (!check_user_params(this->__clients[nb_client].__command.get_command()))
-			// 	this->__clients[nb_client].__command.send_error(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
+			else if (!check_user_params(this->__clients[nb_client].__command.get_command()))
+				this->__clients[nb_client].__command.send_error(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
 			else if (!this->__clients[nb_client].__command.check_registration())
 				this->__clients[nb_client].__command.send_error(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
 			else if (this->__clients[nb_client].__command.chack_already_registred() || (this->parse_input(this->__clients[nb_client].__command.get_command(), 1) == -1))
