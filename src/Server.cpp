@@ -168,23 +168,23 @@ void	Server::run()
 							this->__clients[j].__command.set_command(this->__clients[j].__command.get_command() + string(__buffer));
 							if (this->__clients[j].__command.get_command().find_last_of("\n") != std::string::npos || this->__clients[j].__command.get_command().find_last_of("\r"))
 							{
-								if (!this->__clients[j].is_registred())
-								{
-									backup = this->__clients[j].__command.get_command();
-									while (backup.find("\r") != string::npos)
-									{
-										size_t j = backup.find("\r");
-										backup.erase(j, 1);
-									}
-									while (!backup.empty())
-									{
-										this->__clients[j].__command.set_command(backup.substr(0, backup.find("\n") + 1));
-										this->connect_client(j);
-										backup = backup.substr(backup.find("\n") + 1, string::npos);
-									}
-								}
-								else
-								{
+								// if (!this->__clients[j].is_registred())
+								// {
+								// 	backup = this->__clients[j].__command.get_command();
+								// 	while (backup.find("\r") != string::npos)
+								// 	{
+								// 		size_t j = backup.find("\r");
+								// 		backup.erase(j, 1);
+								// 	}
+								// 	while (!backup.empty())
+								// 	{
+								// 		this->__clients[j].__command.set_command(backup.substr(0, backup.find("\n") + 1));
+								// 		this->connect_client(j);
+								// 		backup = backup.substr(backup.find("\n") + 1, string::npos);
+								// 	}
+								// }
+								// else
+								// {
 									this->__clients[j].__command.set_command(this->__clients[j].__command.get_command().substr(0, this->__clients[j].__command.get_command().size() - 1));
 									std::vector<std::string>	substrings;
 									std::string 				temp;
@@ -248,8 +248,10 @@ void	Server::run()
 											substrings[0] = temp + substrings[0];
 										this->__clients[j].__command.set_params(substrings);
 
-										// for (size_t x = 0; x < substrings.size(); x++)
-										// 	cout << "|" << substrings[x] << "|" << endl;
+										cout << "the command is : <<" << this->__clients[j].__command.get_command() << ">>\n";
+										cout << "the params : <<\n";
+										for (size_t x = 0; x < substrings.size(); x++)
+											cout << "|" << substrings[x] << "|" << endl;
 									}
 									Channel c1("Channel1");
 									c1.add_client(std::pair<int, std::string> (4, "mohamed"));
@@ -281,7 +283,7 @@ void	Server::run()
 									}
 									else if (this->__clients[j].__command.get_command()  == "JOIN")
 									{
-										// this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params());
+										this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(),  __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
 									}
 									else if  (this->__clients[j].__command.get_command()  == "PART")
 									{
@@ -296,7 +298,7 @@ void	Server::run()
 												throw Error("Failed to send message to client");
 									}
 								}
-							}
+							// }
 								this->__clients[j].__command.erase_command();
 							memset(__buffer, 0, sizeof(__buffer));
 						}

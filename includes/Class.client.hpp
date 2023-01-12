@@ -20,6 +20,7 @@ class Client
 	public :
 		Parser	__command;
 		Privmsg	__privmsg;
+		Join	__join;
 		Mode	__mode;
 		bool	__username_filled;
 		bool	__nickname_filled;
