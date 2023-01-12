@@ -3,26 +3,24 @@
 # include <iostream>
 # include <vector>
 # include <sstream>
-class Channel;
+# include "Class.channel.hpp"
+
 class Privmsg
 {
 	private:
 	    std::vector<int>	__receivers;
 		std::string			__message;
-		int					__sender;
 		std::string			__type;
     public:
 			Privmsg();
 			~Privmsg();
 			std::string			getMessage() const;
 			std::vector<int>	getReceivers() const;
-			int                 getSender() const;
 			std::string         getType() const;
 			void                setReceivers(std::vector<int> &receivers);
-			void                setMessage(std::string &message);
-			void                setSender(int sender);
+			void                setMessage(std::string message);
 			void                setType(std::string &type);
-			int					parsPrivmsg(std::vector<std::string> __params, std::vector<std::string> __clients, std::vector<Channel> __channels);
+			int					parsPrivmsg(std::vector<std::string> __params, std::vector<std::pair<std::string, int> > __clients, std::vector<Channel> __channels);
 };
 
 #endif
