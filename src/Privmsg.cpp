@@ -47,10 +47,9 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 	std::string					temp;
 	std::string                 __message;
 
+	__message  = __params[1];
 	if (__params[0][0] == ':' || __params[1][0] != ':')
 		return 412;
-	if (__params[1][0] == ':')
-		__message = __params[1].substr(1, __params[1].size());
 	while (getline(stream, temp, ','))
 	{
 		if (!temp.empty())
@@ -65,7 +64,7 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 				if (__given_clients[i].substr(1, __given_clients[i].size()) == __channels[k].getchannelname())
 				{
 					for (size_t l = 0; l < __channels[k].get_clients().size(); l++) {
-						this->setMessage(":" + __sender_nickname + " PRIVMSG * :" + __message  + "\n");
+						this->setMessage(":" + __sender_nickname + " PRIVMSG * " + __message  + "\n");
 						std::cout << "The full message is " << this->getMessage();
 						if (send(__channels[k].get_clients()[l].first, this->getMessage().c_str(), this->getMessage().size(), 0) == -1)
 							return (-1);
@@ -74,7 +73,7 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 				}
 				else
 				{
-					std::string msg(":* 401 * " + __given_clients[i] + " :No such nick/channel\n");
+					std::string msg(":" + __sender_nickname + " 401 * No such nick/channel\n");
 					if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
 						return (-1);
 				}
@@ -86,13 +85,13 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 			{
 				if (__clients[j].second != __sender) {
 					if (__given_clients[i] == __clients[j].first) {
-						this->setMessage(":" + __sender_nickname + " PRIVMSG * :" + __message  + "\n");
+						this->setMessage(":" + __sender_nickname + " PRIVMSG * " + __message  + "\n");
 						if (send(__clients[j].second, this->getMessage().c_str(), this->getMessage().size(), 0) == -1)
 							return (-1);
 					}
 					else
 					{
-						std::string msg(":* 401 * " + __given_clients[i] + " :No such nick/channel\n");
+						std::string msg(":" + __sender_nickname + " 401 * No such nick/channel\n");
 						if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
 							return (-1);
 					}

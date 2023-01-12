@@ -248,18 +248,14 @@ void	Server::run()
 											substrings[0] = temp + substrings[0];
 										this->__clients[j].__command.set_params(substrings);
 
-										for (size_t x = 0; x < substrings.size(); x++)
-											cout << "|" << substrings[x] << "|" << endl;
+										// for (size_t x = 0; x < substrings.size(); x++)
+										// 	cout << "|" << substrings[x] << "|" << endl;
 									}
 									Channel c1("Channel1");
-									Channel c2("Channel2");
-									c1.add_operator(std::pair<int, std::string> (4, "mohamed"));
+									c1.add_client(std::pair<int, std::string> (4, "mohamed"));
 									c1.add_client(std::pair<int, std::string> (5, "oussama"));
-									c2.add_operator(std::pair<int, std::string> (6, "mohamed1"));
-									c2.add_client(std::pair<int, std::string> (7, "oussama1"));
 									std::vector<Channel> __Channel_list;
 									__Channel_list.push_back(c1);
-									__Channel_list.push_back(c2);
 									if (this->__clients[j].__command.get_command()  == "PRIVMSG")
 									{
 										try
