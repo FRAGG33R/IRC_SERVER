@@ -30,6 +30,8 @@ std::vector<int>	Channel::get_clients()
 	return (this->__clients);
 }
 
+
+
 Channel::~Channel()
 {
 

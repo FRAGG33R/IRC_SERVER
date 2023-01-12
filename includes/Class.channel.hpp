@@ -20,5 +20,6 @@ class Channel
 		size_t				get_clients_size();
 		std::vector<int>	get_clients(void);
 		void				remove_client(int);
+
 };
 #endif

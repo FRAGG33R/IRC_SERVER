@@ -1,4 +1,4 @@
-#include "../includes/Class.PRIVMSG.hpp"
+#include "../includes/Class.privmsg.hpp"
 
 Privmsg::Privmsg()
 {

@@ -3,8 +3,8 @@
 
 #include "Class.parser.hpp"
 #include "Class.commands.hpp"
-#include "Class.JOIN.hpp"
-#include "Class.PRIVMSG.hpp"
+#include "Class.join.hpp"
+#include "Class.privmsg.hpp"
 
 class Client
 {
