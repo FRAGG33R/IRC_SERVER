@@ -39,16 +39,18 @@ void Privmsg::setType(std::string &type)
 	this->__type = type;
 }
 
-int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pair<std::string, int> > __clients, std::vector<Channel> __channels)
+int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pair<std::string, int> > __clients, std::vector<Channel> __channels, int __sender, std::string __sender_nickname)
 {
 	std::vector<std::string>	__given_clients;
-	std::vector<int>			__clients_fds;
+	__params[0].erase(__params[0].find_last_not_of(" ") +1);
 	std::stringstream 			stream(__params[0]);
 	std::string					temp;
-	size_t						__flag = 0;
+	std::string                 __message;
 
-	if (__params[0][0] == ':')
-		return 411;
+	if (__params[0][0] == ':' || __params[1][0] != ':')
+		return 412;
+	if (__params[1][0] == ':')
+		__message = __params[1].substr(1, __params[1].size());
 	while (getline(stream, temp, ','))
 	{
 		if (!temp.empty())
@@ -62,10 +64,19 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 			{
 				if (__given_clients[i].substr(1, __given_clients[i].size()) == __channels[k].getchannelname())
 				{
-					for (size_t l = 0; l < __channels[k].get_clients().size(); l++)
-						__clients_fds.push_back(__channels[k].get_clients()[l]);
-					__flag++;
+					for (size_t l = 0; l < __channels[k].get_clients().size(); l++) {
+						this->setMessage(":* PRIVMSG * :" + __message + "\n");
+						std::cout << "The full message is " << this->getMessage();
+						if (send(__channels[k].get_clients()[l], this->getMessage().c_str(), this->getMessage().size(), 0) == -1)
+							return (-1);
+					}
 					break;
+				}
+				else
+				{
+					std::string msg(":* 401 * " + __given_clients[i] + " :No such nick/channel\n");
+					if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
+						return (-1);
 				}
 			}
 		}
@@ -73,27 +84,21 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 		{
 			for (size_t j = 0; j < __clients.size(); j++)
 			{
-				if (__given_clients[i] == __clients[j].first) {
-					__clients_fds.push_back(__clients[j].second);
-					__flag++;
+				if (__clients[j].second != __sender) {
+					if (__given_clients[i] == __clients[j].first) {
+						this->setMessage(":" + __sender_nickname + " PRIVMSG * :" + __message  + "\n");
+						if (send(__clients[j].second, this->getMessage().c_str(), this->getMessage().size(), 0) == -1)
+							return (-1);
+					}
+					else
+					{
+						std::string msg(":* 401 * " + __given_clients[i] + " :No such nick/channel\n");
+						if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
+							return (-1);
+					}
 				}
 			}
 		}
 	}
-	if (__flag != __given_clients.size())
-	    return 401;
-	Privmsg	__repair;
-	if (__params[1][0] == ':')
-		__repair.setMessage(__params[1].substr(1, __params[1].size()));
-	__repair.setReceivers(__clients_fds);
-	//debug
-	// std::cout << "The receivers" << std::endl;
-	// for (size_t i = 0; i < __repair.getReceivers().size(); i++)
-	// {
-	// 	std::cout << __repair.getReceivers()[i] << std::endl;
-	// }
-	// std::cout << "The message" << std::endl;
-	// std::cout << __repair.getMessage() << std::endl;
-	
 	return (0);
 }
