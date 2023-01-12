@@ -3,8 +3,9 @@
 
 #include "Class.parser.hpp"
 #include "Class.commands.hpp"
-#include "Class.join.hpp"
-#include "Class.privmsg.hpp"
+#include "Class.JOIN.hpp"
+#include "Class.PRIVMSG.hpp"
+#include "Class.MODE.hpp"
 
 class Client
 {
@@ -19,7 +20,7 @@ class Client
 	public :
 		Parser	__command;
 		Privmsg	__privmsg;
-		// Join	__join;
+		Mode	__mode;
 		bool	__username_filled;
 		bool	__nickname_filled;
 		string	__request;

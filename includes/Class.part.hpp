@@ -16,6 +16,7 @@ class Part
         bool                searchChannel(std::string __nameChannel, std::vector<Channel> __channels);
         bool                searchClient(int __clientId, std::vector<Channel> __channels, std::string __nameChannel);
         int                 indexOfChannel(std::string __channelName, std::vector<Channel> __channels);
+        void                noticeAll(Channel __channel);
 
 };
 
