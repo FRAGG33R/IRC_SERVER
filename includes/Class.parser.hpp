@@ -12,7 +12,6 @@ class Parser
 		Registration	regsitration;
 
 	public :
-		// void			put_cmd_params();
 		void			set_command(string);
 		string			get_command();
 		bool			check_command();
@@ -24,7 +23,8 @@ class Parser
 		void			set_pass_registration(bool);
 		void			set_nick_registration(bool);
 		void			set_user_registration(bool);
-		void			send_msg(int __err, int fd);
+		void			send_error(int __err, int fd);
+		void			send_message(std::string __msg, int __fd);
 		vector<string>	&get_params( void );
 		void			set_params(const vector<string> &parametters);
 		Parser();

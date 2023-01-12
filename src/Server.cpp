@@ -188,6 +188,7 @@ void	Server::run()
 									std::vector<std::string> substrings;
 									std::string temp;
 									int					index;
+
 									backup = this->__clients[j].__command.get_command();
 									if (backup.find(" ") != string::npos)
 									{
@@ -213,49 +214,63 @@ void	Server::run()
 									temp = "";
 									size_t k;
 									size_t t;
-									while (substrings[0].find(",") != string::npos)
+									if (substrings.size() != 0)
 									{
+										while (substrings[0].find(",") != string::npos)
+										{
+											t = 0;
+											k = substrings[0].find(",");
+											while (k >= 0 && substrings[j][--k] == ' ') ;
+											while (substrings[0][t] == ' ')
+												t++;
+											if (temp == "")
+												temp = substrings[0].substr(t, ++k - t);
+											else
+												temp += substrings[0].substr(t, ++k - t);
+											temp += ",";
+											substrings[0] = substrings[0].substr(substrings[0].find(",") + 1, string::npos);
+										}
 										t = 0;
-										k = substrings[0].find(",");
-										while (k >= 0 && substrings[j][--k] == ' ') ;
-										while (substrings[0][t] == ' ')
+										k = substrings[0].size();
+										while (substrings[j][t] == ' ')
 											t++;
-										if (temp == "")
-											temp = substrings[0].substr(t, ++k - t);
-										else
-											temp += substrings[0].substr(t, ++k - t);
-										temp += ",";
-										substrings[0] = substrings[0].substr(substrings[0].find(",") + 1, string::npos);
+										while (k >= 0 && substrings[j][--k] == ' ') ;
+										if (substrings[j][k + 1] != ' ')
+											k++;
+										substrings[0] = substrings[0].substr(t, k - t + 1);
+										if (temp != "")
+											substrings[0] = temp + substrings[0];
+										this->__clients[j].__command.set_params(substrings);
 									}
-									t = 0;
-									k = substrings[0].size();
-									while (substrings[j][t] == ' ')
-										t++;
-									while (k >= 0 && substrings[j][--k] == ' ') ;
-									if (substrings[j][k + 1] != ' ')
-										k++;
-									substrings[0] = substrings[0].substr(t, k - t + 1);
-									if (temp != "")
-										substrings[0] = temp + substrings[0];
-									this->__clients[j].__command.set_params(substrings);
-
-									cout << "Its PRIVMSG command \n";
-									Channel c("1337");
-									c.add_client(4);
-									c.add_client(5);
-									std::vector<Channel> cx;
-									cx.push_back(c);
-									if (this->__clients[j].__command.get_command()  == "PRIVMSG")
-									{
-										if (this->__clients[j].__command.get_params().size() != 2)
-											this->__clients[j].__command.send_msg(461, this->__clients[j].get_fd());
-										else
-											this->__clients[j].__command.send_msg(this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), cx), this->__clients[j].get_fd());
-									}
-									else if (this->__clients[j].__command.get_command()  == "JOIN")
-									{
-										//
-									}
+									// cout << "Its PRIVMSG command \n";
+									// Channel c("1337");
+									// c.add_client(4);
+									// c.add_client(5);
+									// std::vector<Channel> cx;
+									// cx.push_back(c);
+									// if (this->__clients[j].__command.get_command()  == "PRIVMSG")
+									// {
+									// 	try
+									// 	{
+									// 		if (this->__clients[j].__command.get_params().size() != 2)
+									// 			this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+									// 		else
+									// 		{
+									// 			this->__clients[j].__command.send_error(this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), cx, this->__clients[j].get_fd()), this->__clients[j].get_fd());
+									// 		}
+									// 	}
+									// 	catch(const std::exception& e)
+									// 	{
+									// 		std::cerr << e.what() << '\n';
+									// 		close (this->__clients[j].get_fd());
+									// 		std::cout << "Disconnet Client " << this->__clients[j].get_fd() << std::endl;
+									// 		this->__clients.erase(this->__clients.begin() + j);
+									// 	}
+									// }
+									// else if (this->__clients[j].__command.get_command()  == "JOIN")
+									// {
+									// 	//
+									// }
 								}
 							}
 								this->__clients[j].__command.erase_command();
@@ -333,30 +348,30 @@ void	Server::connect_client(int nb_client)
 	try
 	{
 		if (!this->__clients[nb_client].__command.check_command())
-			this->__clients[nb_client].__command.send_msg(ERR_UNKNOWNCOMMAND, this->__clients[nb_client].get_fd());
+			this->__clients[nb_client].__command.send_error(ERR_UNKNOWNCOMMAND, this->__clients[nb_client].get_fd());
 		else if (!this->__clients[nb_client].__command.get_registration().get_pass())
 		{
 			if (!check_order(this->__clients[nb_client].__command.get_command(), 1))
-				this->__clients[nb_client].__command.send_msg(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].__command.send_error(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
 			else if (!this->__clients[nb_client].__command.check_registration())
-				this->__clients[nb_client].__command.send_msg(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].__command.send_error(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
 			else if (this->__clients[nb_client].__command.get_command() != this->__password)
-				this->__clients[nb_client].__command.send_msg(ERR_WRONGPASSWORD, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].__command.send_error(ERR_WRONGPASSWORD, this->__clients[nb_client].get_fd());
 			else 
 				this->__clients[nb_client].__command.set_pass_registration(true);
 		}
 		else if (this->__clients[nb_client].__command.get_registration().get_pass() && !this->__clients[nb_client].__command.get_registration().get_nick())
 		{
 			if (!check_order(this->__clients[nb_client].__command.get_command(), 2))
-				this->__clients[nb_client].__command.send_msg(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].__command.send_error(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
 			else if (this->__clients[nb_client].__command.chack_already_registred())
-				this->__clients[nb_client].__command.send_msg(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].__command.send_error(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
 			else if (!this->__clients[nb_client].__command.check_registration())
-				this->__clients[nb_client].__command.send_msg(ERR_NONICKNAMEGIVEN, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].__command.send_error(ERR_NONICKNAMEGIVEN, this->__clients[nb_client].get_fd());
 			else if (this->parse_input(this->__clients[nb_client].__command.get_command(), 2) == 0)
-				this->__clients[nb_client].__command.send_msg(ERR_ERRONEUSNICKNAME, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].__command.send_error(ERR_ERRONEUSNICKNAME, this->__clients[nb_client].get_fd());
 			else if (this->parse_input(this->__clients[nb_client].__command.get_command(), 2) == -1)
-				this->__clients[nb_client].__command.send_msg(ERR_NICKNAMEINUSE, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].__command.send_error(ERR_NICKNAMEINUSE, this->__clients[nb_client].get_fd());
 			else
 			{
 				this->__clients[nb_client].set_nickname(this->__clients[nb_client].__command.get_command());
@@ -366,20 +381,20 @@ void	Server::connect_client(int nb_client)
 		else if (this->__clients[nb_client].__command.get_registration().get_nick() && !this->__clients[nb_client].__command.get_registration().get_user())
 		{
 			if (!check_order(this->__clients[nb_client].__command.get_command(), 3))
-				this->__clients[nb_client].__command.send_msg(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].__command.send_error(ERR_REGIST_ORDER, this->__clients[nb_client].get_fd());
 			else if (!check_user_params(this->__clients[nb_client].__command.get_command()))
-				this->__clients[nb_client].__command.send_msg(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].__command.send_error(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
 			else if (!this->__clients[nb_client].__command.check_registration())
-				this->__clients[nb_client].__command.send_msg(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].__command.send_error(ERR_NEEDMOREPARAMS, this->__clients[nb_client].get_fd());
 			else if (this->__clients[nb_client].__command.chack_already_registred() || (this->parse_input(this->__clients[nb_client].__command.get_command(), 1) == -1))
-				this->__clients[nb_client].__command.send_msg(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].__command.send_error(ERR_ALREADYREGISTRED, this->__clients[nb_client].get_fd());
 			else if (this->parse_input(this->__clients[nb_client].__command.get_command(), 1) == 0)
-				this->__clients[nb_client].__command.send_msg(ERR_ERRONEUSUSERNAME, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].__command.send_error(ERR_ERRONEUSUSERNAME, this->__clients[nb_client].get_fd());
 			else
 			{
 				this->__clients[nb_client].set_username(this->__clients[nb_client].__command.get_command());
 				this->__clients[nb_client].__command.set_user_registration(true);
-				// this->__clients[nb_client].__command.send_msg(RPL_WELCOME, this->__clients[nb_client].get_fd());
+				// this->__clients[nb_client].__command.send_error(RPL_WELCOME, this->__clients[nb_client].get_fd());
 				this->__clients[nb_client].set_is_registred(true);
 			}
 		}

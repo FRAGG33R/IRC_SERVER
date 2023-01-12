@@ -102,7 +102,12 @@ void	Parser::set_user_registration(bool __bool)
 	this->regsitration.set_user(__bool);
 }
 
-void	Parser::send_msg(int __err, int fd)
+void Parser::send_message(std::string __msg, int __fd)
+{
+	if (send(__fd, __msg.c_str(), __msg.size(), 0) == -1)
+		throw Error("Failed to send message");
+}
+void	Parser::send_error(int __err, int fd)
 {	
 	switch (__err)
 	{
@@ -173,6 +178,9 @@ void	Parser::send_msg(int __err, int fd)
 		case ERR_NOSUCHNICK : {
 			(send(fd, MSG_401, strlen(MSG_401), 0) == -1) ? throw Error("failling to send msg") : 1;
 			break;
+		}
+		case -1 : {
+			throw Error("failling to send msg");
 		}
 		default : { break ; }
 	}
