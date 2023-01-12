@@ -16,6 +16,7 @@ class Channel
 		~Channel();
 		std::string									getchannelname();
 		void										add_client(std::pair<int, std::string>);
+		void										add_operator(std::pair<int, std::string>);
 		size_t										get_clients_size();
 		std::vector<std::pair<int, std::string> >	get_clients(void);
 		std::vector<std::pair<int, std::string> >	get_operators(void);

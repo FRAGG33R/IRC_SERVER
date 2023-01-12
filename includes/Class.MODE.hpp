@@ -3,7 +3,9 @@
 
 # include <iostream>
 # include <vector>
+# include <sstream>
 # include "Class.channel.hpp"
+# include <sys/socket.h>
 
 class Mode 
 {
@@ -17,7 +19,7 @@ class Mode
 	char 			getType();
     void 			setChannelName(std::string channel_name);
 	std::string		getChannelName();
-	int				parseMode(std::vector<std::string> __params, std::vector<Channel> __channels);
-
+	int				parseMode(std::vector<std::string> __params, std::vector<Channel> &__channels, int __sender, std::string __sender_name);
 };
+
 #endif
