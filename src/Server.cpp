@@ -104,6 +104,9 @@ void	Server::create_server(void)
 		throw Error("listen error : could not listen on socket");
 }
 
+
+
+
 void	Server::run()
 {
 	int				__connection;
@@ -181,10 +184,11 @@ void	Server::run()
 								// }
 								// else
 								// {
-									this->__clients[j].__command.set_command(this->__clients[j].__command.get_command().substr(0, this->__clients[j].__command.get_command().size() - 1));
-									std::vector<std::string> substrings;
+								/* 	this->__clients[j].__command.set_command(this->__clients[j].__command.get_command().substr(0, this->__clients[j].__command.get_command().size() - 1));
+									// std::vector<std::string> substrings;
 									std::stringstream stream(this->__clients[j].__command.get_command());
 									std::string temp;
+
 									while (getline(stream, temp, ' ')){
 										if (!temp.empty())
 											substrings.push_back(temp);
@@ -195,13 +199,74 @@ void	Server::run()
 										substrings.erase(substrings.begin());
 										this->__clients[j].__command.set_params(substrings);
 										substrings.clear();
-									}
-									if (this->__clients[j].__command.get_command() == "PRIVMSG")
+									} */
+									std::vector<string> substrings;
+									string				temp;
+									int					i;
+
+									backup = this->__clients[j].__command.get_command();
+									if (backup.find(" ") != string::npos)
 									{
-										// for (size_t i = 0; i < this->__clients[j].__command.get_params().size(); i++)
-										// 	cout << this->__clients[j].__command.get_params()[i] << endl;
-										this->__clients[j].__command.send_msg(this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), this->get_channels()), this->__clients[j].get_fd());
+										this->__clients[j].__command.set_command(backup.substr(0, backup.find(" ")));
+										backup = backup.substr(backup.find(" ") + 1, string::npos);
+										for (i = 0;backup[i] == ' '; i++);
+										backup = backup.substr(i, string::npos);
+										i = backup.size() - 1;
+										while (i >= 0 && backup[i] != ':')
+											i--;
+										if (i > 0)
+										{
+											temp = backup.substr(i, string::npos);
+											backup = backup.substr(0, i);
+										}
+										if (!backup.empty())
+											substrings.push_back(backup);
+										if (!temp.empty())
+											substrings.push_back(temp);
 									}
+									else
+										this->__clients[j].__command.set_command(backup);
+
+
+									temp = "";
+									size_t k;
+									size_t t;
+									while (substrings[0].find(",") != string::npos)
+									{
+										t = 0;
+										k = substrings[0].find(",");
+										while (k >= 0 && substrings[j][--k] == ' ') ;
+										while (substrings[0][t] == ' ')
+											t++;
+										if (temp == "")
+											temp = substrings[0].substr(t, ++k - t);
+										else
+											temp += substrings[0].substr(t, ++k - t);
+										temp += ",";
+										substrings[0] = substrings[0].substr(substrings[0].find(",") + 1, string::npos);
+									}
+									t = 0;
+									k = substrings[0].size();
+									while (substrings[j][t] == ' ')
+										t++;
+									if (t > 0) t--;
+									while (k >= 0 && substrings[j][--k] == ' ') ;
+									substrings[0] = substrings[0].substr(t, k);
+									if (temp != "")
+										substrings[0] = temp + substrings[0];
+
+									cout << "the command is : <<" << this->__clients[j].__command.get_command() << ">>\n";
+									cout << "the arguments : \n";
+									for (size_t j = 0; j < substrings.size(); j++)
+										cout << "<<" << substrings[j] << ">>\n";
+									
+									this->__clients[j].__command.set_params(substrings);
+									// if (this->__clients[j].__command.get_command() == "PRIVMSG")
+									// {
+									// 	// for (size_t i = 0; i < this->__clients[j].__command.get_params().size(); i++)
+									// 	// 	cout << this->__clients[j].__command.get_params()[i] << endl;
+									// 	this->__clients[j].__command.send_msg(this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), this->get_channels()), this->__clients[j].get_fd());
+									// }
 								// }
 								this->__clients[j].__command.erase_command();
 							}
