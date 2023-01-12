@@ -245,10 +245,17 @@ void	Server::run()
 									c.add_client(5);
 									std::vector<Channel> cx;
 									cx.push_back(c);
-									if (this->__clients[j].__command.get_params().size() != 2)
+									if (this->__clients[j].__command.get_command()  == "PRIVMSG")
+									{
+										if (this->__clients[j].__command.get_params().size() != 2)
 											this->__clients[j].__command.send_msg(461, this->__clients[j].get_fd());
-									else
-										this->__clients[j].__command.send_msg(this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), cx), this->__clients[j].get_fd());
+										else
+											this->__clients[j].__command.send_msg(this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), cx), this->__clients[j].get_fd());
+									}
+									else if (this->__clients[j].__command.get_command()  == "JOIN")
+									{
+										//
+									}
 								}
 							}
 								this->__clients[j].__command.erase_command();

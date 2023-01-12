@@ -87,12 +87,13 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 		__repair.setMessage(__params[1].substr(1, __params[1].size()));
 	__repair.setReceivers(__clients_fds);
 	//debug
-	std::cout << "The receivers" << std::endl;
-	for (size_t i = 0; i < __repair.getReceivers().size(); i++)
-	{
-		std::cout << __repair.getReceivers()[i] << std::endl;
-	}
-	std::cout << "The message" << std::endl;
-	std::cout << __repair.getMessage() << std::endl;
+	// std::cout << "The receivers" << std::endl;
+	// for (size_t i = 0; i < __repair.getReceivers().size(); i++)
+	// {
+	// 	std::cout << __repair.getReceivers()[i] << std::endl;
+	// }
+	// std::cout << "The message" << std::endl;
+	// std::cout << __repair.getMessage() << std::endl;
+	
 	return (0);
 }
