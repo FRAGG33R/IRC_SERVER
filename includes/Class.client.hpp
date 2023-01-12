@@ -19,7 +19,7 @@ class Client
 	public :
 		Parser	__command;
 		Privmsg	__privmsg;
-		// Join	__join;
+		Join	__join;
 		bool	__username_filled;
 		bool	__nickname_filled;
 		string	__request;
