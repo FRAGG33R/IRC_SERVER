@@ -3,6 +3,7 @@
 
 #include "Class.parser.hpp"
 #include "Class.commands.hpp"
+#include "Class.JOIN.hpp"
 #include "Class.PRIVMSG.hpp"
 
 class Client
@@ -18,6 +19,7 @@ class Client
 	public :
 		Parser	__command;
 		Privmsg	__privmsg;
+		// Join	__join;
 		bool	__username_filled;
 		bool	__nickname_filled;
 		string	__request;
@@ -39,5 +41,6 @@ class Client
 		void    set_is_operator(bool is_operator);
 		void    set_is_registred(bool is_registred);
 		void	set_authentication(bool authentication);
+
 };
 #endif

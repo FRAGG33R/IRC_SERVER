@@ -9,6 +9,8 @@ class Channel
 		std::string			__channel_name;
 		std::string			__password;
 		std::vector<int>	__clients;
+		std::vector<int>	__operators;
+
 	public:
 		Channel();
 		Channel(std::string channel_name);

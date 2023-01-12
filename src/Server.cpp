@@ -188,6 +188,8 @@ void	Server::run()
 									std::vector<std::string> substrings;
 									std::string temp;
 									int					index;
+									int					index_separator = 0;
+
 									backup = this->__clients[j].__command.get_command();
 									if (backup.find(" ") != string::npos)
 									{
@@ -196,12 +198,16 @@ void	Server::run()
 										for (index = 0;backup[index] == ' '; index++);
 										backup = backup.substr(index, string::npos);
 										index = backup.size() - 1;
-										while (index >= 0 && backup[index] != ':')
-											index--;
-										if (index > 0)
+										while (index >= 0)
 										{
-											temp = backup.substr(index, string::npos);
-											backup = backup.substr(0, index);
+											if (backup[index] == ':')
+												index_separator = index;
+											index--;
+										}
+										if (index_separator > 0)
+										{
+											temp = backup.substr(index_separator, string::npos);
+											backup = backup.substr(0, index_separator);
 										}
 										if (!backup.empty())
 											substrings.push_back(backup);
@@ -210,35 +216,38 @@ void	Server::run()
 									}
 									else
 										this->__clients[j].__command.set_command(backup);
-									temp = "";
-									size_t k;
-									size_t t;
-									while (substrings[0].find(",") != string::npos)
+									if (substrings.size() != 0)
 									{
+										cout << "<<" << substrings.size() << ">>\n";
+										temp = "";
+										size_t k;
+										size_t t;
+										while (substrings[0].find(",") != string::npos)
+										{
+											t = 0;
+											k = substrings[0].find(",");
+											while (k >= 0 && substrings[j][--k] == ' ') ;
+											while (substrings[0][t] == ' ')
+												t++;
+											if (temp == "")
+												temp = substrings[0].substr(t, ++k - t);
+											else
+												temp += substrings[0].substr(t, ++k - t);
+											temp += ",";
+											substrings[0] = substrings[0].substr(substrings[0].find(",") + 1, string::npos);
+										}
 										t = 0;
-										k = substrings[0].find(",");
-										while (k >= 0 && substrings[j][--k] == ' ') ;
-										while (substrings[0][t] == ' ')
+										k = substrings[0].size();
+										while (substrings[j][t] == ' ')
 											t++;
-										if (temp == "")
-											temp = substrings[0].substr(t, ++k - t);
-										else
-											temp += substrings[0].substr(t, ++k - t);
-										temp += ",";
-										substrings[0] = substrings[0].substr(substrings[0].find(",") + 1, string::npos);
+										while (k >= 0 && substrings[j][--k] == ' ') ;
+										if (substrings[j][k + 1] != ' ')
+											k++;
+										substrings[0] = substrings[0].substr(t, k - t + 1);
+										if (temp != "")
+											substrings[0] = temp + substrings[0];
 									}
-									t = 0;
-									k = substrings[0].size();
-									while (substrings[j][t] == ' ')
-										t++;
-									while (k >= 0 && substrings[j][--k] == ' ') ;
-									if (substrings[j][k + 1] != ' ')
-										k++;
-									substrings[0] = substrings[0].substr(t, k - t + 1);
-									if (temp != "")
-										substrings[0] = temp + substrings[0];
 									this->__clients[j].__command.set_params(substrings);
-
 									cout << "Its PRIVMSG command \n";
 									Channel c("1337");
 									c.add_client(4);
@@ -254,7 +263,7 @@ void	Server::run()
 									}
 									else if (this->__clients[j].__command.get_command()  == "JOIN")
 									{
-										//
+										// this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params());
 									}
 								}
 							}
@@ -325,7 +334,7 @@ bool	check_user_params(string command)
 		else
 			command.erase();
 	}
-	return (__nb_params == 4);
+	return (__nb_params >= 5);
 }
 
 void	Server::connect_client(int nb_client)
@@ -379,7 +388,7 @@ void	Server::connect_client(int nb_client)
 			{
 				this->__clients[nb_client].set_username(this->__clients[nb_client].__command.get_command());
 				this->__clients[nb_client].__command.set_user_registration(true);
-				// this->__clients[nb_client].__command.send_msg(RPL_WELCOME, this->__clients[nb_client].get_fd());
+				this->__clients[nb_client].__command.send_msg(RPL_WELCOME, this->__clients[nb_client].get_fd());
 				this->__clients[nb_client].set_is_registred(true);
 			}
 		}
