@@ -13,6 +13,6 @@ class Join
 		// std::string __keys;
 	public:
 		Join();
-		void	set_channels_keys(std::vector<std::string> __params/* , std::vector<Channel> __channels, int __new_client, std::string __sender_nickname */);
+		void	set_channels_keys(std::vector<std::string> __params, std::vector<Channel> __channels, int __new_client, std::string __sender_nickname);
 };
 #endif

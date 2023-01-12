@@ -219,7 +219,6 @@ void	Server::run()
 										this->__clients[j].__command.set_command(backup);
 									if (substrings.size() != 0)
 									{
-										cout << "<<" << substrings.size() << ">>\n";
 										temp = "";
 										size_t k;
 										size_t t;
@@ -254,11 +253,15 @@ void	Server::run()
 										for (size_t x = 0; x < substrings.size(); x++)
 											cout << "|" << substrings[x] << "|" << endl;
 									}
-									Channel c("1337");
-									c.add_client(4);
-									c.add_client(5);
-									std::vector<Channel> cx;
-									cx.push_back(c);
+									Channel c1("Channel1");
+									Channel c2("Channel2");
+									c1.add_operator(std::pair<int, std::string> (4, "mohamed"));
+									c1.add_client(std::pair<int, std::string> (5, "oussama"));
+									c2.add_operator(std::pair<int, std::string> (6, "mohamed1"));
+									c2.add_client(std::pair<int, std::string> (7, "oussama1"));
+									std::vector<Channel> __Channel_list;
+									__Channel_list.push_back(c1);
+									__Channel_list.push_back(c2);
 									if (this->__clients[j].__command.get_command()  == "PRIVMSG")
 									{
 										try
@@ -267,7 +270,7 @@ void	Server::run()
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 											else
 											{
-												int res  = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), cx, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
+												int res  = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
 												if ( res == -1)
 													throw Error("Failed to send message to client");
 												else
@@ -284,10 +287,22 @@ void	Server::run()
 									}
 									else if (this->__clients[j].__command.get_command()  == "JOIN")
 									{
-										this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params());
+										this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(),  __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
 									}
-								// }
-							}
+									else if  (this->__clients[j].__command.get_command()  == "PART")
+									{
+										
+									}
+									else if (this->__clients[j].__command.get_command() == "MODE")
+									{
+										if (this->__clients[j].__command.get_params().size() == 0)
+											this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+										else
+											if (this->__clients[j].__mode.parseMode(this->__clients[j].__command.get_params(),  __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname()) == -1)
+												throw Error("Failed to send message to client");
+									}
+								}
+							// }
 								this->__clients[j].__command.erase_command();
 							memset(__buffer, 0, sizeof(__buffer));
 						}

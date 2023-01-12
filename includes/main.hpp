@@ -37,7 +37,7 @@ using std::cerr;
 # include "Class.error.hpp"
 # include "Class.parser.hpp"
 # include "Class.registration.hpp"
-// # include "Class.PRIVMSG.hpp"
+
 
 
 
@@ -74,7 +74,6 @@ using std::cerr;
 #define ERR_TOOMANYTARGETS 407
 #define MSG_401 ":* 401 * No such nick/channel\n"
 #define ERR_NOSUCHNICK 401
-// # include "Class.channel.hpp"
 
 //server informations
 
