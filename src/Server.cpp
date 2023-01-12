@@ -247,6 +247,7 @@ void	Server::run()
 										if (temp != "")
 											substrings[0] = temp + substrings[0];
 										this->__clients[j].__command.set_params(substrings);
+
 										for (size_t x = 0; x < substrings.size(); x++)
 											cout << "|" << substrings[x] << "|" << endl;
 									}
@@ -285,6 +286,10 @@ void	Server::run()
 									else if (this->__clients[j].__command.get_command()  == "JOIN")
 									{
 										// this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params());
+									}
+									else if  (this->__clients[j].__command.get_command()  == "PART")
+									{
+										
 									}
 									else if (this->__clients[j].__command.get_command() == "MODE")
 									{

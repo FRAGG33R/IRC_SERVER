@@ -1,7 +1,7 @@
 SRC_FILE = main.cpp \
 			src/Client.cpp src/Channel.cpp src/Server.cpp src/Error.cpp src/Parsing.cpp \
 			src/Parser.cpp src/Registration.cpp src/Commands.cpp src/Privmsg.cpp src/Join.cpp \
-			src/mode.cpp
+			src/mode.cpp src/Part.cpp
 
 OBJ_FILE = $(SRC_FILE:.cpp=.o)
 
