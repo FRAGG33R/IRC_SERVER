@@ -27,11 +27,11 @@ Server *Server::getInstance(string password, int port, string name )
 	return __instance;
 }
 
-vector<string>	Server::get_clients(void)
+vector<std::pair<string, int> >	Server::get_clients(void)
 {
-	vector<string>    __returned_clients;
+	vector<std::pair<string, int> >    __returned_clients;
 	for (size_t i = 0; i < this->__clients.size(); i++)
-		__returned_clients.push_back(this->__clients[i].get_nickname());
+		__returned_clients.push_back(std::pair<string, int>(this->__clients[i].get_nickname(), this->__clients[i].get_fd()));
 	return (__returned_clients);
 }
 
@@ -164,23 +164,23 @@ void	Server::run()
 							this->__clients[j].__command.set_command(this->__clients[j].__command.get_command() + string(__buffer));
 							if (this->__clients[j].__command.get_command().find_last_of("\n") != std::string::npos || this->__clients[j].__command.get_command().find_last_of("\r"))
 							{
-								// if (!this->__clients[j].is_registred())
-								// {
-								// 	backup = this->__clients[j].__command.get_command();
-								// 	while (backup.find("\r") != string::npos)
-								// 	{
-								// 		size_t j = backup.find("\r");
-								// 		backup.erase(j, 1);
-								// 	}
-								// 	while (!backup.empty())
-								// 	{
-								// 		this->__clients[j].__command.set_command(backup.substr(0, backup.find("\n") + 1));
-										// this->connect_client(j);
-								// 		backup = backup.substr(backup.find("\n") + 1, string::npos);
-								// 	}
-								// }
-								// else
-								// {
+								if (!this->__clients[j].is_registred())
+								{
+									backup = this->__clients[j].__command.get_command();
+									while (backup.find("\r") != string::npos)
+									{
+										size_t j = backup.find("\r");
+										backup.erase(j, 1);
+									}
+									while (!backup.empty())
+									{
+										this->__clients[j].__command.set_command(backup.substr(0, backup.find("\n") + 1));
+										this->connect_client(j);
+										backup = backup.substr(backup.find("\n") + 1, string::npos);
+									}
+								}
+								else
+								{
 									this->__clients[j].__command.set_command(this->__clients[j].__command.get_command().substr(0, this->__clients[j].__command.get_command().size() - 1));
 									std::vector<std::string> substrings;
 									std::stringstream stream(this->__clients[j].__command.get_command());
@@ -198,11 +198,18 @@ void	Server::run()
 									}
 									if (this->__clients[j].__command.get_command() == "PRIVMSG")
 									{
-										// for (size_t i = 0; i < this->__clients[j].__command.get_params().size(); i++)
-										// 	cout << this->__clients[j].__command.get_params()[i] << endl;
-										this->__clients[j].__command.send_msg(this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), this->get_channels()), this->__clients[j].get_fd());
+										cout << "Its PRIVMSG command \n";
+										Channel c("1337");
+										c.add_client(4);
+										c.add_client(5);
+										std::vector<Channel> cx;
+										cx.push_back(c);
+										if (this->__clients[j].__command.get_params().size() != 2)
+												this->__clients[j].__command.send_msg(461, this->__clients[j].get_fd());
+										else
+											this->__clients[j].__command.send_msg(this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), cx), this->__clients[j].get_fd());
 									}
-								// }
+								}
 								this->__clients[j].__command.erase_command();
 							}
 							memset(__buffer, 0, sizeof(__buffer));

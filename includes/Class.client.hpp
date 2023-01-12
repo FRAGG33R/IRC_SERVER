@@ -1,10 +1,10 @@
 #ifndef CLASS_CLIENT_HPP
- #define CLASS_CLIENT_HPP
+# define CLASS_CLIENT_HPP
 
 #include "Class.parser.hpp"
-#include "main.hpp"
 #include "Class.commands.hpp"
 #include "Class.PRIVMSG.hpp"
+
 class Client
 {
 	private :

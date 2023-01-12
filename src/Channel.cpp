@@ -1,12 +1,12 @@
 # include "../includes/Class.channel.hpp"
 
 
-Channel::Channel(string channel_name)
+Channel::Channel(std::string channel_name)
 {
 	this->__channel_name = channel_name;
 }
 
-string	Channel::getchannelname(){
+std::string	Channel::getchannelname(){
 	return __channel_name;
 }
 
@@ -25,7 +25,7 @@ void	Channel::remove_client(int i){
 	this->__clients.erase(this->__clients.begin() + i);
 }
 
-vector<int>	Channel::get_clients()
+std::vector<int>	Channel::get_clients()
 {
 	return (this->__clients);
 }
