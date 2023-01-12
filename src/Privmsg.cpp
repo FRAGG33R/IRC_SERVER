@@ -56,6 +56,8 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 		if (!temp.empty())
 			__given_clients.push_back(temp);
 	}
+	std::cout << __params[0] << std::endl;
+	std::cout << __params[1] << std::endl;
 	for (size_t i = 0; i < __given_clients.size(); i++)
 	{
 		if (__given_clients[i][0] == '#')
@@ -65,7 +67,7 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 				if (__given_clients[i].substr(1, __given_clients[i].size()) == __channels[k].getchannelname())
 				{
 					for (size_t l = 0; l < __channels[k].get_clients().size(); l++) {
-						this->setMessage(":* PRIVMSG * :" + __message + "\n");
+						this->setMessage(":" + __sender_nickname + " PRIVMSG * :" + __message  + "\n");
 						std::cout << "The full message is " << this->getMessage();
 						if (send(__channels[k].get_clients()[l], this->getMessage().c_str(), this->getMessage().size(), 0) == -1)
 							return (-1);
