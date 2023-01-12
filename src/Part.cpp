@@ -8,6 +8,9 @@ void    Part::part(std::vector<std::string> __params, int __client, std::vector<
     std::string                 __temp;
     std::string                 __message;
 
+	(void)__sender;
+	(void)__sender_nickname;
+
     while(getline(__stream, __temp, ','))
     {
         if (!__temp.empty())

@@ -293,7 +293,6 @@ void	Server::run()
 									}
 									else if (this->__clients[j].__command.get_command() == "MODE")
 									{
-										std::cout << "-> This is MODE command \n";
 										if (this->__clients[j].__command.get_params().size() == 0)
 											this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 										else

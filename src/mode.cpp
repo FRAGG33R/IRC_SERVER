@@ -47,10 +47,6 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 	}
 	__params = __temp_vec;
 	__temp_vec.clear();
-	for (size_t  i = 0; i < __params.size(); ++i)
-	{
-		std::cout << "<" << __params[i] << ">" << std::endl;
-	}
 	if (__params[0][0] != '#')
 	{
 		if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
