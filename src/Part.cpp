@@ -1,4 +1,4 @@
-#include "../includes/Class.part.hpp"
+#include "../includes/Class.PART.hpp"
 
 void    Part::part(std::vector<std::string> __params, int __client, std::vector<Channel> __channels, int __sender, std::string __sender_nickname)
 {
