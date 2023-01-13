@@ -7,42 +7,52 @@ void    Kick::kick(std::vector<std::string> __params, int __client, std::vector<
     
     for (size_t i = 0; i < __channels.size(); i++)
     {
-        if (!this->searchChannel(__nameChannel, __channels))
+        if (__params[0][0] == '#')
         {
-            __message = __nameChannel + " :No such channel\n";
-            send(__client, __message.c_str(), __message.size(), 0);
-            break ; 
-        }
-        else if (!this->searchClient(__client, __channels, __nameChannel))
-        {
-            __message = __nameChannel + " :You're not on that channel\n";
-            send(__client, __message.c_str(), __message.size(), 0);
-            break ;
-        }
-        else if (this->searchClient(__client, __channels, __nameChannel))
-        {
-            if (!this->checkOperator(__client, __channels, __nameChannel))
+
+            if (!this->searchChannel(__nameChannel, __channels))
             {
-                __message = __nameChannel + " :You're not channel operator\n";
+                __message = __nameChannel + " :No such channel\n";
                 send(__client, __message.c_str(), __message.size(), 0);
+                break ; 
             }
-            else
+            else if (!this->searchClient(__client, __channels, __nameChannel))
             {
-                if (this->searchClient(__params[1], __channels, __nameChannel))
+                __message = __nameChannel + " :You're not on that channel\n";
+                send(__client, __message.c_str(), __message.size(), 0);
+                break ;
+            }
+            else if (this->searchClient(__client, __channels, __nameChannel))
+            {
+                if (!this->checkOperator(__client, __channels, __nameChannel))
                 {
-                    if (__params[2][0] == ':')
+                    __message = __nameChannel + " :You're not channel operator\n";
+                    send(__client, __message.c_str(), __message.size(), 0);
+                }
+                else
+                {
+                    if (this->searchClient(__params[1], __channels, __nameChannel))
                     {
-                        this->noticeAll(__channels[i], __client, true, __params[2]);
-                        __channels[i].remove_client(this->indexOfClient(__params[1], __channels, __nameChannel));
-                    }
-                    else
-                    {
-                        this->noticeAll(__channels[i], __client, false, NULL);
-                        __channels[i].remove_client(this->indexOfClient(__params[1], __channels, __nameChannel));
+                        if (__params[2][0] == ':')
+                        {
+                            this->noticeAll(__channels[i], __client, true, __params[2]);
+                            __channels[i].remove_client(this->indexOfClient(__params[1], __channels, __nameChannel));
+                        }
+                        else
+                        {
+                            this->noticeAll(__channels[i], __client, false, NULL);
+                            __channels[i].remove_client(this->indexOfClient(__params[1], __channels, __nameChannel));
+                        }
                     }
                 }
             }
         }
+        else
+        {
+            __message = __params[0] +" :No such channel\n";
+			send(__client, __message.c_str(), __message.size(), 0);
+        }
+
     }
 }
 
