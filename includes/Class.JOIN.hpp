@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 # include "Class.channel.hpp"
+# include <sys/socket.h>
 
 class Join
 {
@@ -13,6 +14,6 @@ class Join
 		// std::string __keys;
 	public:
 		Join();
-		void	set_channels_keys(std::vector<std::string> __params, std::vector<Channel> __channels, int __new_client, std::string __sender_nickname);
+		int	set_channels_keys(std::vector<std::string> __params , std::vector<Channel> &__channels, int __new_client, std::string __sender_nickname, std::vector<Channel> &ref_channels);
 };
 #endif

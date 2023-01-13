@@ -278,7 +278,7 @@ void	Server::run()
 									}
 									else if (this->__clients[j].__command.get_command()  == "JOIN")
 									{
-										this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(),  __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
+										this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(),  __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname(), this->get_ref_channels());
 									}
 									else if  (this->__clients[j].__command.get_command()  == "PART")
 									{
@@ -302,6 +302,11 @@ void	Server::run()
 			}
 		}
 	}
+}
+
+vector<Channel>	&Server::get_ref_channels(void)
+{
+	return (this->__channels);
 }
 
 // void	Server::join_client_to_channel(string nick_name, string shannel)
