@@ -28,6 +28,11 @@ Server *Server::getInstance(string password, int port, string name )
 	return __instance;
 }
 
+vector<Channel>	&Server::get_ref_channels(void)
+{
+	return (this->__channels);
+}
+
 vector<std::pair<string, int> >	Server::get_clients(void)
 {
 	vector<std::pair<string, int> >    __returned_clients;
@@ -282,7 +287,7 @@ void	Server::run()
 									}
 									else if  (this->__clients[j].__command.get_command()  == "PART")
 									{
-										
+										this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), __Channel_list);
 									}
 									else if (this->__clients[j].__command.get_command() == "MODE")
 									{
