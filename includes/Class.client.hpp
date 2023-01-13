@@ -1,11 +1,12 @@
 #ifndef CLASS_CLIENT_HPP
 # define CLASS_CLIENT_HPP
 
-#include "Class.parser.hpp"
-#include "Class.commands.hpp"
-#include "Class.JOIN.hpp"
-#include "Class.PRIVMSG.hpp"
-#include "Class.MODE.hpp"
+# include "Class.parser.hpp"
+# include "Class.commands.hpp"
+# include "Class.JOIN.hpp"
+# include "Class.PRIVMSG.hpp"
+# include "Class.MODE.hpp"
+# include "Class.part.hpp"
 
 class Client
 {
@@ -20,6 +21,7 @@ class Client
 	public :
 		Parser	__command;
 		Privmsg	__privmsg;
+		Part	__part;
 		Join	__join;
 		Mode	__mode;
 		bool	__username_filled;

@@ -29,6 +29,7 @@ class Server
 		static Server*	getInstance(string password, int port, string name = "CW9");
 		vector<std::pair<string, int> >	get_clients(void);
 		vector<Channel>	get_channels(void);
+		vector<Channel>	&get_ref_channels(void);
 		void			add_to_poll(struct pollfd *__poll_fds, int __fd);
 		void			full_close(struct pollfd *__poll_fd);
 		void			remove_from_poll(struct pollfd *__poll_fds, int __fd);
