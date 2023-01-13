@@ -28,6 +28,11 @@ Server *Server::getInstance(string password, int port, string name )
 	return __instance;
 }
 
+vector<Channel>	&Server::get_ref_channels(void)
+{
+	return (this->__channels);
+}
+
 vector<std::pair<string, int> >	Server::get_clients(void)
 {
 	vector<std::pair<string, int> >    __returned_clients;
@@ -219,7 +224,6 @@ void	Server::run()
 										this->__clients[j].__command.set_command(backup);
 									if (substrings.size() != 0)
 									{
-										cout << "<<" << substrings.size() << ">>\n";
 										temp = "";
 										size_t k;
 										size_t t;
@@ -248,16 +252,13 @@ void	Server::run()
 										if (temp != "")
 											substrings[0] = temp + substrings[0];
 										this->__clients[j].__command.set_params(substrings);
-
-										for (size_t x = 0; x < substrings.size(); x++)
-											cout << "|" << substrings[x] << "|" << endl;
 									}
-									Channel c("1337");
-									c.add_client(std::pair<int, std::string> (4, "mohamed"));
-									c.add_client(std::pair<int, std::string> (5, "oussama"));
-									std::vector<Channel> cx;
-									cx.push_back(c);
-									if (this->__clients[j].__command.get_command()  == "PRIVMSG")
+									Channel c1("Channel1");
+									c1.add_client(std::pair<int, std::string> (4, "mohamed"));
+									c1.add_client(std::pair<int, std::string> (5, "oussama"));
+									std::vector<Channel> __Channel_list;
+									__Channel_list.push_back(c1);
+									if (this->__clients[j].__command.get_command()  == "PRIVMSG" || this->__clients[j].__command.get_command()  == "NOTICE")
 									{
 										try
 										{
@@ -265,7 +266,7 @@ void	Server::run()
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 											else
 											{
-												int res  = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), cx, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
+												int res  = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
 												if ( res == -1)
 													throw Error("Failed to send message to client");
 												else
@@ -282,19 +283,18 @@ void	Server::run()
 									}
 									else if (this->__clients[j].__command.get_command()  == "JOIN")
 									{
-										// this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params());
+										this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(),  __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname(), this->get_ref_channels());
 									}
 									else if  (this->__clients[j].__command.get_command()  == "PART")
 									{
-										
+										this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), __Channel_list);
 									}
 									else if (this->__clients[j].__command.get_command() == "MODE")
 									{
-										std::cout << "-> This is MODE command \n";
-										if (this->__clients[j].__command.get_params().size() != 3)
+										if (this->__clients[j].__command.get_params().size() == 0)
 											this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 										else
-											if (this->__clients[j].__mode.parseMode(this->__clients[j].__command.get_params(),  this->__channels) == -1)
+											if (this->__clients[j].__mode.parseMode(this->__clients[j].__command.get_params(),  __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname()) == -1)
 												throw Error("Failed to send message to client");
 									}
 								}
@@ -307,6 +307,11 @@ void	Server::run()
 			}
 		}
 	}
+}
+
+vector<Channel>	&Server::get_ref_channels(void)
+{
+	return (this->__channels);
 }
 
 // void	Server::join_client_to_channel(string nick_name, string shannel)

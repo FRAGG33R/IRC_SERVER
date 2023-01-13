@@ -10,13 +10,11 @@
 class Part
 {
     public:
-        Part();
-        ~Part();
-        void                part(std::vector<std::string> __params, int __client, std::vector<Channel> __channels, int __sender, std::string __sender_nickname);
+        void                part(std::vector<std::string> __params, int __client, std::vector<Channel> &__channels);
         bool                searchChannel(std::string __nameChannel, std::vector<Channel> __channels);
         bool                searchClient(int __clientId, std::vector<Channel> __channels, std::string __nameChannel);
         int                 indexOfChannel(std::string __channelName, std::vector<Channel> __channels);
-        void                noticeAll(Channel __channel);
+        void                noticeAll(Channel __channel, std::string __client);
 
 };
 

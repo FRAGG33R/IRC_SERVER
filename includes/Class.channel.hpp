@@ -11,11 +11,14 @@ class Channel
 		std::vector<std::pair<int, std::string> >	__clients;
 		std::vector<std::pair<int, std::string> >	__operators;
 	public:
+		Channel(std::string __channel_name, std::string __password, std::pair<int, std::string> __client, std::pair<int, std::string> __operator);
 		Channel();
 		Channel(std::string channel_name);
 		~Channel();
+		std::string									get_password();
 		std::string									getchannelname();
 		void										add_client(std::pair<int, std::string>);
+		void										add_operator(std::pair<int, std::string>);
 		size_t										get_clients_size();
 		std::vector<std::pair<int, std::string> >	get_clients(void);
 		std::vector<std::pair<int, std::string> >	get_operators(void);

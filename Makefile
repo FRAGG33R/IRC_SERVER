@@ -26,11 +26,11 @@ CFLAGS = -Wextra  -std=c++98
 all:$(NAME)
 
 %.o:%.cpp $(INCLUDE)
-	@$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@ -g
 	@echo "[$(GREEN) OK $(RESET)]$(YELLOW) Compiling $<$(RESET)"
 
 $(NAME) : $(OBJ_FILE)
-	@$(CC) $(FLAGS) $(OBJ_FILE) -o $(NAME)
+	@$(CC) $(FLAGS) $(OBJ_FILE) -o $(NAME) -g
 
 clean :
 	@rm -rf $(OBJ_FILE)
