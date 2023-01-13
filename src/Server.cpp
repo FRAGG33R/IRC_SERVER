@@ -147,7 +147,6 @@ void	Server::run()
 						}
 						add_to_poll(this->__poll_fds, __connection);
 						this->__clients.push_back(Client(__connection));
-						Server::sent_from_registration(__connection);
 					}
 					else
 					{
@@ -309,36 +308,6 @@ void	Server::run()
 	}
 }
 
-vector<Channel>	&Server::get_ref_channels(void)
-{
-	return (this->__channels);
-}
-
-// void	Server::join_client_to_channel(string nick_name, string shannel)
-// {
-// 	bool	exist(false);
-
-// 	for (size_t i = 0; i < this->__channels.size(); i++)
-// 	{
-// 		if (shannel == this->__channels[i].getchannelname())
-// 		{
-// 			this->__channels[i].add_client(nick_name);
-// 			exist = true;
-// 		}
-// 	}
-// 	if (!exist)
-// 	{
-// 		this->__channels.push_back(Channel(shannel));
-// 		for (size_t i = 0; i < this->__channels.size(); i++)
-// 		{
-// 			if (shannel == this->__channels[i].getchannelname())
-// 			{
-// 				this->__channels[i].add_client(nick_name);
-// 			}
-// 		}
-// 	}
-// }
-
 bool	check_order(string command, int order)
 {
 	if (order == 1)
@@ -439,101 +408,3 @@ void	Server::connect_client(int nb_client)
 	}
 }
 
-void	Server::sent_from_registration(int nb_client)
-{
-	(void)nb_client;
-	// string str =  string(GRN) + string("█████████████████████████████████████████████\n");
-	// send(nb_client, str.c_str(), str.length(), 0);
-	// send(nb_client, std::setw(43), 43, 0);
-	// string str =  string(GRN) + string("█\n") + string(std::setw(43)) + ;
-}
-
-// void    Server::command::__join__(){
-//     std::cout << "ok\n";
-// }
-
-// void	Server::__privmsg__(string msg, vector<string> recevier){
-// 	for (size_t i = 0; i < __clients.size(); i++){
-// 		for (size_t j = 0; j < recevier.size(); j++){
-// 			if (recevier[j] == __clients[i].get_nickname()){
-// 				std::cout << "send message to " << recevier[i] << endl;
-// 				send(this->__clients[i].get_fd(), msg.c_str(), msg.size(), 0);
-// 			}
-// 		}
-// 	}
-// 	for (size_t i = 0; i < __channels.size(); i++){
-// 		if (recevier[i] == __channels[i].getchannelname()){
-// 			for (size_t j = 0; j < __channels[i].get_clients_size(); i++){
-// 				if (this->__clients[j].get_nickname() == this->__channels[i].get_client(j))
-// 					send(this->__clients[j].get_fd(), msg.c_str(), msg.size(), 0);
-// 			}
-// 		}
-// 	}
-// }
-
-// void	Server::__notice__(string msg, vector<string> recevier){
-// 	for (size_t i = 0; i < __clients.size(); i++){
-// 		for (size_t j = 0; j < recevier.size(); j++){
-// 			if (recevier[j] == __clients[i].get_nickname()){
-// 				std::cout << "send message to" << recevier[i] << endl;
-// 				send(this->__clients[i].get_fd(), msg.c_str(), msg.size(), 0);
-// 			}
-// 		}
-// 	}
-// 	for (size_t i = 0; i < __channels.size(); i++){
-// 		if (recevier[i] == __channels[i].getchannelname()){
-// 			for (size_t j = 0; j < __channels[i].get_clients_size(); i++){
-// 				if (this->__clients[j].get_nickname() == this->__channels[i].get_client(j))
-// 					send(this->__clients[j].get_fd(), msg.c_str(), msg.size(), 0);
-// 			}
-// 		}
-// 	}
-// }
-
-// void	Server::__bot__(string nickname, string currentUser){
-// 	bool found(false);
-// 	std::cout << "nickname" << nickname << " info:\n";
-// 	for (size_t i = 0; i < this->__clients.size(); i++){
-// 		if (nickname == __clients[i].get_nickname()){
-// 			found = true;
-// 			std::cout << "user found: \n";
-// 			std::cout << "Username : " << __clients[i].get_username() << endl;
-// 			std::cout << "Nickname : " << __clients[i].get_nickname() << endl;
-// 			std::cout << "Mutual Server : ";
-// 			this->__mutualChannels__(nickname, currentUser);
-// 		}
-// 	} 
-// }
-
-
-// void	Server::__mutualChannels__(string nickname, string currentUser){
-	
-// 	for (size_t i = 0; i < this->__channels.size(); i++){
-// 		u_int valid = 0;
-// 		for (size_t j = 0; j < this->__channels[i].get_clients_size(); j++){
-// 			if (nickname == this->__channels[i].get_client(j) || currentUser == this->__channels[i].get_client(j))
-// 				valid++;
-// 			if (valid == 2)
-// 				std::cout << this->__channels[i].getchannelname() << " ";
-// 		}
-// 	}
-// 	std::cout << endl;
-// }
-
-// void	Server::__kick__(int id, string channel, string user){
-	
-// 	for (size_t i = 0; i < this->__channels.size(); i++){
-// 		if (channel == this->__channels[i].getchannelname()){
-// 			for (size_t j = 0; this->__channels[i].get_clients_size(); j++){
-// 				if(this->__clients[id].get_nickname() == this->__channels[i].get_client(j) && 
-// 				   this->__clients[id].is_operator()){
-// 					for (size_t k = 0; this->__channels[i].get_clients_size(); k++){
-// 						if (user == this->__channels[i].get_client(k)){
-// 							this->__channels[i].remove_client(k);
-// 						}
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// }
