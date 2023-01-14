@@ -2,7 +2,6 @@
 # define CLASS_CLIENT_HPP
 
 # include "Class.parser.hpp"
-# include "Class.commands.hpp"
 # include "Class.JOIN.hpp"
 # include "Class.PRIVMSG.hpp"
 # include "Class.MODE.hpp"

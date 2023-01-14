@@ -147,7 +147,6 @@ void	Server::run()
 						}
 						add_to_poll(this->__poll_fds, __connection);
 						this->__clients.push_back(Client(__connection));
-						Server::sent_from_registration(__connection);
 					}
 					else
 					{
@@ -421,6 +420,7 @@ void	Server::connect_client(int nb_client)
 	}
 }
 
+<<<<<<< HEAD
 void	Server::sent_from_registration(int nb_client)
 {
 	(void)nb_client;
@@ -429,3 +429,5 @@ void	Server::sent_from_registration(int nb_client)
 	// send(nb_client, std::setw(43), 43, 0);
 	// string str =  string(GRN) + string("█\n") + string(std::setw(43)) + ;
 }
+=======
+>>>>>>> 2119d848eb622fbb7031f983d4ea769bead05072
