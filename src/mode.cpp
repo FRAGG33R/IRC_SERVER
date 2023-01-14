@@ -76,7 +76,7 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 				return (-1);
 			return (0);
 		}
-		if (__params[1][1] != 'o' || __params[1].size() > 2 )
+		if ((__params[1][1] != 'o' && __params[1][1] != 'p') || __params[1].size() > 2 )
 		{
 			__message  = ":" + __sender_name + " 472 * is unknown mode char to me\n";
 			if (send(__sender, __message.c_str(), __message.size(), 0) == -1)

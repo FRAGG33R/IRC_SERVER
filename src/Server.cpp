@@ -420,14 +420,3 @@ void	Server::connect_client(int nb_client)
 	}
 }
 
-<<<<<<< HEAD
-void	Server::sent_from_registration(int nb_client)
-{
-	(void)nb_client;
-	// string str =  string(GRN) + string("█████████████████████████████████████████████\n");
-	// send(nb_client, str.c_str(), str.length(), 0);
-	// send(nb_client, std::setw(43), 43, 0);
-	// string str =  string(GRN) + string("█\n") + string(std::setw(43)) + ;
-}
-=======
->>>>>>> 2119d848eb622fbb7031f983d4ea769bead05072
