@@ -253,49 +253,61 @@ void	Server::run()
 											substrings[0] = temp + substrings[0];
 										this->__clients[j].__command.set_params(substrings);
 									}
-									Channel c1("Channel1");
-									c1.add_client(std::pair<int, std::string> (4, "mohamed"));
-									c1.add_client(std::pair<int, std::string> (5, "oussama"));
-									std::vector<Channel> __Channel_list;
-									__Channel_list.push_back(c1);
+									// Channel c1("Channel1");
+									// c1.add_client(std::pair<int, std::string> (4, "mohamed"));
+									// c1.add_client(std::pair<int, std::string> (5, "oussama"));
+									// std::vector<Channel> __Channel_list;
+									// __Channel_list.push_back(c1);
 									if (this->__clients[j].__command.get_command()  == "PRIVMSG" || this->__clients[j].__command.get_command()  == "NOTICE")
 									{
-										try
-										{
-											if (this->__clients[j].__command.get_params().size() != 2)
-												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
-											else
-											{
-												int res  = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
-												if ( res == -1)
-													throw Error("Failed to send message to client");
-												else
-													this->__clients[j].__command.send_error(res, this->__clients[j].get_fd());
-											}
-										}
-										catch(const std::exception& e)
-										{
-											std::cerr << e.what() << '\n';
-											close (this->__clients[j].get_fd());
-											std::cout << "Disconnet Client " << this->__clients[j].get_fd() << std::endl;
-											this->__clients.erase(this->__clients.begin() + j);
-										}
+										// try
+										// {
+										// 	if (this->__clients[j].__command.get_params().size() != 2)
+										// 		this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+										// 	else
+										// 	{
+										// 		int res  = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
+										// 		if ( res == -1)
+										// 			throw Error("Failed to send message to client");
+										// 		else
+										// 			this->__clients[j].__command.send_error(res, this->__clients[j].get_fd());
+										// 	}
+										// }
+										// catch(const std::exception& e)
+										// {
+										// 	std::cerr << e.what() << '\n';
+										// 	close (this->__clients[j].get_fd());
+										// 	std::cout << "Disconnet Client " << this->__clients[j].get_fd() << std::endl;
+										// 	this->__clients.erase(this->__clients.begin() + j);
+										// }
 									}
 									else if (this->__clients[j].__command.get_command()  == "JOIN")
 									{
-										this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(),  __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname(), this->get_ref_channels());
+										this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->__clients[j].get_nickname(), this->get_ref_channels());
+										cout << "list of channels : \n";
+										for (size_t ii = 0; ii < this->__channels.size(); ii++)
+										{
+											cout << "shannel name : ||" << this->__channels[ii].getchannelname() << "||\n";
+											cout << "shannel password : ||" << this->__channels[ii].get_password() << "||\n";
+											cout << "existing clients : \n";
+											for (size_t jj = 0; jj < this->__channels[ii].get_clients().size(); jj++)
+											{
+												cout << "|" << this->__channels[ii].get_clients()[jj].second << "| ";
+											}
+											cout << "\nthe operator is : " << this->__channels[ii].get_operators()[0].second << "\n";
+										}
 									}
 									else if  (this->__clients[j].__command.get_command()  == "PART")
 									{
-										this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), __Channel_list);
+										// this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), __Channel_list);
 									}
 									else if (this->__clients[j].__command.get_command() == "MODE")
 									{
-										if (this->__clients[j].__command.get_params().size() == 0)
-											this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
-										else
-											if (this->__clients[j].__mode.parseMode(this->__clients[j].__command.get_params(),  __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname()) == -1)
-												throw Error("Failed to send message to client");
+										// if (this->__clients[j].__command.get_params().size() == 0)
+										// 	this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+										// else
+										// 	if (this->__clients[j].__mode.parseMode(this->__clients[j].__command.get_params(),  __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname()) == -1)
+										// 		throw Error("Failed to send message to client");
 									}
 								}
 							}
@@ -308,36 +320,6 @@ void	Server::run()
 		}
 	}
 }
-
-vector<Channel>	&Server::get_ref_channels(void)
-{
-	return (this->__channels);
-}
-
-// void	Server::join_client_to_channel(string nick_name, string shannel)
-// {
-// 	bool	exist(false);
-
-// 	for (size_t i = 0; i < this->__channels.size(); i++)
-// 	{
-// 		if (shannel == this->__channels[i].getchannelname())
-// 		{
-// 			this->__channels[i].add_client(nick_name);
-// 			exist = true;
-// 		}
-// 	}
-// 	if (!exist)
-// 	{
-// 		this->__channels.push_back(Channel(shannel));
-// 		for (size_t i = 0; i < this->__channels.size(); i++)
-// 		{
-// 			if (shannel == this->__channels[i].getchannelname())
-// 			{
-// 				this->__channels[i].add_client(nick_name);
-// 			}
-// 		}
-// 	}
-// }
 
 bool	check_order(string command, int order)
 {
@@ -447,93 +429,3 @@ void	Server::sent_from_registration(int nb_client)
 	// send(nb_client, std::setw(43), 43, 0);
 	// string str =  string(GRN) + string("█\n") + string(std::setw(43)) + ;
 }
-
-// void    Server::command::__join__(){
-//     std::cout << "ok\n";
-// }
-
-// void	Server::__privmsg__(string msg, vector<string> recevier){
-// 	for (size_t i = 0; i < __clients.size(); i++){
-// 		for (size_t j = 0; j < recevier.size(); j++){
-// 			if (recevier[j] == __clients[i].get_nickname()){
-// 				std::cout << "send message to " << recevier[i] << endl;
-// 				send(this->__clients[i].get_fd(), msg.c_str(), msg.size(), 0);
-// 			}
-// 		}
-// 	}
-// 	for (size_t i = 0; i < __channels.size(); i++){
-// 		if (recevier[i] == __channels[i].getchannelname()){
-// 			for (size_t j = 0; j < __channels[i].get_clients_size(); i++){
-// 				if (this->__clients[j].get_nickname() == this->__channels[i].get_client(j))
-// 					send(this->__clients[j].get_fd(), msg.c_str(), msg.size(), 0);
-// 			}
-// 		}
-// 	}
-// }
-
-// void	Server::__notice__(string msg, vector<string> recevier){
-// 	for (size_t i = 0; i < __clients.size(); i++){
-// 		for (size_t j = 0; j < recevier.size(); j++){
-// 			if (recevier[j] == __clients[i].get_nickname()){
-// 				std::cout << "send message to" << recevier[i] << endl;
-// 				send(this->__clients[i].get_fd(), msg.c_str(), msg.size(), 0);
-// 			}
-// 		}
-// 	}
-// 	for (size_t i = 0; i < __channels.size(); i++){
-// 		if (recevier[i] == __channels[i].getchannelname()){
-// 			for (size_t j = 0; j < __channels[i].get_clients_size(); i++){
-// 				if (this->__clients[j].get_nickname() == this->__channels[i].get_client(j))
-// 					send(this->__clients[j].get_fd(), msg.c_str(), msg.size(), 0);
-// 			}
-// 		}
-// 	}
-// }
-
-// void	Server::__bot__(string nickname, string currentUser){
-// 	bool found(false);
-// 	std::cout << "nickname" << nickname << " info:\n";
-// 	for (size_t i = 0; i < this->__clients.size(); i++){
-// 		if (nickname == __clients[i].get_nickname()){
-// 			found = true;
-// 			std::cout << "user found: \n";
-// 			std::cout << "Username : " << __clients[i].get_username() << endl;
-// 			std::cout << "Nickname : " << __clients[i].get_nickname() << endl;
-// 			std::cout << "Mutual Server : ";
-// 			this->__mutualChannels__(nickname, currentUser);
-// 		}
-// 	} 
-// }
-
-
-// void	Server::__mutualChannels__(string nickname, string currentUser){
-	
-// 	for (size_t i = 0; i < this->__channels.size(); i++){
-// 		u_int valid = 0;
-// 		for (size_t j = 0; j < this->__channels[i].get_clients_size(); j++){
-// 			if (nickname == this->__channels[i].get_client(j) || currentUser == this->__channels[i].get_client(j))
-// 				valid++;
-// 			if (valid == 2)
-// 				std::cout << this->__channels[i].getchannelname() << " ";
-// 		}
-// 	}
-// 	std::cout << endl;
-// }
-
-// void	Server::__kick__(int id, string channel, string user){
-	
-// 	for (size_t i = 0; i < this->__channels.size(); i++){
-// 		if (channel == this->__channels[i].getchannelname()){
-// 			for (size_t j = 0; this->__channels[i].get_clients_size(); j++){
-// 				if(this->__clients[id].get_nickname() == this->__channels[i].get_client(j) && 
-// 				   this->__clients[id].is_operator()){
-// 					for (size_t k = 0; this->__channels[i].get_clients_size(); k++){
-// 						if (user == this->__channels[i].get_client(k)){
-// 							this->__channels[i].remove_client(k);
-// 						}
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// }

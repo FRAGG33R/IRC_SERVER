@@ -4,20 +4,14 @@ Join::Join()
 {
 
 }
-
-int	Join::set_channels_keys(std::vector<std::string> __params , std::vector<Channel> &__channels, int __new_client, std::string __sender_nickname, std::vector<Channel> &ref_channels)
+#define ZOB ":* zobino * l9laaaaaaaaawi\n"
+int	Join::set_channels_keys(std::vector<std::string> __params , int __new_client, std::string __sender_nickname, std::vector<Channel> &ref_channels)
 {
 	size_t			__begin;
 	size_t			__end;
 	std::string		__names;
 	std::string		__keys;
 
-//JOIN kamal,#sba3,#lba3,#nmer,#faouzi key1,key2,key3
-
-	/* (void)__channels;
-	(void)__sender_nickname;
-	(void)__new_client; */
-	//TODO send error if there is a message to send
 	if (__params[0].find(" ") != std::string::npos)
 	{
 		__keys = __params[0].substr(__params[0].find(" ") + 1, std::string::npos);
@@ -47,20 +41,22 @@ int	Join::set_channels_keys(std::vector<std::string> __params , std::vector<Chan
 	__names.erase();
 
 	bool	client_exist(false);
+	bool	channel_exist(false);
 	for (std::map<std::string, std::string>::iterator it = this->__channels.begin(); it != this->__channels.end(); it++)
 	{
-		for (size_t i = 0; i < __channels.size(); i++)
+		for (size_t i = 0; i < ref_channels.size(); i++)
 		{
-			if (it->first[0] == '#' && __channels[i].getchannelname() == it->first)
+			if (it->first[0] == '#' && ref_channels[i].getchannelname() == it->first)
 			{
-				for (size_t j = 0; j < __channels[i].get_clients().size(); j++)
-					if (__channels[i].get_clients()[j].second == __sender_nickname)
+				channel_exist = true;
+				for (size_t j = 0; j < ref_channels[i].get_clients().size(); j++)
+					if (ref_channels[i].get_clients()[j].second == __sender_nickname)
 						client_exist = true;
 				if (!client_exist)
 				{
-					if (!__channels[i].get_password().empty())
+					if (!ref_channels[i].get_password().empty())
 					{
-						if (__channels[i].get_password() == it->second)
+						if (ref_channels[i].get_password() == it->second)
 						{
 							if (send(__new_client, "welcome to channel\n", sizeof("welcome to channel\n"), 0) == -1)
 								return (-1);
@@ -71,7 +67,7 @@ int	Join::set_channels_keys(std::vector<std::string> __params , std::vector<Chan
 					}
 					else
 					{
-						__channels[i].add_client(std::pair<int, std::string>(__new_client, __sender_nickname));
+						ref_channels[i].add_client(std::pair<int, std::string>(__new_client, __sender_nickname));
 						if (send(__new_client, "welcome to channel\n", sizeof("welcome to channel\n"), 0) == -1)
 								return (-1);
 					}
@@ -80,8 +76,17 @@ int	Join::set_channels_keys(std::vector<std::string> __params , std::vector<Chan
 				{
 					Channel	__new(it->first, it->second, std::pair<int, std::string>(__new_client, __sender_nickname), std::pair<int, std::string>(__new_client, __sender_nickname));
 					ref_channels.push_back(__new);
+					// if (send(__new_client, std::string(std::string(":") + __sender_nickname + std::string(" JOIN :" + it->first) + std::string("\n")).c_str(), sizeof(std::string(std::string(":") + __sender_nickname + std::string(" JOIN :" + it->first + std::string("\n"))).c_str()), 0) == -1)
+					// 	return (-1);
+					send(__new_client, ZOB, sizeof(ZOB), 0);
 				}
 			}
+		}
+		if (!channel_exist)
+		{
+			Channel	__new(it->first, it->second, std::pair<int, std::string>(__new_client, __sender_nickname), std::pair<int, std::string>(__new_client, __sender_nickname));
+			ref_channels.push_back(__new);
+			send(__new_client, ZOB, sizeof(ZOB), 0);
 		}
 	}
 	return (0);
