@@ -55,7 +55,7 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 	}
 	for (; __index < __channels.size(); __index++)
 	{
-		if (__params[0].substr(1, __params[0].size()) == __channels[__index].getchannelname())
+		if (__params[0] == __channels[__index].getchannelname())
 		{
 			__valid = 1;
 			break;
