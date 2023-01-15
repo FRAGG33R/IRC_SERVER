@@ -252,33 +252,28 @@ void	Server::run()
 											substrings[0] = temp + substrings[0];
 										this->__clients[j].__command.set_params(substrings);
 									}
-									// Channel c1("Channel1");
-									// c1.add_client(std::pair<int, std::string> (4, "mohamed"));
-									// c1.add_client(std::pair<int, std::string> (5, "oussama"));
-									// std::vector<Channel> __Channel_list;
-									// __Channel_list.push_back(c1);
 									if (this->__clients[j].__command.get_command()  == "PRIVMSG" || this->__clients[j].__command.get_command()  == "NOTICE")
 									{
-										// try
-										// {
-										// 	if (this->__clients[j].__command.get_params().size() != 2)
-										// 		this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
-										// 	else
-										// 	{
-										// 		int res  = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
-										// 		if ( res == -1)
-										// 			throw Error("Failed to send message to client");
-										// 		else
-										// 			this->__clients[j].__command.send_error(res, this->__clients[j].get_fd());
-										// 	}
-										// }
-										// catch(const std::exception& e)
-										// {
-										// 	std::cerr << e.what() << '\n';
-										// 	close (this->__clients[j].get_fd());
-										// 	std::cout << "Disconnet Client " << this->__clients[j].get_fd() << std::endl;
-										// 	this->__clients.erase(this->__clients.begin() + j);
-										// }
+										try
+										{
+											if (this->__clients[j].__command.get_params().size() != 2)
+												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+											else
+											{
+												int res  = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), this->__channels, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
+												if ( res == -1)
+													throw Error("Failed to send message to client");
+												else
+													this->__clients[j].__command.send_error(res, this->__clients[j].get_fd());
+											}
+										}
+										catch(const std::exception& e)
+										{
+											std::cerr << e.what() << '\n';
+											close (this->__clients[j].get_fd());
+											std::cout << "Disconnet Client " << this->__clients[j].get_fd() << std::endl;
+											this->__clients.erase(this->__clients.begin() + j);
+										}
 									}
 									else if (this->__clients[j].__command.get_command()  == "JOIN")
 									{
@@ -293,20 +288,24 @@ void	Server::run()
 											{
 												cout << "|" << this->__channels[ii].get_clients()[jj].second << "| ";
 											}
-											cout << "\nthe operator is : " << this->__channels[ii].get_operators()[0].second << "\n";
+											cout << "\nthe operators is : " << "\n";
+											for (size_t jj = 0; jj < this->__channels[ii].get_operators().size(); jj++)
+											{
+												cout << this->__channels[ii].get_operators()[jj].second << "\n";
+											}
 										}
 									}
 									else if  (this->__clients[j].__command.get_command()  == "PART")
 									{
-										// this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), __Channel_list);
+										this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->__channels);
 									}
 									else if (this->__clients[j].__command.get_command() == "MODE")
 									{
-										// if (this->__clients[j].__command.get_params().size() == 0)
-										// 	this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
-										// else
-										// 	if (this->__clients[j].__mode.parseMode(this->__clients[j].__command.get_params(),  __Channel_list, this->__clients[j].get_fd(), this->__clients[j].get_nickname()) == -1)
-										// 		throw Error("Failed to send message to client");
+										if (this->__clients[j].__command.get_params().size() == 0)
+											this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+										else
+											if (this->__clients[j].__mode.parseMode(this->__clients[j].__command.get_params(),  this->__channels, this->__clients[j].get_fd(), this->__clients[j].get_nickname()) == -1)
+												throw Error("Failed to send message to client");
 									}
 								}
 							}

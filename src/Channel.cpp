@@ -44,6 +44,10 @@ std::string	Channel::get_password()
 {
 	return (this->__password);
 }
+void	Channel::set_password(std::string __pass)
+{
+	this->__password = __pass;
+}
 
 Channel::~Channel()
 {

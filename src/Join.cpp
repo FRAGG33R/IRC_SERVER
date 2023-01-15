@@ -39,7 +39,7 @@ void	Join::parse_join_args(std::vector<std::string> &__params)
 	__names.erase();
 }
 
-#define ZOB ":* welcome * welcome\n"
+#define WELCOME ":* welcome * welcome\n"
 int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_client, std::string __sender_nickname, std::vector<Channel> &ref_channels)
 {
 	size_t			__begin;
@@ -83,7 +83,7 @@ int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_clien
 				{
 					Channel	__new(it->first, it->second, std::pair<int, std::string>(__new_client, __sender_nickname), std::pair<int, std::string>(__new_client, __sender_nickname));
 					ref_channels.push_back(__new);
-					send(__new_client, ZOB, sizeof(ZOB), 0);
+					send(__new_client, WELCOME, sizeof(WELCOME), 0);
 				}
 			}
 		}
@@ -91,7 +91,7 @@ int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_clien
 		{
 			Channel	__new(it->first, it->second, std::pair<int, std::string>(__new_client, __sender_nickname), std::pair<int, std::string>(__new_client, __sender_nickname));
 			ref_channels.push_back(__new);
-			send(__new_client, ZOB, sizeof(ZOB), 0);
+			send(__new_client, WELCOME, sizeof(WELCOME), 0);
 		}
 	}
 	return (0);
