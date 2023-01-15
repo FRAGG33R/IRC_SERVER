@@ -4,13 +4,11 @@ Join::Join()
 {
 
 }
-#define ZOB ":* zobino * l9laaaaaaaaawi\n"
-int	Join::set_channels_keys(std::vector<std::string> __params , int __new_client, std::string __sender_nickname, std::vector<Channel> &ref_channels)
+
+void	Join::parse_join_args(std::vector<std::string> &__params)
 {
-	size_t			__begin;
-	size_t			__end;
-	std::string		__names;
 	std::string		__keys;
+	std::string		__names;
 
 	if (__params[0].find(" ") != std::string::npos)
 	{
@@ -39,7 +37,15 @@ int	Join::set_channels_keys(std::vector<std::string> __params , int __new_client
 	else
 		this->__channels[__names.substr(0, std::string::npos)] = std::string("");
 	__names.erase();
+}
 
+#define ZOB ":* welcome * welcome\n"
+int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_client, std::string __sender_nickname, std::vector<Channel> &ref_channels)
+{
+	size_t			__begin;
+	size_t			__end;
+
+	this->parse_join_args(__params);
 	bool	client_exist(false);
 	bool	channel_exist(false);
 	for (std::map<std::string, std::string>::iterator it = this->__channels.begin(); it != this->__channels.end(); it++)
@@ -58,6 +64,7 @@ int	Join::set_channels_keys(std::vector<std::string> __params , int __new_client
 					{
 						if (ref_channels[i].get_password() == it->second)
 						{
+							ref_channels[i].add_client(std::pair<int, std::string>(__new_client, __sender_nickname));
 							if (send(__new_client, "welcome to channel\n", sizeof("welcome to channel\n"), 0) == -1)
 								return (-1);
 						}
@@ -76,8 +83,6 @@ int	Join::set_channels_keys(std::vector<std::string> __params , int __new_client
 				{
 					Channel	__new(it->first, it->second, std::pair<int, std::string>(__new_client, __sender_nickname), std::pair<int, std::string>(__new_client, __sender_nickname));
 					ref_channels.push_back(__new);
-					// if (send(__new_client, std::string(std::string(":") + __sender_nickname + std::string(" JOIN :" + it->first) + std::string("\n")).c_str(), sizeof(std::string(std::string(":") + __sender_nickname + std::string(" JOIN :" + it->first + std::string("\n"))).c_str()), 0) == -1)
-					// 	return (-1);
 					send(__new_client, ZOB, sizeof(ZOB), 0);
 				}
 			}
