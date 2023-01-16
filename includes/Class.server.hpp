@@ -33,13 +33,10 @@ class Server
 		void							full_close(struct pollfd *__poll_fd);
 		void							remove_from_poll(struct pollfd *__poll_fds, int __fd);
 		int								parse_input(string __input, int flag);
-		int 							client_register(int __client_fd, int index);
-		void							fill_username(int __client_fd, int index);
-		void    						fill_nickname(int __client_fd, int index);
-		void							fill_operator(int __client_fd, int index);
 		void							connect_client(int nb_client);
-		void							join_client_to_channel(string nick_name, string shannel);
 		void                            clean_channels(std::vector<Channel> &__channels, int __fd);
+		void                            bot(std::string __client_name, int __client_fd);
+
 		Server(){};
 		~Server(){};
 };

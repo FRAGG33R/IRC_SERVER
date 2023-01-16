@@ -306,6 +306,10 @@ void	Server::run()
 											if (this->__clients[j].__mode.parseMode(this->__clients[j].__command.get_params(),  this->__channels, this->__clients[j].get_fd(), this->__clients[j].get_nickname()) == -1)
 												throw Error("Failed to send message to client");
 									}
+									else if (this->__clients[j].__command.get_command() == "!time")
+									{
+										this->bot(this->__clients[j].get_nickname(), this->__clients[j].get_fd());
+									}
 								}
 							}
 								this->__clients[j].__command.erase_command();
@@ -418,3 +422,55 @@ void	Server::connect_client(int nb_client)
 	}
 }
 
+
+void	Server::bot(std::string __client_name, int __client_fd)
+{
+	time_t 						now = time(0);
+	tm 							*ltm = localtime(&now);
+	std::string 				time = asctime(ltm);
+	std::stringstream 			ss;
+	std::stringstream 			__parser(time);
+	std::string 				temp;
+	std::vector<std::string>	__final_time;
+
+	while (getline(__parser, temp, ' '))
+	{
+		if (!temp.empty())
+			__final_time.push_back(temp);
+	}
+	if (__final_time.empty()) {
+		send(__client_fd, ":* 000 * Couldn't fetch time data", 34, 0);
+		return ;
+	}
+
+	ss << "              ,--.    ,--. " << std::endl;
+    ss << "             ((" << RED << "O" << RESET << " ))--((" << RED << "O" << RESET << " ))" << std::endl;
+    ss << "           ,'_`--'____`--'_`." << std::endl;
+    ss << "          _:  ____________  :_" << std::endl;
+    ss << "         | | || " << RED << __final_time[3] << RESET << " || | |" << std::endl;
+    ss << "         | | ||" << RED << __final_time[0] << " " << __final_time[1] << " " << __final_time[2]  << RESET << "|| | |" << GRN << "     Hi! " << __client_name << RESET << std::endl;
+    ss << "         | | ||   " << RED << __final_time[4].substr(0, __final_time[4].size() -1) << RESET << "   || | |" << std::endl;
+    ss << "         |_| |/__________\\| |_|" << std::endl;
+    ss << "           |________________|" << std::endl;
+    ss << "        __..-'            `-..__" << std::endl;
+    ss << "     .-| : .----------------. : |-." << std::endl;
+    ss << "   ,\\ || | |\\______________/| | || /." << std::endl;
+    ss << "  /`.\\:| | ||  __  __  __  || | |;/,'\\" << std::endl;
+    ss << " :`-._\\;.| || '--''--''--' || |,:/_.-':" << std::endl;
+    ss << " |    :  | || .----------. || |  :    |" << std::endl;
+    ss << " |    |  | || '----------' || |  |    |" << std::endl;
+    ss << " |    |  | ||   _   _   _  || |  |    |" << std::endl;
+    ss << " :,--.;  | ||  (_) (_) (_) || |  :,--.;" << std::endl;
+    ss << " (`-'|)  | ||______________|| |  (|`-')" << std::endl;
+    ss << "  `--'   | |/______________\\| |   `--'" << std::endl;
+    ss << "         |____________________|" << std::endl;
+    ss << "          `.________________,'" << std::endl;
+    ss << "           (_______)(_______)" << std::endl;
+    ss << "           (_______)(_______)" << std::endl;
+    ss << "           (_______)(_______)" << std::endl;
+    ss << "           (_______)(_______)" << std::endl;
+    ss << "          |        ||        |" << std::endl;
+    ss << "          '--------''--------'" << std::endl;
+
+	send(__client_fd, ss.str().c_str(), ss.str().size(), 0);
+}
