@@ -34,7 +34,6 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 {
 	int							__valid = 0, __is_op = 0;
 	size_t						__index = 0;
-
 	std::string					__temp;
 	std::vector<std::string>    __temp_vec;
 	std::stringstream 			__stream(__params[0]);

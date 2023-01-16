@@ -80,7 +80,21 @@ void	Server::full_close(struct pollfd *__poll_fd)
 		if (__poll_fd[i].fd != -1)
 			close(__poll_fd[i].fd);
 }
-
+void	Server::clean_channels(std::vector<Channel> &__channels, int __fd)
+{
+	for (size_t i = 0; i < __channels.size(); i++)
+	{
+		for (size_t j = 0; j < __channels[i].get_clients().size(); j++)
+		{
+			if (__channels[i].get_clients()[j].first == __fd) {
+				__channels[i].get_clients().erase(__channels[i].get_clients().begin() + j);
+			}
+			if (__channels[i].get_operators()[j].first == __fd) {
+				__channels[i].get_operators().erase(__channels[i].get_operators().begin() + j);
+			}
+		}
+	}
+}
 void Server::print(void)
 {
 	cout << GRN << "	███████████████████████████████████" << endl;
@@ -150,7 +164,8 @@ void	Server::run()
 					}
 					else
 					{
-						if (this->__clients.size() != 0) {
+						if (this->__clients.size() != 0)
+						{
 							size_t j = 0;
 							for (; j < this->__clients.size(); j++)
 							{
@@ -163,12 +178,12 @@ void	Server::run()
 								cerr << RED << "The client " << this->__clients[j].get_fd() <<  " disconnected !" << RESET << endl;
 								close(this->__clients[j].get_fd());
 								remove_from_poll(__poll_fds, this->__clients[j].get_fd());
+								this->clean_channels(this->__channels, this->__clients[j].get_fd());
 								this->__clients.erase(this->__clients.begin() + j);
 								break ;
 							}
 							string	backup;
 							size_t	first_space;
-
 							this->__clients[j].__command.set_command(this->__clients[j].__command.get_command() + string(__buffer));
 							if (this->__clients[j].__command.get_command().find_last_of("\n") != std::string::npos || this->__clients[j].__command.get_command().find_last_of("\r"))
 							{
@@ -278,22 +293,6 @@ void	Server::run()
 									else if (this->__clients[j].__command.get_command()  == "JOIN")
 									{
 										this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->__clients[j].get_nickname(), this->get_ref_channels());
-										cout << "list of channels : \n";
-										for (size_t ii = 0; ii < this->__channels.size(); ii++)
-										{
-											cout << "shannel name : ||" << this->__channels[ii].getchannelname() << "||\n";
-											cout << "shannel password : ||" << this->__channels[ii].get_password() << "||\n";
-											cout << "existing clients : \n";
-											for (size_t jj = 0; jj < this->__channels[ii].get_clients().size(); jj++)
-											{
-												cout << "|" << this->__channels[ii].get_clients()[jj].second << "| ";
-											}
-											cout << "\nthe operators is : " << "\n";
-											for (size_t jj = 0; jj < this->__channels[ii].get_operators().size(); jj++)
-											{
-												cout << this->__channels[ii].get_operators()[jj].second << "\n";
-											}
-										}
 									}
 									else if  (this->__clients[j].__command.get_command()  == "PART")
 									{

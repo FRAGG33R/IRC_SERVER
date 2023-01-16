@@ -39,6 +39,7 @@ class Server
 		void							fill_operator(int __client_fd, int index);
 		void							connect_client(int nb_client);
 		void							join_client_to_channel(string nick_name, string shannel);
+		void                            clean_channels(std::vector<Channel> &__channels, int __fd);
 		Server(){};
 		~Server(){};
 };

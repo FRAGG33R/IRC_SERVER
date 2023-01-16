@@ -30,7 +30,7 @@ all:$(NAME)
 	@echo "[$(GREEN) OK $(RESET)]$(YELLOW) Compiling $<$(RESET)"
 
 $(NAME) : $(OBJ_FILE)
-	@$(CC) $(FLAGS) $(OBJ_FILE) -o $(NAME) -g -fsanitize=address
+	@$(CC) $(FLAGS) $(OBJ_FILE) -o $(NAME) -g
 
 clean :
 	@rm -rf $(OBJ_FILE)

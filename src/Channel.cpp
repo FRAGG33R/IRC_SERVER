@@ -1,6 +1,5 @@
 # include "../includes/Class.channel.hpp"
 
-
 Channel::Channel(std::string channel_name)
 {
 	this->__channel_name = channel_name;
@@ -30,12 +29,12 @@ void	Channel::remove_client(int i)
 	this->__clients.erase(this->__clients.begin() + i);
 }
 
-std::vector<std::pair<int, std::string> >	Channel::get_clients()
+std::vector<std::pair<int, std::string> >	&Channel::get_clients()
 {
 	return (this->__clients);
 }
 
-std::vector<std::pair<int, std::string> >	Channel::get_operators()
+std::vector<std::pair<int, std::string> >	&Channel::get_operators()
 {
 	return (this->__operators);
 }
@@ -44,6 +43,7 @@ std::string	Channel::get_password()
 {
 	return (this->__password);
 }
+
 void	Channel::set_password(std::string __pass)
 {
 	this->__password = __pass;
@@ -53,6 +53,7 @@ Channel::~Channel()
 {
 
 }
+
 Channel::Channel(std::string __channel_name, std::string __password, std::pair<int, std::string> __client, std::pair<int, std::string> __operator)
 {
 	this->__channel_name = __channel_name;
