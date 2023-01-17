@@ -124,9 +124,6 @@ void	Server::create_server(void)
 		throw Error("listen error : could not listen on socket");
 }
 
-
-
-
 void	Server::run()
 {
 	int				__connection;
@@ -275,7 +272,7 @@ void	Server::run()
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 											else
 											{
-												int res  = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), this->__channels, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
+												int res = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), this->__channels, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
 												if ( res == -1)
 													throw Error("Failed to send message to client");
 												else
@@ -308,8 +305,16 @@ void	Server::run()
 									}
 									else if (this->__clients[j].__command.get_command() == "!time")
 									{
-										this->bot(this->__clients[j].get_nickname(), this->__clients[j].get_fd());
+										if (this->__clients[j].__command.get_params().size() == 0)
+											this->bot(this->__clients[j].get_nickname(), this->__clients[j].get_fd());
+										else
+											this->__clients[j].__command.send_error(0, this->__clients[j].get_fd());
 									}
+									else
+										this->__clients[j].__command.send_error(ERR_UNKNOWNCOMMAND, this->__clients[j].get_fd());
+									for (size_t x = 0; x < this->__clients[j].__command.get_params().size(); x++)
+										this->__clients[j].__command.get_params().erase(this->__clients[j].__command.get_params().begin() + x);
+									this->__clients[j].__command.get_params().clear();
 								}
 							}
 								this->__clients[j].__command.erase_command();
@@ -442,7 +447,6 @@ void	Server::bot(std::string __client_name, int __client_fd)
 		send(__client_fd, ":* 000 * Couldn't fetch time data", 34, 0);
 		return ;
 	}
-
 	ss << "              ,--.    ,--. " << std::endl;
     ss << "             ((" << RED << "O" << RESET << " ))--((" << RED << "O" << RESET << " ))" << std::endl;
     ss << "           ,'_`--'____`--'_`." << std::endl;

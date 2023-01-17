@@ -47,24 +47,24 @@ using std::cerr;
 #define USER_COMMAND "USER"
 
 //error reply numbers
-#define ERR_NEEDMOREPARAMS 461
-#define MSG_461 ":* 461 * Not enough parameters\n"
-#define ERR_ALREADYREGISTRED 462
-#define MSG_462 ":* 462 * You may not reregister\n"
-#define ERR_NONICKNAMEGIVEN 431
-#define MSG_431 ":* 431 * No nickname given\n"
-#define ERR_ERRONEUSNICKNAME 432
-#define MSG_432 ":NICK 432 * Erroneus nickname\n"
-#define ERR_NICKNAMEINUSE 433
-#define MSG_433 ":NICK 433 * Nickname is already in use\n"
-#define ERR_WRONGPASSWORD 666
-#define MSG_666 ":PASS 666 * wrong password\n"
-#define ERR_UNKNOWNCOMMAND 421
-#define MSG_421 ":* 421 * Unknown command\n"
-#define ERR_REGIST_ORDER 667
-#define MSG_667 ":* 667 * Enter PASS <password>, NICK <nickname>, USER <user>\n"
-#define ERR_ERRONEUSUSERNAME 668
-#define MSG_668 ":NICK 668 * Erroneus username\n"
+# define ERR_NEEDMOREPARAMS 461
+# define MSG_461 ":* 461 * Not enough parameters\n"
+# define ERR_ALREADYREGISTRED 462
+# define MSG_462 ":* 462 * You may not reregister\n"
+# define ERR_NONICKNAMEGIVEN 431
+# define MSG_431 ":* 431 * No nickname given\n"
+# define ERR_ERRONEUSNICKNAME 432
+# define MSG_432 ":NICK 432 * Erroneus nickname\n"
+# define ERR_NICKNAMEINUSE 433
+# define MSG_433 ":NICK 433 * Nickname is already in use\n"
+# define ERR_WRONGPASSWORD 666
+# define MSG_666 ":PASS 666 * wrong password\n"
+# define ERR_UNKNOWNCOMMAND 421
+# define MSG_421 ":* 421 * Unknown command\n"
+# define ERR_REGIST_ORDER 667
+# define MSG_667 ":* 667 * Enter PASS <password>, NICK <nickname>, USER <user>\n"
+# define ERR_ERRONEUSUSERNAME 668
+# define MSG_668 ":NICK 668 * Erroneus username\n"
 
 #define MSG_411 ":* 411 * No recipient given\n"
 #define ERR_NORECIPIENT 411
@@ -74,7 +74,7 @@ using std::cerr;
 #define ERR_TOOMANYTARGETS 407
 #define MSG_401 ":* 401 * No such nick/channel\n"
 #define ERR_NOSUCHNICK 401
-
+#define MSG_0 ":* 0 * Too many parameters\n"
 //server informations
 
 #define RPL_WELCOME 1

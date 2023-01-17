@@ -39,7 +39,8 @@ void	Join::parse_join_args(std::vector<std::string> &__params)
 	__names.erase();
 }
 
-#define WELCOME ":* welcome * welcome\n"
+# define WELCOME ":* welcome * welcome\n"
+
 int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_client, std::string __sender_nickname, std::vector<Channel> &ref_channels)
 {
 	size_t			__begin;

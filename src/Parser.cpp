@@ -182,6 +182,9 @@ void	Parser::send_error(int __err, int fd)
 		case -1 : {
 			throw Error("failling to send msg");
 		}
+		case 0 : {
+			(send(fd, MSG_0, strlen(MSG_0), 0) == -1) ? throw Error("failling to send msg") : 1;
+		}
 		default : { break ; }
 	}
 }

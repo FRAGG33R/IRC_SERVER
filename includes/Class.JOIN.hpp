@@ -9,7 +9,7 @@
 class Join
 {
 	private:
-		std::map<std::string, std::string> __channels;
+		std::map<std::string, std::string>	__channels;
 		void	parse_join_args(std::vector<std::string> &__params);
 	public:
 		Join();
