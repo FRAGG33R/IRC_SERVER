@@ -79,10 +79,11 @@ using std::cerr;
 
 #define RPL_WELCOME 1
 
-#define SERVER_NAME "machlouj"
+#define SERVER_NAME "CW9"
 #define CONCAT(x, y) x ##y
 
 #define WELCOME ":* 001 * welcome to "
+
 #define MSG_WELCOME WELCOME SERVER_NAME "\n"
 
 //Functions

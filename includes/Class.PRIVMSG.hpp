@@ -26,7 +26,7 @@ class Privmsg
 			void                setReceivers(std::vector<int> &receivers);
 			void                setMessage(std::string message);
 			void                setType(std::string &type);
-			int					parsPrivmsg(std::vector<std::string> __params, std::vector<std::pair<std::string, int> > __clients, std::vector<Channel> __channels, int __sender, std::string __sender_nickname);
+			int					parsPrivmsg(std::vector<std::string> __params, std::vector<std::pair<std::string, int> > __clients, std::vector<Channel> &__channels, int __sender, std::string __sender_nickname);
 };
 
 #endif

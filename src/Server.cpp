@@ -272,7 +272,7 @@ void	Server::run()
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 											else
 											{
-												int res = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), this->__channels, this->__clients[j].get_fd(), this->__clients[j].get_nickname());
+												int res = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), this->get_ref_channels(), this->__clients[j].get_fd(), this->__clients[j].get_nickname());
 												if ( res == -1)
 													throw Error("Failed to send message to client");
 												else
@@ -293,14 +293,14 @@ void	Server::run()
 									}
 									else if  (this->__clients[j].__command.get_command()  == "PART")
 									{
-										this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->__channels);
+										this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->get_ref_channels());
 									}
 									else if (this->__clients[j].__command.get_command() == "MODE")
 									{
 										if (this->__clients[j].__command.get_params().size() == 0)
 											this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 										else
-											if (this->__clients[j].__mode.parseMode(this->__clients[j].__command.get_params(),  this->__channels, this->__clients[j].get_fd(), this->__clients[j].get_nickname()) == -1)
+											if (this->__clients[j].__mode.parseMode(this->__clients[j].__command.get_params(),  this->get_ref_channels(), this->__clients[j].get_fd(), this->__clients[j].get_nickname()) == -1)
 												throw Error("Failed to send message to client");
 									}
 									else if (this->__clients[j].__command.get_command() == "!time")
