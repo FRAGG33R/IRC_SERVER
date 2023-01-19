@@ -15,9 +15,9 @@ void    Part::part(std::vector<std::string> __params, int __client, std::vector<
     }
     for (size_t i = 0; i < __leave_channels.size(); i++)
     {
+		std::cout << "THe channels is  : " << __leave_channels[i] << std::endl;
 		if (__leave_channels[i][0] == '#')
 		{
-			__leave_channels[i] = __leave_channels[i].substr(1, __leave_channels[i].size());
 			for (size_t j = 0; j < __channels.size(); j++)
 			{
 				if (!this->searchChannel(__leave_channels[i], __channels))

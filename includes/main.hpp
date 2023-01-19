@@ -1,5 +1,6 @@
 #ifndef __IRC__HPP__
 #define __IRC__HPP__
+
 //Librarys
 # include <iostream>
 # include <string>
