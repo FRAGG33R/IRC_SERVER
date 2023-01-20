@@ -1,6 +1,4 @@
 #include "../includes/Class.part.hpp"
-// If the last client leave the channel then the channel should be closed
-// if the client was operator , then You should remove the client from the clients vector and the operators vector 
 
 int    Part::part(std::vector<std::string> __params, int __client, std::vector<Channel> &__channels)
 {
@@ -43,6 +41,8 @@ int    Part::part(std::vector<std::string> __params, int __client, std::vector<C
 						if (__client == __channels[__channel_index].get_operators()[k].first)
 							__channels[__channel_index].get_operators().erase(__channels[__channel_index].get_operators().begin() + k);
 					}
+					if (__channels[__channel_index].get_clients().size() == 0)
+						__channels.erase(__channels.begin() + __channel_index);
 				}
 				else
 				{
