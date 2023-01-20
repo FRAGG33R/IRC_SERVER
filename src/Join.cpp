@@ -38,6 +38,7 @@ void	Join::parse_join_args(std::vector<std::string> &__params)
 		this->__channels[__names.substr(0, std::string::npos)] = std::string("");
 	__names.erase();
 }
+
 void Join::erase_channels( void )
 {
 	__channels.clear();
@@ -86,9 +87,8 @@ int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_clien
 					{
 						__message = ":" + it->first + " 475 * Cannot join channel\n";
 						if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
-						    return (-1);
+							return (-1);
 					}
-
 				}
 			}
 		}
@@ -100,8 +100,6 @@ int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_clien
 			if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
 					return (-1);
 		}
-
-
 	}
 	return (0);
 }

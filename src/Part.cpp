@@ -1,6 +1,8 @@
 #include "../includes/Class.part.hpp"
+// If the last client leave the channel then the channel should be closed
+// if the client was operator , then You should remove the client from the clients vector and the operators vector 
 
-void    Part::part(std::vector<std::string> __params, int __client, std::vector<Channel> &__channels)
+int    Part::part(std::vector<std::string> __params, int __client, std::vector<Channel> &__channels)
 {
     __params[0].erase(__params[0].find_last_not_of("") + 1);
     std::vector<std::string>    __leave_channels;
@@ -15,42 +17,48 @@ void    Part::part(std::vector<std::string> __params, int __client, std::vector<
     }
     for (size_t i = 0; i < __leave_channels.size(); i++)
     {
-		std::cout << "THe channels is  : " << __leave_channels[i] << std::endl;
 		if (__leave_channels[i][0] == '#')
 		{
-			for (size_t j = 0; j < __channels.size(); j++)
+			int __channel_index = this->indexOfChannel(__leave_channels[i], __channels);
+			if (__channel_index == -1)
 			{
-				if (!this->searchChannel(__leave_channels[i], __channels))
+				__message = ": " + __leave_channels[i] + " 403 * No such channel\n";
+				if (send(__client, __message.c_str(), __message.size(), 0) == -1)
+					return (-1);
+			}
+			else
+			{
+				if (this->searchClient(__client, __channels, __channel_index))
 				{
-					__message = __leave_channels[i] + " :No such channel\n";
-					send(__client, __message.c_str(), __message.size(), 0);
-					break ;
-				}
-				else if (!this->searchClient(__client, __channels, __leave_channels[i]))
-				{
-					__message = __leave_channels[i] + " :You're not on that channel\n";
-					send(__client, __message.c_str(), __message.size(), 0);
-					break ; 
-				}
-				else if (this->searchClient(__client, __channels, __leave_channels[i]))
-				{
-					int index = this->indexOfChannel(__leave_channels[i], __channels);
-					for (size_t k = 0; k < __channels[index].get_clients_size(); k++)
+					for (size_t k = 0; k < __channels[__channel_index].get_clients_size(); k++)
 					{
-						if (__client == __channels[index].get_clients()[k].first){
-							this->noticeAll(__channels[index],  __channels[index].get_clients()[k].second);
-							__channels[index].remove_client(k);
+						if (__client == __channels[__channel_index].get_clients()[k].first)
+						{
+							this->noticeAll(__channels[__channel_index],  __channels[__channel_index].get_clients()[k].second);
+							__channels[__channel_index].remove_client(k);
 						}
 					}
+					for (size_t k = 0; k < __channels[__channel_index].get_operators().size(); k++)
+					{
+						if (__client == __channels[__channel_index].get_operators()[k].first)
+							__channels[__channel_index].get_operators().erase(__channels[__channel_index].get_operators().begin() + k);
+					}
+				}
+				else
+				{
+					__message = ": " + __leave_channels[i] + " 442 * You're not on that channel\n";
+					if (send(__client, __message.c_str(), __message.size(), 0) == -1)
+						return (-1);
 				}
 			}
 		}
 		else
 		{
-			__message = __leave_channels[i] + " :No such channel\n";
+			__message = ": " + __leave_channels[i] + " 403 * No such channel\n";
 			send(__client, __message.c_str(), __message.size(), 0);
 		}
     }
+	return (0);
 }
 
 void    Part::noticeAll(Channel __channel, std::string __client)
@@ -62,9 +70,6 @@ void    Part::noticeAll(Channel __channel, std::string __client)
         send(__channel.get_clients()[i].first, __message.c_str(), __message.size(), 0);
     }
 }
-
-
-
 
 bool    Part::searchChannel(std::string __nameChannel, std::vector<Channel> __channels)
 {
@@ -78,14 +83,13 @@ bool    Part::searchChannel(std::string __nameChannel, std::vector<Channel> __ch
     return found;
 }
 
-bool    Part::searchClient(int __clientId, std::vector<Channel> __channels, std::string __nameChannel)
+bool    Part::searchClient(int __clientId, std::vector<Channel> __channels, int	__channel_index)
 {
     bool found(false);
 
-    int index = this->indexOfChannel(__nameChannel, __channels);
-    for (size_t i = 0; i <  __channels[index].get_clients_size(); i++)
+    for (size_t i = 0; i <  __channels[__channel_index].get_clients_size(); i++)
     {
-        if (__clientId == __channels[index].get_clients()[i].first)
+        if (__clientId == __channels[__channel_index].get_clients()[i].first)
             found = true;
     }
     return found;
