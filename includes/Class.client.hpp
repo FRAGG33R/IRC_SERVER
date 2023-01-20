@@ -6,6 +6,7 @@
 # include "Class.PRIVMSG.hpp"
 # include "Class.MODE.hpp"
 # include "Class.part.hpp"
+# include "Class.KICK.hpp"
 
 class Client
 {
@@ -23,6 +24,7 @@ class Client
 		Part	__part;
 		Join	__join;
 		Mode	__mode;
+		Kick    __kick;
 		bool	__username_filled;
 		bool	__nickname_filled;
 		string	__request;

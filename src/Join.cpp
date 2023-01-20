@@ -38,53 +38,57 @@ void	Join::parse_join_args(std::vector<std::string> &__params)
 		this->__channels[__names.substr(0, std::string::npos)] = std::string("");
 	__names.erase();
 }
-
-# define WELCOME ":* welcome * welcome\n"
+void Join::erase_channels( void )
+{
+	__channels.clear();
+}
 
 int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_client, std::string __sender_nickname, std::vector<Channel> &ref_channels)
 {
 	size_t			__begin;
 	size_t			__end;
+	std::string		__message;
 
 	this->parse_join_args(__params);
 	bool	client_exist(false);
 	bool	channel_exist(false);
 	for (std::map<std::string, std::string>::iterator it = this->__channels.begin(); it != this->__channels.end(); it++)
 	{
+		channel_exist =  false;
+		client_exist = false;
 		for (size_t i = 0; i < ref_channels.size(); i++)
 		{
-			if (it->first[0] == '#' && ref_channels[i].getchannelname() == it->first)
+			if (ref_channels[i].getchannelname() == it->first)
 			{
 				channel_exist = true;
+				client_exist = false;
 				for (size_t j = 0; j < ref_channels[i].get_clients().size(); j++)
+				{
 					if (ref_channels[i].get_clients()[j].second == __sender_nickname)
+					{
 						client_exist = true;
+						__message = ":" + __sender_nickname + " 443 * is already on channel\n";
+						if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
+							return (-1);
+						break ;
+					}
+				}
 				if (!client_exist)
 				{
-					if (!ref_channels[i].get_password().empty())
+					if (ref_channels[i].get_password().empty() || ref_channels[i].get_password() == it->second)
 					{
-						if (ref_channels[i].get_password() == it->second)
-						{
-							ref_channels[i].add_client(std::pair<int, std::string>(__new_client, __sender_nickname));
-							if (send(__new_client, "welcome to channel\n", sizeof("welcome to channel\n"), 0) == -1)
-								return (-1);
-						}
-						else
-							if (send(__new_client, "incorrect password\n", sizeof("incorrect password\n"), 0) == -1)
+						ref_channels[i].add_client(std::pair<int, std::string>(__new_client, __sender_nickname));
+						__message = ":" + __sender_nickname + "JOIN * Welcome To " + it->first + " channel\n";
+						if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
 								return (-1);
 					}
 					else
 					{
-						ref_channels[i].add_client(std::pair<int, std::string>(__new_client, __sender_nickname));
-						if (send(__new_client, "welcome to channel\n", sizeof("welcome to channel\n"), 0) == -1)
-								return (-1);
+						__message = ":" + it->first + " 475 * Cannot join channel\n";
+						if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
+						    return (-1);
 					}
-				}
-				else
-				{
-					Channel	__new(it->first, it->second, std::pair<int, std::string>(__new_client, __sender_nickname), std::pair<int, std::string>(__new_client, __sender_nickname));
-					ref_channels.push_back(__new);
-					send(__new_client, WELCOME, sizeof(WELCOME), 0);
+
 				}
 			}
 		}
@@ -92,8 +96,12 @@ int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_clien
 		{
 			Channel	__new(it->first, it->second, std::pair<int, std::string>(__new_client, __sender_nickname), std::pair<int, std::string>(__new_client, __sender_nickname));
 			ref_channels.push_back(__new);
-			send(__new_client, WELCOME, sizeof(WELCOME), 0);
+			__message = ":" + __sender_nickname + " JOIN * Welcome To " + it->first + " channel\n";
+			if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
+					return (-1);
 		}
+
+
 	}
 	return (0);
 }

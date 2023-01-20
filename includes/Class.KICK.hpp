@@ -11,8 +11,6 @@
 class   Kick
 {
     public:
-        Kick();
-        ~Kick();
         void                kick(std::vector<std::string> __params, int __client, std::vector<Channel> __channels);
         bool                searchChannel(std::string __nameChannel, std::vector<Channel> __channels);
         bool                searchClient(int __clientId, std::vector<Channel> __channels, std::string __nameChannel);

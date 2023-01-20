@@ -1,20 +1,19 @@
 #include "../includes/Class.KICK.hpp"
 
-void    Kick::kick(std::vector<std::string> __params, int __client, std::vector<Channel> __channels)
+void	Kick::kick(std::vector<std::string> __params, int __client, std::vector<Channel> __channels)
 {
     std::string     __nameChannel = __params[0].erase(__params[0].find_last_not_of(" ") + 1);
     std::string     __message;
-    
+	
     for (size_t i = 0; i < __channels.size(); i++)
     {
         if (__params[0][0] == '#')
         {
-
             if (!this->searchChannel(__nameChannel, __channels))
             {
                 __message = __nameChannel + " :No such channel\n";
                 send(__client, __message.c_str(), __message.size(), 0);
-                break ; 
+                break ;
             }
             else if (!this->searchClient(__client, __channels, __nameChannel))
             {
@@ -52,12 +51,10 @@ void    Kick::kick(std::vector<std::string> __params, int __client, std::vector<
             __message = __params[0] +" :No such channel\n";
 			send(__client, __message.c_str(), __message.size(), 0);
         }
-
     }
 }
 
-
-void    Kick::noticeAll(Channel __channel,int   __client, bool    __reason, std::string __reasonMsg)
+void	Kick::noticeAll(Channel __channel,int   __client, bool    __reason, std::string __reasonMsg)
 {
     std::string __message;
     if (__reason)
@@ -115,7 +112,7 @@ int    Kick::indexOfClient(std::string __client, std::vector<Channel> __channels
     return -1;
 }
 
-bool    Kick::searchClient(int __clientId, std::vector<Channel> __channels, std::string __nameChannel)
+bool	Kick::searchClient(int __clientId, std::vector<Channel> __channels, std::string __nameChannel)
 {
     bool found(false);
 
@@ -128,7 +125,7 @@ bool    Kick::searchClient(int __clientId, std::vector<Channel> __channels, std:
     return found;
 }
 
-bool    Kick::searchClient(std::string  __client, std::vector<Channel> __channels, std::string __nameChannel)
+bool	Kick::searchClient(std::string  __client, std::vector<Channel> __channels, std::string __nameChannel)
 {
     bool found(false);
 
@@ -141,7 +138,7 @@ bool    Kick::searchClient(std::string  __client, std::vector<Channel> __channel
     return found;
 }
 
-int   Kick::indexOfChannel(std::string __channelName, std::vector<Channel> __channels)
+int		Kick::indexOfChannel(std::string __channelName, std::vector<Channel> __channels)
 {
     for (size_t i = 0; i < __channels.size(); i++)
     {

@@ -264,9 +264,9 @@ void	Server::run()
 											substrings[0] = temp + substrings[0];
 										this->__clients[j].__command.set_params(substrings);
 									}
-									if (this->__clients[j].__command.get_command()  == "PRIVMSG" || this->__clients[j].__command.get_command()  == "NOTICE")
+									try
 									{
-										try
+										if (this->__clients[j].__command.get_command()  == "PRIVMSG" || this->__clients[j].__command.get_command()  == "NOTICE")
 										{
 											if (this->__clients[j].__command.get_params().size() != 2)
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
@@ -279,45 +279,48 @@ void	Server::run()
 													this->__clients[j].__command.send_error(res, this->__clients[j].get_fd());
 											}
 										}
-										catch(const std::exception& e)
+										else if (this->__clients[j].__command.get_command()  == "JOIN") 
 										{
-											std::cerr << e.what() << '\n';
-											close (this->__clients[j].get_fd());
-											std::cout << "Disconnet Client " << this->__clients[j].get_fd() << std::endl;
-											this->__clients.erase(this->__clients.begin() + j);
+											this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->__clients[j].get_nickname(), this->get_ref_channels());
+											this->__clients[j].__join.erase_channels();
 										}
-									}
-									else if (this->__clients[j].__command.get_command()  == "JOIN")
-									{
-										this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->__clients[j].get_nickname(), this->get_ref_channels());
-									}
-									else if  (this->__clients[j].__command.get_command()  == "PART")
-									{
-										this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->get_ref_channels());
-									}
-									else if (this->__clients[j].__command.get_command() == "MODE")
-									{
-										if (this->__clients[j].__command.get_params().size() == 0)
-											this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+										else if  (this->__clients[j].__command.get_command()  == "PART")
+											this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->get_ref_channels());
+										else if (this->__clients[j].__command.get_command() == "MODE")
+										{
+											if (this->__clients[j].__command.get_params().size() == 0)
+												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+											else
+												if (this->__clients[j].__mode.parseMode(this->__clients[j].__command.get_params(),  this->get_ref_channels(), this->__clients[j].get_fd(), this->__clients[j].get_nickname()) == -1)
+													throw Error("Failed to send message to client");
+										}
+										else if (this->__clients[j].__command.get_command() == "KICK")
+										{
+											
+										}
+										else if (this->__clients[j].__command.get_command() == "!time")
+										{
+											if (this->__clients[j].__command.get_params().size() == 0)
+												this->bot(this->__clients[j].get_nickname(), this->__clients[j].get_fd());
+											else
+												this->__clients[j].__command.send_error(0, this->__clients[j].get_fd());
+										}
 										else
-											if (this->__clients[j].__mode.parseMode(this->__clients[j].__command.get_params(),  this->get_ref_channels(), this->__clients[j].get_fd(), this->__clients[j].get_nickname()) == -1)
-												throw Error("Failed to send message to client");
+											this->__clients[j].__command.send_error(ERR_UNKNOWNCOMMAND, this->__clients[j].get_fd());
 									}
-									else if (this->__clients[j].__command.get_command() == "!time")
+									catch(const std::exception& e)
 									{
-										if (this->__clients[j].__command.get_params().size() == 0)
-											this->bot(this->__clients[j].get_nickname(), this->__clients[j].get_fd());
-										else
-											this->__clients[j].__command.send_error(0, this->__clients[j].get_fd());
+										std::cerr << e.what() << '\n';
+										close (this->__clients[j].get_fd());
+										std::cout << "Disconnet Client " << this->__clients[j].get_fd() << std::endl;
+										this->__clients.erase(this->__clients.begin() + j);
 									}
-									else
-										this->__clients[j].__command.send_error(ERR_UNKNOWNCOMMAND, this->__clients[j].get_fd());
 									for (size_t x = 0; x < this->__clients[j].__command.get_params().size(); x++)
 										this->__clients[j].__command.get_params().erase(this->__clients[j].__command.get_params().begin() + x);
 									this->__clients[j].__command.get_params().clear();
 								}
 							}
-								this->__clients[j].__command.erase_command();
+							this->__clients[j].__command.erase_command();
 							memset(__buffer, 0, sizeof(__buffer));
 						}
 					}
