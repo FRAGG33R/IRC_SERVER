@@ -1,4 +1,4 @@
-#include "../includes/Class.KICK.hpp"
+# include "../includes/Class.KICK.hpp"
 
 void	Kick::kick(std::vector<std::string> __params, int __client, std::vector<Channel> __channels)
 {

@@ -79,7 +79,7 @@ int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_clien
 					if (ref_channels[i].get_password().empty() || ref_channels[i].get_password() == it->second)
 					{
 						ref_channels[i].add_client(std::pair<int, std::string>(__new_client, __sender_nickname));
-						__message = ":" + __sender_nickname + "JOIN * Welcome To " + it->first + " channel\n";
+						__message = ":" + __sender_nickname + " JOIN * Welcome To " + it->first + " channel\n";
 						if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
 								return (-1);
 					}
