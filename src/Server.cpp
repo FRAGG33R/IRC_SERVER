@@ -296,7 +296,32 @@ void	Server::run()
 										}
 										else if (this->__clients[j].__command.get_command() == "KICK")
 										{
-											this->__clients[j].__kick.kick(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->get_ref_channels());
+											std::cout << this->__clients[j].__command.get_params().size() << std::endl;
+											if (this->__clients[j].__command.get_params().size() == 0 )
+												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+											else if (this->__clients[j].__command.get_params().size() == 1)
+												this->__clients[j].__kick.kick(this->__clients[j].__command.get_params(), std::pair<std::string, int> (this->__clients[j].get_nickname(), this->__clients[j].get_fd()), this->get_ref_channels());
+											else if (this->__clients[j].__command.get_params().size() == 2)
+												this->__clients[j].__kick.kick(this->__clients[j].__command.get_params(), std::pair<std::string, int> (this->__clients[j].get_nickname(), this->__clients[j].get_fd()), this->get_ref_channels());
+											else
+												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+									
+										}
+										else if (this->__clients[j].__command.get_command() == "QUIT")
+										{
+											if (this->__clients[j].__command.get_params().size() == 0 )
+												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+											else
+											{
+												int res = this->__clients[j].__quit.quit(this->__clients[j].__command.get_params(), this->get_ref_channels(), std::pair<std::string, int> (this->__clients[j].get_nickname(), this->__clients[j].get_fd()));
+												if (res == 0)
+												{
+													this->__clients.erase(this->__clients.begin() + j);
+													break;
+												}
+												else if (res == -1)
+													throw Error("Failed to send message to client");
+											}
 										}
 										else if (this->__clients[j].__command.get_command() == "!time")
 										{

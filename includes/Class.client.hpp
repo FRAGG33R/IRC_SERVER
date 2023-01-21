@@ -7,6 +7,7 @@
 # include "Class.MODE.hpp"
 # include "Class.part.hpp"
 # include "Class.KICK.hpp"
+# include "Class.QUIT.hpp"
 
 class Client
 {
@@ -25,6 +26,8 @@ class Client
 		Join	__join;
 		Mode	__mode;
 		Kick    __kick;
+		Quit	__quit;
+
 		bool	__username_filled;
 		bool	__nickname_filled;
 		string	__request;
