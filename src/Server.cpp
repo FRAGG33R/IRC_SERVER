@@ -296,7 +296,7 @@ void	Server::run()
 										}
 										else if (this->__clients[j].__command.get_command() == "KICK")
 										{
-											
+											this->__clients[j].__kick.kick(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->get_ref_channels());
 										}
 										else if (this->__clients[j].__command.get_command() == "!time")
 										{
