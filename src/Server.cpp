@@ -296,6 +296,16 @@ void	Server::run()
 										}
 										else if (this->__clients[j].__command.get_command() == "KICK")
 										{
+											std::cout << this->__clients[j].__command.get_params().size() << std::endl;
+											if (this->__clients[j].__command.get_params().size() == 0 )
+												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+											else if (this->__clients[j].__command.get_params().size() == 1)
+												this->__clients[j].__kick.kick(this->__clients[j].__command.get_params(), std::pair<std::string, int> (this->__clients[j].get_nickname(), this->__clients[j].get_fd()), this->get_ref_channels());
+											else if (this->__clients[j].__command.get_params().size() == 2)
+												this->__clients[j].__kick.kick(this->__clients[j].__command.get_params(), std::pair<std::string, int> (this->__clients[j].get_nickname(), this->__clients[j].get_fd()), this->get_ref_channels());
+											else
+												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+									
 										}
 										else if (this->__clients[j].__command.get_command() == "QUIT")
 										{
