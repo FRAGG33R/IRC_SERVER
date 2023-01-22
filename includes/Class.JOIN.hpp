@@ -18,7 +18,4 @@ class Join
 };
 #endif
 
-// 1-remove # from the channel
 // 2-check the password for channel
-// 3-remove desconnected client from all channels
-// 4-erase the channel from the vector when the last client desconnected

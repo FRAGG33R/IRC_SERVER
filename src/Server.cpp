@@ -93,6 +93,9 @@ void	Server::clean_channels(std::vector<Channel> &__channels, int __fd)
 				__channels[i].get_operators().erase(__channels[i].get_operators().begin() + j);
 			}
 		}
+		if (__channels[i].get_clients().size() == 0)
+			__channels.erase(__channels.begin() + i);
+
 	}
 }
 void Server::print(void)
@@ -175,7 +178,7 @@ void	Server::run()
 								cerr << RED << "The client " << this->__clients[j].get_fd() <<  " disconnected !" << RESET << endl;
 								close(this->__clients[j].get_fd());
 								remove_from_poll(__poll_fds, this->__clients[j].get_fd());
-								this->clean_channels(this->__channels, this->__clients[j].get_fd());
+								this->clean_channels(this->get_ref_channels(), this->__clients[j].get_fd());
 								this->__clients.erase(this->__clients.begin() + j);
 								break ;
 							}
@@ -296,7 +299,6 @@ void	Server::run()
 										}
 										else if (this->__clients[j].__command.get_command() == "KICK")
 										{
-											std::cout << this->__clients[j].__command.get_params().size() << std::endl;
 											if (this->__clients[j].__command.get_params().size() == 0 )
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 											else if (this->__clients[j].__command.get_params().size() == 1)
