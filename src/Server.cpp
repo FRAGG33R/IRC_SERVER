@@ -445,7 +445,6 @@ void	Server::connect_client(int nb_client)
 	}
 }
 
-
 void	Server::bot(std::string __client_name, int __client_fd)
 {
 	time_t 						now = time(0);
