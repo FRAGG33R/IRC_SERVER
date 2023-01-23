@@ -66,15 +66,13 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 					for (size_t l = 0; l < __channels[k].get_clients().size(); l++)
 					{
 						this->setMessage(":" + __sender_nickname + " PRIVMSG * " + __message  + "\n");
-						// std::cout << "The full message is " << this->getMessage();
-						// std::cout << "The client is : " << __channels[k].get_clients()[l].second << std::endl;
 						if (send(__channels[k].get_clients()[l].first, this->getMessage().c_str(), this->getMessage().size(), 0) == -1)
 							return (-1);
 					}
 				}
 				else
 				{
-					std::string msg(":" + __sender_nickname + " 401 * No such nick/channel\n");
+					std::string msg(":" + __sender_nickname + " 401 " + __given_clients[i] + " No such nick/channel\n");
 					if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
 						return (-1);
 				}
@@ -82,21 +80,29 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 		}
 		else
 		{
-			for (size_t j = 0; j < __clients.size(); j++)
+			if (client_exist(__clients, __given_clients[i]))
 			{
-				if (__given_clients[i] == __clients[j].first) {
-					this->setMessage(":" + __sender_nickname + " PRIVMSG * " + __message  + "\n");
-					if (send(__clients[j].second, this->getMessage().c_str(), this->getMessage().size(), 0) == -1)
-						return (-1);
-				}
-				else
-				{
-					std::string msg(":" + __sender_nickname + " 401 * No such nick/channel\n");
-					if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
-						return (-1);
-				}
+				this->setMessage(":" + __sender_nickname + " PRIVMSG * " + __message  + "\n");
+				if (send(__clients[i].second, this->getMessage().c_str(), this->getMessage().size(), 0) == -1)
+					return (-1);
+			}
+			else
+			{
+				std::string msg(":" + __sender_nickname + " 401 " + __given_clients[i] + " No such nick/channel\n");
+				if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
+					return (-1);
 			}
 		}
 	}
 	return (-2);
+}
+
+int	Privmsg::client_exist(std::vector<std::pair<std::string, int> > __client_list, std::string __client)
+{
+	for (size_t j = 0; j < __client_list.size(); j++)
+	{
+		if (__client == __client_list[j].first)
+			return (1);
+	}
+	return (0);
 }

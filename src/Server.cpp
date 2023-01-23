@@ -1,8 +1,6 @@
 # include "../includes/main.hpp"
 # include "../includes/Class.server.hpp"
 
-//kick message is not important
-
 Server	*Server::__instance = nullptr;
 
 Server::Server(string password, int port, string name = "CW9")
