@@ -186,8 +186,8 @@ void	Server::run()
 							}
 							string	backup;
 							size_t	first_space;
-							this->__clients[j].__command.set_command(this->__clients[j].__command.get_command() + string(__buffer));
-							if (this->__clients[j].__command.get_command().find_last_of("\n") != std::string::npos || this->__clients[j].__command.get_command().find_last_of("\r"))
+
+							if (this->__clients[j].__command.get_command().find_last_of("\n") != std::string::npos || this->__clients[j].__command.get_command().find_last_of("\r") != std::string::npos)
 							{
 								if (!this->__clients[j].is_registred())
 								{

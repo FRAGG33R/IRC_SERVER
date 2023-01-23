@@ -192,6 +192,7 @@ void	Parser::send_error(int __err, int fd)
 bool	Parser::check_command()
 {
 	string	command(this->command);
+
 	if (command.find(" ") != string::npos)
 		command = command.substr(0, command.find(" "));
 	else
@@ -200,29 +201,6 @@ bool	Parser::check_command()
 		return (false);
 	return (true);
 }
-
-#define PRIVMSG "PRIVMSG"
-// void	Parser::put_cmd_params()
-// {
-// 	size_t	__first_space;
-// 	string	__backup;
-
-// 	__backup = this->command;
-// 	__first_space = this->command.find_first_not_of(" ");
-// 	if (__first_space != 0)
-// 		this->command = this->command.substr(__first_space, string::npos);
-// 	if (this->command == PRIVMSG)
-
-// 	if (this->command.find(" ") != string::npos)
-// 	{
-// 		this->command = this->command.substr(0, this->command.find(" "));
-// 		__backup = this->command.substr(0, this->command.find(" "));
-// 		while (!__backup.empty())
-// 		{
-// 			this->params.push_back(0, 1);
-// 		}
-// 	}
-// }
 
 vector<string>	&Parser::get_params()
 {
