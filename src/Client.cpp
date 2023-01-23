@@ -12,7 +12,7 @@ Client::Client(string username, string nickname, bool is_operator, bool authenti
 	this->__fd = fd;
 }
 
-Client::Client(int fd) : __fd(fd), __is_authenticated(false), __is_registred(false)
+Client::Client(int fd) : __is_authenticated(false), __is_registred(false),  __fd(fd)
 {
 	this->__username_filled = false;
 	this->__nickname_filled = false;

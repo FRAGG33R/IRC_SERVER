@@ -46,8 +46,6 @@ void Join::erase_channels( void )
 
 int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_client, std::string __sender_nickname, std::vector<Channel> &ref_channels)
 {
-	size_t			__begin;
-	size_t			__end;
 	std::string		__message;
 
 	this->parse_join_args(__params);

@@ -16,7 +16,6 @@ class Privmsg
 	    std::vector<int>	__receivers;
 		std::string			__message;
 		std::string			__type;
-		int					__sender;
     public:
 			Privmsg();
 			~Privmsg();
