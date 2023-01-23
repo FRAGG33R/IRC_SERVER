@@ -193,10 +193,7 @@ void	Server::run()
 								{
 									backup = this->__clients[j].__command.get_command();
 									while (backup.find("\r") != string::npos)
-									{
-										size_t j = backup.find("\r");
-										backup.erase(j, 1);
-									}
+										backup.erase(backup.find("\r"), 1);
 									while (!backup.empty())
 									{
 										this->__clients[j].__command.set_command(backup.substr(0, backup.find("\n") + 1));
@@ -217,7 +214,7 @@ void	Server::run()
 									{
 										this->__clients[j].__command.set_command(backup.substr(0, backup.find(" ")));
 										backup = backup.substr(backup.find(" ") + 1, string::npos);
-										for (index = 0;backup[index] == ' '; index++);
+										for (index = 0; backup[index] == ' '; index++);
 										backup = backup.substr(index, string::npos);
 										index = backup.size() - 1;
 										while (index >= 0)
@@ -247,7 +244,7 @@ void	Server::run()
 										{
 											t = 0;
 											k = substrings[0].find(",");
-											while (k >= 0 && substrings[j][--k] == ' ') ;
+											while (k >= 0 && substrings[0][--k] == ' ') ;
 											while (substrings[0][t] == ' ')
 												t++;
 											if (temp == "")
@@ -259,10 +256,10 @@ void	Server::run()
 										}
 										t = 0;
 										k = substrings[0].size();
-										while (substrings[j][t] == ' ')
+										while (substrings[0][t] == ' ')
 											t++;
-										while (k >= 0 && substrings[j][--k] == ' ') ;
-										if (substrings[j][k + 1] != ' ')
+										while (k >= 0 && substrings[0][--k] == ' ') ;
+										if (substrings[0][k + 1] != ' ')
 											k++;
 										substrings[0] = substrings[0].substr(t, k - t + 1);
 										if (temp != "")
