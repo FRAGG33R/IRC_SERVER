@@ -136,8 +136,7 @@ void	Server::run()
 	char			__buffer[MAX_FD];
 	string	__response = string(GRN) + "Connected with the irc server successfully\n" + string(RESET);
 	string	__try_password = string(RED) + "Password incorrect please try again.\n" + string(RESET);
-	string	__request;
-	string	__interpret;
+	string	__command_buffer;
 
 	this->print();
 	while (true)
@@ -185,10 +184,11 @@ void	Server::run()
 								break ;
 							}
 							string	backup;
-							size_t	first_space;
-
+							__command_buffer += string(__buffer);
+							this->__clients[j].__command.set_command(__command_buffer);
 							if (this->__clients[j].__command.get_command().find_last_of("\n") != std::string::npos || this->__clients[j].__command.get_command().find_last_of("\r") != std::string::npos)
 							{
+								__command_buffer.erase();
 								if (!this->__clients[j].is_registred())
 								{
 									backup = this->__clients[j].__command.get_command();
@@ -341,8 +341,8 @@ void	Server::run()
 										this->__clients[j].__command.get_params().erase(this->__clients[j].__command.get_params().begin() + x);
 									this->__clients[j].__command.get_params().clear();
 								}
+									this->__clients[j].__command.erase_command();
 							}
-							this->__clients[j].__command.erase_command();
 							memset(__buffer, 0, sizeof(__buffer));
 						}
 					}

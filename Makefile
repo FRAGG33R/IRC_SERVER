@@ -21,7 +21,7 @@ INCLUDE = $(wildcard includes/*.hpp)
 
 CC = c++
 
-CFLAGS = -Wextra  -std=c++98
+CFLAGS = -Wextra -Wall -Werror -std=c++98
 
 all:$(NAME)
 
