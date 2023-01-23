@@ -50,7 +50,6 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
         }
     }
 
-
     for (size_t i = 0; i < __listofchannels.size(); i++)
     {
         if (!this->searchChannel(__listofchannels[i], __channels))
@@ -101,20 +100,23 @@ void	Kick::noticeAll(Channel __channel,int   __client, std::string  __nameofclie
 {
     (void) __client;
     std::string __message;
+
     if (__reason)
     {
+        __message =  "KICK " + __channel.getchannelname()+ " " + __nameofclient + " "+ __reasonMsg +"\n";
         for(size_t i = 0; i < __channel.get_clients_size(); i++)
         {
-            __message =  "KICK " + __channel.getchannelname()+ " " + __nameofclient + " "+ __reasonMsg +"\n";
-            send(__channel.get_clients()[i].first, __message.c_str(), __message.size(), 0);
+			if (__channel.get_clients()[i].first != __client)
+            	send(__channel.get_clients()[i].first, __message.c_str(), __message.size(), 0);
         }
     }
     else
     {
+		__message =  "KICK " + __channel.getchannelname()+ " " + __nameofclient + "\n";
         for(size_t i = 0; i < __channel.get_clients_size(); i++)
         {
-            __message =  "KICK " + __channel.getchannelname()+ " " + __nameofclient + " " +"\n";
-            send(__channel.get_clients()[i].first, __message.c_str(), __message.size(), 0);
+			if (__channel.get_clients()[i].first != __client)
+            	send(__channel.get_clients()[i].first, __message.c_str(), __message.size(), 0);
         }
     }
 }
