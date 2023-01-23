@@ -17,7 +17,7 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
         if (!__tmp.empty())
             __args.push_back(__tmp);
     }
-    if (__params[1][0] != ':')
+    if (!__params[1].empty() && __params[1][0] != ':')
     {
         __message =  ": " + __client.first + " 412 * No text to send\n";
 		send(__client.second, __message.c_str(), __message.size(), 0);
