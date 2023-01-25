@@ -75,7 +75,7 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 				return (-1);
 			return (0);
 		}
-		if ((__params[1][1] != 'o' && __params[1][1] != 'p') || __params[1].size() > 2)
+		if ((__params[1][1] != 'o' && __params[1][1] != 'k') || __params[1].size() > 2)
 		{
 			__message  = ":" + __sender_name + " 472 * is unknown mode char to me\n";
 			if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
@@ -107,15 +107,20 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 					return (-1);
 			}
 		}
-		else if (__params[1][1] == 'p')
+		else if (__params[1][1] == 'k')
 		{
 			for (size_t i = 0; i < __channels[__index].get_operators().size(); i++)
 			{
 				if (__sender_name == __channels[__index].get_operators()[i].second)
 					__is_op = 1;
 			}
-			if (__is_op == 1)
-				__channels[__index].set_password(__params[2]);
+			if (__is_op == 1) 
+			{
+				if (__params[1][0]  == '-')
+					__channels[__index].get_password().erase();
+				else if (__params[1][0]  == '+')
+					__channels[__index].set_password(__params[2]);
+			}
 			else
 			{
 				__message  = ":" + __sender_name + " 482 * You're not channel operator\n";

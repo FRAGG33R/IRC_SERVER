@@ -39,7 +39,7 @@ std::vector<std::pair<int, std::string> >	&Channel::get_operators()
 	return (this->__operators);
 }
 
-std::string	Channel::get_password()
+std::string	&Channel::get_password()
 {
 	return (this->__password);
 }

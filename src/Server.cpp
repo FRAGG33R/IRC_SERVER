@@ -362,7 +362,7 @@ bool	check_order(string command, int order)
 		if (command.find(USER_COMMAND) == string::npos)
 			return (0);
 	return (1);
-};
+}
 
 bool	check_user_params(string command)
 {
