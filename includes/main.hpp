@@ -2,6 +2,7 @@
 #define __IRC__HPP__
 
 //Librarys
+
 # include <iostream>
 # include <string>
 # include <vector>
@@ -61,12 +62,11 @@ using std::cerr;
 # define ERR_WRONGPASSWORD 666
 # define MSG_666 ":PASS 666 * wrong password\n"
 # define ERR_UNKNOWNCOMMAND 421
-# define MSG_421 ":* 421 * Unknown command\n"
+# define MSG_421 RED ":* 421 * Unknown command\n" RESET
 # define ERR_REGIST_ORDER 667
 # define MSG_667 ":* 667 * Enter PASS <password>, NICK <nickname>, USER <user>\n"
 # define ERR_ERRONEUSUSERNAME 668
 # define MSG_668 ":NICK 668 * Erroneus username\n"
-
 #define MSG_411 ":* 411 * No recipient given\n"
 #define ERR_NORECIPIENT 411
 #define MSG_412 ":* 412 * No text to send\n"
@@ -76,6 +76,10 @@ using std::cerr;
 #define MSG_401 ":* 401 * No such nick/channel\n"
 #define ERR_NOSUCHNICK 401
 #define MSG_0 ":* 0 * Too many parameters\n"
+
+#define MSG_402 ":* 402 No such server\n"
+#define ERR_NOSUCHSERVER 402
+
 //server informations
 
 #define RPL_WELCOME 1

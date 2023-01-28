@@ -382,7 +382,7 @@ bool	check_user_params(string command)
 		else
 			command.erase();
 	}
-	return (__nb_params >= 5);
+	return (__nb_params >= 4);
 }
 
 void	Server::connect_client(int nb_client)

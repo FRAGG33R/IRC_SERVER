@@ -20,7 +20,7 @@ int    Part::part(std::vector<std::string> __params, int __client, std::vector<C
 			int __channel_index = this->indexOfChannel(__leave_channels[i], __channels);
 			if (__channel_index == -1)
 			{
-				__message = ": " + __leave_channels[i] + " 403 * No such channel\n";
+				__message = std::string(RED) + ": " + __leave_channels[i] + " 403 * No such channel\n" + std::string(RESET);
 				if (send(__client, __message.c_str(), __message.size(), 0) == -1)
 					return (-1);
 			}
@@ -46,7 +46,7 @@ int    Part::part(std::vector<std::string> __params, int __client, std::vector<C
 				}
 				else
 				{
-					__message = ": " + __leave_channels[i] + " 442 * You're not on that channel\n";
+					__message = std::string(RED) + ": " + __leave_channels[i] + " 442 * You're not on that channel\n" + std::string(RESET);
 					if (send(__client, __message.c_str(), __message.size(), 0) == -1)
 						return (-1);
 				}
@@ -54,7 +54,7 @@ int    Part::part(std::vector<std::string> __params, int __client, std::vector<C
 		}
 		else
 		{
-			__message = ": " + __leave_channels[i] + " 403 * No such channel\n";
+			__message = std::string(RED) + ": " + __leave_channels[i] + " 403 * No such channel\n" + std::string(RESET);
 			send(__client, __message.c_str(), __message.size(), 0);
 		}
     }

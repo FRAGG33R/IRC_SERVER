@@ -68,7 +68,7 @@ int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_clien
 						if (ref_channels[i].get_clients()[j].second == __sender_nickname)
 						{
 							client_exist = true;
-							__message = ":" + __sender_nickname + " 443 * is already on channel\n";
+							__message = std::string(RED)  + ":" + __sender_nickname + " 443 * is already on channel\n" + std::string(RESET);
 							if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
 								return (-1);
 							break ;
@@ -85,7 +85,7 @@ int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_clien
 						}
 						else
 						{
-							__message = ":" + it->first + " 475 * Cannot join channel\n";
+							__message = std::string(RED) + ":" + it->first + " 475 * Cannot join channel\n" + std::string(RESET);
 							if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
 								return (-1);
 						}
@@ -103,7 +103,7 @@ int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_clien
 		}
 		else
 		{
-			__message = ": " + it->first + " 403 * No such channel\n";
+			__message = std::string(RED) + ": " + it->first + " 403 * No such channel\n" + std::string(RESET);
 			if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
 				return (-1);
 		}

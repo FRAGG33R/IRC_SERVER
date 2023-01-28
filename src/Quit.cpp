@@ -1,10 +1,5 @@
 # include "../includes/Class.QUIT.hpp"
 
-//close the client file descriptor
-//remove the client from all channels (vectors)
-//broadcast the message in all  channels that the client exist on
-//remove the client from the vector of client in the server class
-//default message "user has quit"
 
 int	Quit::quit(std::vector<std::string> &__params, std::vector<Channel> &__channels, std::pair<std::string, int> __client)
 {
@@ -14,7 +9,7 @@ int	Quit::quit(std::vector<std::string> &__params, std::vector<Channel> &__chann
 
 	if (__params[0][0] != ':')
 	{
-		__message =  ": " + __client.first + " 412 * No text to send\n";
+		__message =  std::string(RED) + ": " + __client.first + " 412 * No text to send\n" + std::string(RESET);
 		if (send(__client.second, __message.c_str(), __message.size(), 0) == -1)
 			return (-1);
 		return (1);

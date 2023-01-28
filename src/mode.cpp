@@ -37,7 +37,7 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 	std::string					__temp;
 	std::vector<std::string>    __temp_vec;
 	std::stringstream 			__stream(__params[0]);
-	std::string					__message = ":" + __sender_name + " MODE 403 * : No such channel\n";
+	std::string					__message = std::string(RED) + ":" + __sender_name + " MODE 403 * : No such channel\n" + std::string(RESET);
 
 	while (getline(__stream, __temp, ' '))
 	{
@@ -70,14 +70,14 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 	{
 		if ((__params[1][0]  != '-' && __params[1][0] != '+'))
 		{
-			__message = ":" + __sender_name + " 501 * Unknown MODE flag\n";
+			__message = std::string(RED) + ":" + __sender_name + " 501 * Unknown MODE flag\n"  + std::string(RESET);
 			if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
 				return (-1);
 			return (0);
 		}
 		if ((__params[1][1] != 'o' && __params[1][1] != 'k') || __params[1].size() > 2)
 		{
-			__message  = ":" + __sender_name + " 472 * is unknown mode char to me\n";
+			__message  = std::string (RED) + ":" + __sender_name + " 472 * is unknown mode char to me\n" + std::string(RESET);
 			if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
 				return (-1);
 			return (0);
@@ -96,13 +96,13 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 					if (__params[2] == __channels[__index].get_clients()[i].second)
 						return (__channels[__index].add_operator(std::pair<int, std::string> (__channels[__index].get_clients()[i].first, __channels[__index].get_clients()[i].second)), 0);
 				}
-				__message  = ":" + __sender_name + " 401 * No such nick/channel\n";
+				__message  = std::string(RED) + ":" + __sender_name + " 401 * No such nick/channel\n" + std::string(RESET);
 				if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
 					return (-1);
 			}
 			else
 			{
-				__message  = ":" + __sender_name + " 482 * You're not channel operator\n";
+				__message  = std::string(RED) + ":" + __sender_name + " 482 * You're not channel operator\n" + std::string(RESET);
 				if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
 					return (-1);
 			}
@@ -123,7 +123,7 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 			}
 			else
 			{
-				__message  = ":" + __sender_name + " 482 * You're not channel operator\n";
+				__message  = std::string(RED) + ":" + __sender_name + " 482 * You're not channel operator\n" + std::string(RESET);
 				if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
 					return (-1);
 			}

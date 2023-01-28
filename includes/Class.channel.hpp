@@ -3,6 +3,10 @@
 # include <iostream>
 # include <vector>
 
+# define GRN "\e[1;32m"
+# define RESET "\e[0m"
+# define RED "\e[1;31m"
+
 class Channel 
 {
 	private:

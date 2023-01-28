@@ -7,9 +7,6 @@
 # include "Class.channel.hpp"
 # include <sys/socket.h>
 
-
-
-
 class Privmsg
 {
 	private:

@@ -72,7 +72,7 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 				}
 				else
 				{
-					std::string msg(":" + __sender_nickname + " 401 " + __given_clients[i] + " No such nick/channel\n");
+					std::string msg(std::string(RED) + ":" + __sender_nickname + " 401 " + __given_clients[i] + " No such nick/channel\n" + std::string(RESET));
 					if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
 						return (-1);
 				}
@@ -88,7 +88,7 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 			}
 			else
 			{
-				std::string msg(":" + __sender_nickname + " 401 " + __given_clients[i] + " No such nick/channel\n");
+				std::string msg(std::string(RED) + ":" + __sender_nickname + " 401 " + __given_clients[i] + " No such nick/channel\n" + std::string(RESET));
 				if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
 					return (-1);
 			}
