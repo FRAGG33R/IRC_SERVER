@@ -11,35 +11,51 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
     std::vector<std::string>    __listofchannels;
     std::vector<std::string>    __listofclients;
     std::stringstream           __splitargs(__params[0]);
-  
+
+	// std::cout << "1\n";
     while (getline(__splitargs, __tmp, ' '))
     {
         if (!__tmp.empty())
             __args.push_back(__tmp);
     }
-    if (!__params[1].empty() && __params[1][0] != ':')
-    {
-        __message =  std::string(RED) + ": " + __client.first + " 412 * No text to send\n" + std::string(RESET);
-		send(__client.second, __message.c_str(), __message.size(), 0);
-        return ;
-    }
+	// std::cout << "2\n";
 
+    if (__params.size() > 1)
+    {
+		if (__params[1][0] != ':') 
+		{
+			__message =  std::string(RED) + ": " + __client.first + " 412 * No text to send\n" + std::string(RESET);
+			send(__client.second, __message.c_str(), __message.size(), 0);
+			return ;
+		}
+    }
+	// std::cout << "3\n";
+	// std::cout << "*"  << __args[0] << std::endl;
+	// std::cout << "*"  << __args[1] << std::endl;
     std::stringstream           __splitchannels(__args[0]);
+	if (__args.size() == 1)
+	{
+		__message =  std::string(RED) + ": " + __client.first + " 401 * No such nick/channel\n" + std::string(RESET);
+		send(__client.second, __message.c_str(), __message.size(), 0);
+		return ;
+	}
     std::stringstream           __splitclients(__args[1]);
     
-    __tmp.clear();
+    __tmp.erase();
     while(getline(__splitchannels, __tmp, ','))
     {
         if (!__tmp.empty())
             __listofchannels.push_back(__tmp);
     }
-    __tmp.clear();
+    __tmp.erase();
+	// std::cout << "4\n";
+
     while(getline(__splitclients, __tmp, ','))
     {
         if (!__tmp.empty())
             __listofclients.push_back(__tmp);
     }
-
+	// std::cout << "5\n";
     for (size_t i = 0; i < __listofchannels.size(); i++)
     {
         if (__listofchannels[i][0] != '#')
