@@ -12,26 +12,12 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
     std::vector<std::string>    __listofclients;
     std::stringstream           __splitargs(__params[0]);
 
-	// std::cout << "1\n";
     while (getline(__splitargs, __tmp, ' '))
     {
         if (!__tmp.empty())
             __args.push_back(__tmp);
     }
-	// std::cout << "2\n";
-
-    if (__params.size() > 1)
-    {
-		if (__params[1][0] != ':') 
-		{
-			__message =  std::string(RED) + ": " + __client.first + " 412 * No text to send\n" + std::string(RESET);
-			send(__client.second, __message.c_str(), __message.size(), 0);
-			return ;
-		}
-    }
-	// std::cout << "3\n";
-	// std::cout << "*"  << __args[0] << std::endl;
-	// std::cout << "*"  << __args[1] << std::endl;
+ 
     std::stringstream           __splitchannels(__args[0]);
 	if (__args.size() == 1)
 	{
@@ -48,14 +34,13 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
             __listofchannels.push_back(__tmp);
     }
     __tmp.erase();
-	// std::cout << "4\n";
 
     while(getline(__splitclients, __tmp, ','))
     {
         if (!__tmp.empty())
             __listofclients.push_back(__tmp);
     }
-	// std::cout << "5\n";
+
     for (size_t i = 0; i < __listofchannels.size(); i++)
     {
         if (__listofchannels[i][0] != '#')
@@ -72,13 +57,11 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
         {
 			__message = std::string(RED) + ": " + __listofchannels[i] + " 403 * No such channel\n" + std::string(RESET);
             send(__client.second, __message.c_str(), __message.size(), 0);
-            break ;
         }
         else if (!this->searchClient(__client.second, __channels, __listofchannels[i]))
         {
 			__message = std::string (RED) + ": " + __listofchannels[i] + " 442 * You're not on that channel\n" + std::string(RESET);
             send(__client.second, __message.c_str(), __message.size(), 0);
-            break ; 
         }
         else if (this->searchClient(__client.second, __channels, __listofchannels[i]))
         {
@@ -86,7 +69,7 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
             {
 				__message = std::string (RED) + ": " + __listofchannels[i] + " 442 * You're not on that channel\n" + std::string(RESET);
                 send(__client.second, __message.c_str(), __message.size(), 0);
-                break;
+                continue;
             }
             else if (this->checkOperator(__client.second, __channels, __listofchannels[i]))
             {
@@ -94,22 +77,23 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
                 {
                     if (this->searchClient(__listofclients[j], __channels, __listofchannels[i]))
                     {
-                        if (__params[1][0] == ':')
-                        {
-                            this->noticeAll(__channels[i], __client.second, __listofclients[j] , true, __params[1]);
-                            __channels[i].remove_client(this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]));
-                        }
-                        else
-                        {
-                            this->noticeAll(__channels[i], __client.second, __listofclients[j], false, __params[1]);
-                            __channels[i].remove_client(this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]));
-                        }
+						this->noticeAll(__channels[i], __client.second, __listofclients[j], !__params.empty(), __params[1]);
+						__channels[i].remove_client(this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]));
                     }
+					else
+					{
+						__message = std::string (RED) + ": " + __listofchannels[i] + " 442 * You're not on that channel\n" + std::string(RESET);
+						send(__client.second, __message.c_str(), __message.size(), 0);
+					}
                 }
             }
+			else
+			{
+				__message = std::string (RED) + ": " + __listofchannels[i] + " 482 * You're not channel operator\n" + std::string(RESET);
+				send(__client.second, __message.c_str(), __message.size(), 0);
+			}
         }
     }
-
 }
 
 void	Kick::noticeAll(Channel __channel,int   __client, std::string  __nameofclient, bool    __reason, std::string __reasonMsg)
