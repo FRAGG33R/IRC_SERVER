@@ -82,7 +82,6 @@ void	Server::full_close(struct pollfd *__poll_fd)
 }
 void	Server::clean_channels(std::vector<Channel> &__channels, int __fd)
 {
-	std::cout << "HELlo \n";
 	for (size_t i = 0; i < __channels.size(); i++)
 	{
 		for (size_t j = 0; j < __channels[i].get_clients().size(); j++)
@@ -99,7 +98,6 @@ void	Server::clean_channels(std::vector<Channel> &__channels, int __fd)
 		}
 		if (__channels[i].get_clients().size() == 0)
 			__channels.erase(__channels.begin() + i);
-
 	}
 }
 void Server::print(void)

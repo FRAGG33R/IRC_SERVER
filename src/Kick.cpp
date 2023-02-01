@@ -1,5 +1,5 @@
 # include "../includes/Class.KICK.hpp"
-// + i on erase
+
 void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> __client, std::vector<Channel> &__channels)
 {
     __params[0].erase(__params[0].find_last_not_of(" ") + 1);
@@ -18,6 +18,7 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
     }
  
     std::stringstream           __splitchannels(__args[0]);
+	std::cout << __args[0] << std::endl;
 	if (__args.size() == 1)
 	{
 		__message =  std::string(RED) + ": " + __client.first + " 401 * No such nick/channel\n" + std::string(RESET);
@@ -25,7 +26,7 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
 		return ;
 	}
     std::stringstream           __splitclients(__args[1]);
-    
+
     __tmp.erase();
     while(getline(__splitchannels, __tmp, ','))
     {
@@ -33,20 +34,20 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
             __listofchannels.push_back(__tmp);
     }
     __tmp.erase();
-
     while(getline(__splitclients, __tmp, ','))
     {
         if (!__tmp.empty())
             __listofclients.push_back(__tmp);
     }
 
-    for (size_t i = 0; i < __listofchannels.size(); i++)
+    for (size_t index = 0; index < __listofchannels.size(); index++)
     {
-        if (__listofchannels[i][0] != '#')
+        if (__listofchannels[index][0] != '#')
         {
-			__message = std::string(RED) + ": " + __listofchannels[i] + " 403 * No such channel\n" + std::string(RESET);
+			__message = std::string(RED) + ": " + __listofchannels[index] + " 403 * No such channel\n" + std::string(RESET);
             send(__client.second, __message.c_str(), __message.size(), 0);
-            __listofchannels.erase(__listofchannels.begin()); // +i
+            __listofchannels.erase(__listofchannels.begin() + index);
+			index--;
         }
     }
 
@@ -71,23 +72,15 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
                 {
                     if (this->searchClient(__listofclients[j], __channels, __listofchannels[i]))
                     {
-						std::cout << "there is  " << __channels.size() << " channels before \n";
-						std::cout << "this channel contain " << __channels[i].get_clients().size() << " client \n";
-						std::cout << "this channel contain " << __channels[i].get_operators().size() << " operator \n";
 						this->noticeAll(__channels[i], __client.second, __listofclients[j], (__params[1].size() > 1 && __params[1][0] == ':'), __params[1]);
 						int	__client_index = this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]);
 						int	__operator_index = this->indexOfOper(__listofclients[j], __channels, __listofchannels[i]);
-						std::cout << "Shoud I remove " << __client_index << "and " << __operator_index << "client\n";
 						if (__client_index != -1)
 							__channels[i].get_clients().erase(__channels[i].get_clients().begin() + this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]));
 						if (__operator_index != -1)
 							__channels[i].get_operators().erase(__channels[i].get_operators().begin() + this->indexOfOper(__listofclients[j], __channels, __listofchannels[i]));
 						if (__channels[i].get_clients().size() == 0)
 							__channels.erase(__channels.begin() + i);
-						std::cout << "there is  " << __channels.size() << " channels after \n";
-						std::cout << "*********\n";
-						std::cout << "this channel contain " << __channels[i].get_clients().size() << " client \n";
-						std::cout << "this channel contain " << __channels[i].get_operators().size() << " operator \n";
                     }
 					else
 					{
@@ -105,7 +98,7 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
     }
 }
 
-void	Kick::noticeAll(Channel __channel,int   __client, std::string  __nameofclient, bool    __reason, std::string __reasonMsg)
+void	Kick::noticeAll(Channel __channel,int   __client, std::string  __nameofclient, bool  __reason, std::string __reasonMsg)
 {
     (void) __client;
     std::string __message;
