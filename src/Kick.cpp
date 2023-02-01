@@ -1,4 +1,7 @@
 # include "../includes/Class.KICK.hpp"
+//kick the same client twice
+//garbage value in the reason message
+// the operator can kick himself
 
 void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> __client, std::vector<Channel> &__channels)
 {
@@ -65,28 +68,31 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
         }
         else if (this->searchClient(__client.second, __channels, __listofchannels[i]))
         {
-            if (!this->checkOperator(__client.second, __channels, __listofchannels[i]))
-            {
-				__message = std::string (RED) + ": " + __listofchannels[i] + " 442 * You're not on that channel\n" + std::string(RESET);
-                send(__client.second, __message.c_str(), __message.size(), 0);
-                continue;
-            }
-            else if (this->checkOperator(__client.second, __channels, __listofchannels[i]))
-            {
-                for (size_t j = 0; j < __listofclients.size(); j++)
+			bool	__is_operator = this->checkOperator(__client.second, __channels, __listofchannels[i]);
+			if (__is_operator)
+			{
+				for (size_t j = 0; j < __listofclients.size(); j++)
                 {
                     if (this->searchClient(__listofclients[j], __channels, __listofchannels[i]))
                     {
-						this->noticeAll(__channels[i], __client.second, __listofclients[j], !__params.empty(), __params[1]);
-						__channels[i].remove_client(this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]));
+						std::cout << "!!!\n";
+						std::cout << "there is  " << __channels.size() << " channels before \n";
+						std::cout << "this channel contain " << __channels[i].get_clients().size() << " client \n";
+						// this->noticeAll(__channels[i], __client.second, __listofclients[j], !__params.empty(), __params[1]);
+						std::cout << "Shoud I remove " << this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]) << "client\n";
+						// __channels[i].remove_client(this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]));
+						__channels[i].get_clients().erase(__channels[i].get_clients().begin() + this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]));
+						// if (__channels[i].get_clients().size() == 0)
+						// 	__channels.erase(__channels.begin() + i);
+						std::cout << "there is  " << __channels.size() << " channels after \n";
                     }
 					else
 					{
-						__message = std::string (RED) + ": " + __listofchannels[i] + " 442 * You're not on that channel\n" + std::string(RESET);
+						__message  = std::string(RED) + ":" + __listofclients[j] + " 401 * No such nick/channel\n" + std::string(RESET);
 						send(__client.second, __message.c_str(), __message.size(), 0);
 					}
                 }
-            }
+			}
 			else
 			{
 				__message = std::string (RED) + ": " + __listofchannels[i] + " 482 * You're not channel operator\n" + std::string(RESET);
