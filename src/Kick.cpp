@@ -1,5 +1,4 @@
 # include "../includes/Class.KICK.hpp"
-//kick the same client twice
 //garbage value in the reason message
 // the operator can kick himself
 
@@ -14,7 +13,6 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
     std::vector<std::string>    __listofchannels;
     std::vector<std::string>    __listofclients;
     std::stringstream           __splitargs(__params[0]);
-
     while (getline(__splitargs, __tmp, ' '))
     {
         if (!__tmp.empty())
@@ -78,9 +76,8 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
 						std::cout << "!!!\n";
 						std::cout << "there is  " << __channels.size() << " channels before \n";
 						std::cout << "this channel contain " << __channels[i].get_clients().size() << " client \n";
-						// this->noticeAll(__channels[i], __client.second, __listofclients[j], !__params.empty(), __params[1]);
+						this->noticeAll(__channels[i], __client.second, __listofclients[j], (__params[1].size() > 1 && __params[1][0] == ':'), __params[1]);
 						std::cout << "Shoud I remove " << this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]) << "client\n";
-						// __channels[i].remove_client(this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]));
 						__channels[i].get_clients().erase(__channels[i].get_clients().begin() + this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]));
 						// if (__channels[i].get_clients().size() == 0)
 						// 	__channels.erase(__channels.begin() + i);
@@ -107,9 +104,9 @@ void	Kick::noticeAll(Channel __channel,int   __client, std::string  __nameofclie
     (void) __client;
     std::string __message;
 
-    if (__reason)
+    if (__reason && !(__reasonMsg.size() == 1 && __reasonMsg[0] == ':'))
     {
-        __message =  "KICK " + __channel.getchannelname()+ " " + __nameofclient + " "+ __reasonMsg +"\n";
+        __message =  "KICK " + __channel.getchannelname() + " " + __nameofclient + " "+ __reasonMsg +"\n";
         for(size_t i = 0; i < __channel.get_clients_size(); i++)
         {
 			if (__channel.get_clients()[i].first != __client)
@@ -118,7 +115,7 @@ void	Kick::noticeAll(Channel __channel,int   __client, std::string  __nameofclie
     }
     else
     {
-		__message =  "KICK " + __channel.getchannelname()+ " " + __nameofclient + "\n";
+		__message =  "KICK " + __channel.getchannelname() + " " + __nameofclient + "\n";
         for(size_t i = 0; i < __channel.get_clients_size(); i++)
         {
 			if (__channel.get_clients()[i].first != __client)
