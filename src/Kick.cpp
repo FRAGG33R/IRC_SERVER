@@ -1,7 +1,5 @@
 # include "../includes/Class.KICK.hpp"
-//garbage value in the reason message
-// the operator can kick himself
-
+// + i on erase
 void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> __client, std::vector<Channel> &__channels)
 {
     __params[0].erase(__params[0].find_last_not_of(" ") + 1);
@@ -48,7 +46,7 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
         {
 			__message = std::string(RED) + ": " + __listofchannels[i] + " 403 * No such channel\n" + std::string(RESET);
             send(__client.second, __message.c_str(), __message.size(), 0);
-            __listofchannels.erase(__listofchannels.begin());
+            __listofchannels.erase(__listofchannels.begin()); // +i
         }
     }
 
@@ -73,15 +71,23 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
                 {
                     if (this->searchClient(__listofclients[j], __channels, __listofchannels[i]))
                     {
-						std::cout << "!!!\n";
 						std::cout << "there is  " << __channels.size() << " channels before \n";
 						std::cout << "this channel contain " << __channels[i].get_clients().size() << " client \n";
+						std::cout << "this channel contain " << __channels[i].get_operators().size() << " operator \n";
 						this->noticeAll(__channels[i], __client.second, __listofclients[j], (__params[1].size() > 1 && __params[1][0] == ':'), __params[1]);
-						std::cout << "Shoud I remove " << this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]) << "client\n";
-						__channels[i].get_clients().erase(__channels[i].get_clients().begin() + this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]));
-						// if (__channels[i].get_clients().size() == 0)
-						// 	__channels.erase(__channels.begin() + i);
+						int	__client_index = this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]);
+						int	__operator_index = this->indexOfOper(__listofclients[j], __channels, __listofchannels[i]);
+						std::cout << "Shoud I remove " << __client_index << "and " << __operator_index << "client\n";
+						if (__client_index != -1)
+							__channels[i].get_clients().erase(__channels[i].get_clients().begin() + this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]));
+						if (__operator_index != -1)
+							__channels[i].get_operators().erase(__channels[i].get_operators().begin() + this->indexOfOper(__listofclients[j], __channels, __listofchannels[i]));
+						if (__channels[i].get_clients().size() == 0)
+							__channels.erase(__channels.begin() + i);
 						std::cout << "there is  " << __channels.size() << " channels after \n";
+						std::cout << "*********\n";
+						std::cout << "this channel contain " << __channels[i].get_clients().size() << " client \n";
+						std::cout << "this channel contain " << __channels[i].get_operators().size() << " operator \n";
                     }
 					else
 					{
@@ -128,7 +134,7 @@ bool    Kick::checkOperator(int   __id, std::vector<Channel> __channels, std::st
 {
     bool found(false);
     int index = this->indexOfChannel(__nameChannel, __channels);
-    for (size_t i = 0; i < __channels[index].get_clients_size(); i++)
+    for (size_t i = 0; i < __channels[index].get_operators().size(); i++)
     {
         if (__id ==  __channels[index].get_operators()[i].first)
             found = true;
@@ -149,13 +155,24 @@ bool    Kick::searchChannel(std::string __nameChannel, std::vector<Channel> __ch
 }
 
 
-int    Kick::indexOfClient(std::string __client, std::vector<Channel> __channels, std::string __nameChannel)
+int    Kick::indexOfClient(std::string __client, std::vector<Channel> &__channels, std::string __nameChannel)
 {
  
     int index = this->indexOfChannel(__nameChannel, __channels);
     for (size_t i = 0; i <  __channels[index].get_clients_size(); i++)
     {
         if (__client == __channels[index].get_clients()[i].second)
+            return i;
+    }
+    return -1;
+}
+int    Kick::indexOfOper(std::string __oper, std::vector<Channel> &__channels, std::string __nameChannel)
+{
+ 
+    int index = this->indexOfChannel(__nameChannel, __channels);
+    for (size_t i = 0; i <  __channels[index].get_operators().size(); i++)
+    {
+        if (__oper == __channels[index].get_operators()[i].second)
             return i;
     }
     return -1;
