@@ -186,9 +186,9 @@ void	Server::run()
 							string	backup;
 							__command_buffer += string(__buffer);
 							this->__clients[j].__command.set_command(__command_buffer);
+							__command_buffer.erase();
 							if (this->__clients[j].__command.get_command().find_last_of("\n") != std::string::npos || this->__clients[j].__command.get_command().find_last_of("\r") != std::string::npos)
 							{
-								__command_buffer.erase();
 								if (!this->__clients[j].is_registred())
 								{
 									backup = this->__clients[j].__command.get_command();
