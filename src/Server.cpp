@@ -318,7 +318,7 @@ void	Server::run()
 												if (res == 0)
 												{
 													this->__clients.erase(this->__clients.begin() + j);
-													break;
+													break ;
 												}
 												else if (res == -1)
 													throw Error("Failed to send message to client");
@@ -397,6 +397,10 @@ bool	check_user_params(string command)
 
 void	Server::connect_client(int nb_client)
 {
+	std::string	__message;
+	char		hostname[1024] = {0};
+
+    gethostname(hostname, sizeof(hostname));
 	try
 	{
 		if (!this->__clients[nb_client].__command.check_command())
@@ -446,7 +450,14 @@ void	Server::connect_client(int nb_client)
 			{
 				this->__clients[nb_client].set_username(this->__clients[nb_client].__command.get_command());
 				this->__clients[nb_client].__command.set_user_registration(true);
-				this->__clients[nb_client].__command.send_error(RPL_WELCOME, this->__clients[nb_client].get_fd());
+				__message = "001 Welcome to the Internet Relay Network " + this->__clients[nb_client].get_nickname() + "!" + this->__clients[nb_client].get_username() + "@" + string(hostname) + "\n";
+				send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0);
+				__message = "002 Your host is " + this->__server_name + ", running version 1.0\n";
+				send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0);
+				__message = "003 This server was created Dec 2, 2022\n";
+				send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0);
+				__message = "004 " + this->__server_name + " 1.0 iok\n";
+				send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0);
 				this->__clients[nb_client].set_is_registred(true);
 			}
 		}

@@ -21,7 +21,8 @@ int	Quit::quit(std::vector<std::string> &__params, std::vector<Channel> &__chann
 		__exist = 0;
 		for (size_t j = 0; j < __channels[i].get_clients().size(); j++)
 		{
-			if (__channels[i].get_clients()[j].first == __client.second) {
+			if (__channels[i].get_clients()[j].first == __client.second)
+			{
 				__channels[i].get_clients().erase(__channels[i].get_clients().begin() + j);
 				__exist = 1;
 				break;
