@@ -10,6 +10,11 @@ void	Parser::set_command(string command)
 	this->command = command;
 }
 
+void	Parser::add_command(string command)
+{
+	this->command += command;
+}
+
 string	Parser::get_command()
 {
 	return (this->command);

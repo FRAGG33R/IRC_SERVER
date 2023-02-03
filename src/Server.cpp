@@ -184,8 +184,9 @@ void	Server::run()
 								break ;
 							}
 							string	backup;
-							__command_buffer += string(__buffer);
-							this->__clients[j].__command.set_command(__command_buffer);
+							cout << "||" << __buffer << "||\n";
+							__command_buffer = string(__buffer);
+							this->__clients[j].__command.add_command(__command_buffer);
 							__command_buffer.erase();
 							if (this->__clients[j].__command.get_command().find_last_of("\n") != std::string::npos || this->__clients[j].__command.get_command().find_last_of("\r") != std::string::npos)
 							{
@@ -276,7 +277,7 @@ void	Server::run()
 											{
 												int res = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), this->get_ref_channels(), this->__clients[j].get_fd(), this->__clients[j].get_nickname());
 												if ( res == -1)
-													throw Error("Failed to send message to client");
+													throw Error("Failed to send message to client\n");
 												else
 													this->__clients[j].__command.send_error(res, this->__clients[j].get_fd());
 											}
@@ -320,6 +321,7 @@ void	Server::run()
 													throw Error("Failed to send message to client");
 											}
 										}
+										else if (this->__clients[j].__command.get_command() == "INVITE")
 										else if (this->__clients[j].__command.get_command() == "!time")
 										{
 											if (this->__clients[j].__command.get_params().size() == 0)

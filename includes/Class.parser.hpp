@@ -27,6 +27,7 @@ class Parser
 		void			send_message(std::string __msg, int __fd);
 		vector<string>	&get_params( void );
 		void			set_params(const vector<string> &parametters);
+		void			add_command(string command);
 		Parser();
 		~Parser();
 };
