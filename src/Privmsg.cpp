@@ -39,7 +39,7 @@ void Privmsg::setType(std::string &type)
 	this->__type = type;
 }
 
-int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pair<std::string, int> > __clients, std::vector<Channel> &__channels, int __sender, std::string __sender_nickname)
+int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pair<std::string, int> > __clients, std::vector<Channel> &__channels, int __sender, std::string __sender_nickname, bool __command)
 {
 	std::vector<std::string>	__given_clients;
 	__params[0].erase(__params[0].find_last_not_of(" ") + 1);
@@ -65,16 +65,22 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 				{
 					for (size_t l = 0; l < __channels[k].get_clients().size(); l++)
 					{
-						this->setMessage(":" + __sender_nickname + " PRIVMSG * " + __message  + "\n");
+						if (__command)
+							this->setMessage(":" + __sender_nickname + " PRIVMSG * " + __message  + "\n");
+						else
+							this->setMessage(":" + __sender_nickname + " NOTICE * " + __message  + "\n");
 						if (send(__channels[k].get_clients()[l].first, this->getMessage().c_str(), this->getMessage().size(), 0) == -1)
 							return (-1);
 					}
 				}
 				else
 				{
-					std::string msg(std::string(RED) + ":" + __sender_nickname + " 401 " + __given_clients[i] + " No such nick/channel\n" + std::string(RESET));
-					if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
-						return (-1);
+					if (__command)
+					{
+						std::string msg(std::string(RED) + ":" + __sender_nickname + " 401 " + __given_clients[i] + " No such nick/channel\n" + std::string(RESET));
+						if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
+							return (-1);
+					}
 				}
 			}
 		}
@@ -82,15 +88,22 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 		{
 			if (client_exist(__clients, __given_clients[i]))
 			{
-				this->setMessage(":" + __sender_nickname + " PRIVMSG * " + __message  + "\n");
+				if (__command)
+					this->setMessage(":" + __sender_nickname + " PRIVMSG * " + __message  + "\n");
+				else 
+					this->setMessage(":" + __sender_nickname + " NOTICE * " + __message  + "\n");
+
 				if (send(__clients[i].second, this->getMessage().c_str(), this->getMessage().size(), 0) == -1)
 					return (-1);
 			}
 			else
 			{
-				std::string msg(std::string(RED) + ":" + __sender_nickname + " 401 " + __given_clients[i] + " No such nick/channel\n" + std::string(RESET));
-				if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
-					return (-1);
+				if (__command)
+				{
+					std::string msg(std::string(RED) + ":" + __sender_nickname + " 401 " + __given_clients[i] + " No such nick/channel\n" + std::string(RESET));
+					if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
+						return (-1);
+				}
 			}
 		}
 	}

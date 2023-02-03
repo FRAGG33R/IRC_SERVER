@@ -184,7 +184,6 @@ void	Server::run()
 								break ;
 							}
 							string	backup;
-							cout << "||" << __buffer << "||\n";
 							__command_buffer = string(__buffer);
 							this->__clients[j].__command.add_command(__command_buffer);
 							__command_buffer.erase();
@@ -275,7 +274,11 @@ void	Server::run()
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 											else
 											{
-												int res = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), this->get_ref_channels(), this->__clients[j].get_fd(), this->__clients[j].get_nickname());
+												int res = 0;
+												if (this->__clients[j].__command.get_command()  == "PRIVMSG")
+													res = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), this->get_ref_channels(), this->__clients[j].get_fd(), this->__clients[j].get_nickname(), true);
+												else
+													res = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), this->get_ref_channels(), this->__clients[j].get_fd(), this->__clients[j].get_nickname(), false);
 												if ( res == -1)
 													throw Error("Failed to send message to client\n");
 												else
@@ -322,6 +325,9 @@ void	Server::run()
 											}
 										}
 										else if (this->__clients[j].__command.get_command() == "INVITE")
+										{
+
+										}
 										else if (this->__clients[j].__command.get_command() == "!time")
 										{
 											if (this->__clients[j].__command.get_params().size() == 0)
