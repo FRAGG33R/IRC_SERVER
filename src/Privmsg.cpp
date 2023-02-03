@@ -55,8 +55,10 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 		if (!temp.empty())
 			__given_clients.push_back(temp);
 	}
+
 	for (size_t i = 0; i < __given_clients.size(); i++)
 	{
+		std::cout << "|" << __given_clients[i] << "|" << std::endl;
 		if (__given_clients[i][0] == '#')
 		{
 			for (size_t k = 0; k < __channels.size(); k++)
@@ -86,14 +88,15 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 		}
 		else
 		{
-			if (client_exist(__clients, __given_clients[i]))
+			int	__index = client_exist(__clients, __given_clients[i]);
+			if (__index != -1)
 			{
 				if (__command)
 					this->setMessage(":" + __sender_nickname + " PRIVMSG * " + __message  + "\n");
 				else 
 					this->setMessage(":" + __sender_nickname + " NOTICE * " + __message  + "\n");
 
-				if (send(__clients[i].second, this->getMessage().c_str(), this->getMessage().size(), 0) == -1)
+				if (send(__clients[__index].second, this->getMessage().c_str(), this->getMessage().size(), 0) == -1)
 					return (-1);
 			}
 			else
@@ -115,7 +118,7 @@ int	Privmsg::client_exist(std::vector<std::pair<std::string, int> > __client_lis
 	for (size_t j = 0; j < __client_list.size(); j++)
 	{
 		if (__client == __client_list[j].first)
-			return (1);
+			return (j);
 	}
-	return (0);
+	return (-1);
 }
