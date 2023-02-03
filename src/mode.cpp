@@ -91,14 +91,36 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 			}
 			if (__is_op == 1)
 			{
-				for (size_t i = 0; i < __channels[__index].get_clients().size(); i++)
+				if (__params[1][0]  == '-')
 				{
-					if (__params[2] == __channels[__index].get_clients()[i].second)
-						return (__channels[__index].add_operator(std::pair<int, std::string> (__channels[__index].get_clients()[i].first, __channels[__index].get_clients()[i].second)), 0);
+					for (size_t i = 0; i < __channels[__index].get_operators().size(); i++)
+					{
+						if (__params[2] == __channels[__index].get_operators()[i].second)
+						{ 
+							__message = ":" + __sender_name + " MODE -o " + __channels[__index].get_operators()[i].second + "\n";
+							send(__sender, __message.c_str(), __message.size(), 0);
+							return (__channels[__index].get_operators().erase(__channels[__index].get_operators().begin() + i), 0);
+						}
+					}
+					__message  = std::string(RED) + ":" + __sender_name + " 401 * No such nick/channel\n" + std::string(RESET);
+					if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
+						return (-1);
 				}
-				__message  = std::string(RED) + ":" + __sender_name + " 401 * No such nick/channel\n" + std::string(RESET);
-				if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
-					return (-1);
+				else if (__params[1][0]  == '+')
+				{
+					for (size_t i = 0; i < __channels[__index].get_clients().size(); i++)
+					{
+						if (__params[2] == __channels[__index].get_clients()[i].second)
+						{
+							__message = ":" + __sender_name + " MODE +o " + __channels[__index].get_operators()[i].second + "\n";
+							send(__sender, __message.c_str(), __message.size(), 0);
+							return (__channels[__index].add_operator(std::pair<int, std::string> (__channels[__index].get_clients()[i].first, __channels[__index].get_clients()[i].second)), 0);
+						}
+					}
+					__message  = std::string(RED) + ":" + __sender_name + " 401 * No such nick/channel\n" + std::string(RESET);
+					if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
+						return (-1);
+				}
 			}
 			else
 			{
@@ -117,9 +139,19 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 			if (__is_op == 1) 
 			{
 				if (__params[1][0]  == '-')
+				{
 					__channels[__index].get_password().erase();
-				else if (__params[1][0]  == '+')
+					__message  = ":" + __sender_name + " MODE -k\n";
+					if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
+						return (-1);
+				}
+				else if (__params[1][0]  == '+') 
+				{
 					__channels[__index].set_password(__params[2]);
+					__message  = ":" + __sender_name + " MODE +k\n";
+					if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
+						return (-1);
+				}
 			}
 			else
 			{

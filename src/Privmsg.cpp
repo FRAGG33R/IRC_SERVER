@@ -41,6 +41,9 @@ void Privmsg::setType(std::string &type)
 
 int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pair<std::string, int> > __clients, std::vector<Channel> &__channels, int __sender, std::string __sender_nickname, bool __command)
 {
+
+// 	:Angel PRIVMSG Wiz :Hello are you receiving this message ?
+//                                 ; Message from Angel to Wiz.
 	std::vector<std::string>	__given_clients;
 	__params[0].erase(__params[0].find_last_not_of(" ") + 1);
 	std::stringstream 			stream(__params[0]);
@@ -58,7 +61,6 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 
 	for (size_t i = 0; i < __given_clients.size(); i++)
 	{
-		std::cout << "|" << __given_clients[i] << "|" << std::endl;
 		if (__given_clients[i][0] == '#')
 		{
 			for (size_t k = 0; k < __channels.size(); k++)
@@ -68,9 +70,9 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 					for (size_t l = 0; l < __channels[k].get_clients().size(); l++)
 					{
 						if (__command)
-							this->setMessage(":" + __sender_nickname + " PRIVMSG * " + __message  + "\n");
+							this->setMessage(":" + __sender_nickname + " PRIVMSG " + __channels[k].get_clients()[l].second + " " +  __message  + "\n");
 						else
-							this->setMessage(":" + __sender_nickname + " NOTICE * " + __message  + "\n");
+							this->setMessage(":" + __sender_nickname + " NOTICE " + __channels[k].get_clients()[l].second + " " +  __message  + "\n");
 						if (send(__channels[k].get_clients()[l].first, this->getMessage().c_str(), this->getMessage().size(), 0) == -1)
 							return (-1);
 					}
@@ -92,10 +94,9 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 			if (__index != -1)
 			{
 				if (__command)
-					this->setMessage(":" + __sender_nickname + " PRIVMSG * " + __message  + "\n");
-				else 
-					this->setMessage(":" + __sender_nickname + " NOTICE * " + __message  + "\n");
-
+					this->setMessage(":" + __sender_nickname + " PRIVMSG " + __clients[__index].first + " " +  __message  + "\n");
+				else
+					this->setMessage(":" + __sender_nickname + " NOTICE " + __clients[__index].first + " " +  __message  + "\n");
 				if (send(__clients[__index].second, this->getMessage().c_str(), this->getMessage().size(), 0) == -1)
 					return (-1);
 			}
