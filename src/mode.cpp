@@ -175,11 +175,11 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 		{
 			if (__params[1][0]  == '-')
 			{
-
+				__channels[__index].set_topic(false);
 			}
 			else if (__params[1][0]  == '+')
 			{
-				
+				__channels[__index].set_topic(true);
 			}
 		}
 	}
