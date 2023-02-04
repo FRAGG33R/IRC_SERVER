@@ -295,11 +295,23 @@ void	Server::run()
 										}
 										else if (this->__clients[j].__command.get_command()  == "JOIN" || this->__clients[j].__command.get_command()  == "join") 
 										{
-											this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->__clients[j].get_nickname(), this->get_ref_channels());
-											this->__clients[j].__join.erase_channels();
+											if (this->__clients[j].__command.get_params().size() == 0)
+												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+											else
+											{
+												this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->__clients[j].get_nickname(), this->get_ref_channels());
+												this->__clients[j].__join.erase_channels();
+											}
 										}
 										else if  (this->__clients[j].__command.get_command()  == "PART" || this->__clients[j].__command.get_command()  == "part")
-											this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->get_ref_channels());
+										{
+											if (this->__clients[j].__command.get_params().size() == 0)
+												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+											else
+											{
+												this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->get_ref_channels());
+											}
+										}
 										else if (this->__clients[j].__command.get_command() == "MODE" || this->__clients[j].__command.get_command() == "mode")
 										{
 											if (this->__clients[j].__command.get_params().size() == 0)
