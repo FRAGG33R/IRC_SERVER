@@ -15,7 +15,8 @@ int parse_arguments(const string &__port, const string &__password)
 
 int	is_command(string __request)
 {
-	string __commands[15] = {"PASS", "NICK", "USER", "OPER", "MODE", "QUIT", "JOIN", "PART", "KICK", "PRIVMSG", "SENDFILE", "WHOIS", "KILL", "OP"};
+	string __commands[15] = {"PASS", "NICK", "USER", "OPER", "MODE", "QUIT", "JOIN", "PART", "KICK", "PRIVMSG", "SENDFILE", "WHOIS", "KILL", "OP", \
+							"pass", "nick", "user", "oper", "mode", "quit", "join", "part", "kick", "privmsg", "sendfile", "whois", "kill", "op"};
 	for (int i = 0; i < 15; i++)
 	{
 		if (__commands[i] == __request)
@@ -30,10 +31,6 @@ int Server::parse_input(string __input, int flag)
 	{
 		if (__input.length() < 5 || std::isdigit(__input[0]))
 			return  0;
-		for (unsigned int  i = 0; i < this->__clients.size(); i++) {
-			if (this->__clients[i].get_username() == __input)
-				return (-1); //username already exist
-		}
 		return (1);
 	}
 	if (flag == 2)

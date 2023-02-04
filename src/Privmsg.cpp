@@ -51,8 +51,8 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 	std::string                 __message;
 
 	__message  = __params[1];
-	if (__params[0][0] == ':' || __params[1][0] != ':')
-		return 412;
+	// if (__params[0][0] == ':' || __params[1][0] != ':')
+	// 	return 412;
 	while (getline(stream, temp, ','))
 	{
 		if (!temp.empty())

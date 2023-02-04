@@ -189,6 +189,7 @@ void	Server::run()
 								break ;
 							}
 							string	backup;
+							std::cout << "-" << __buffer << std::endl;
 							__command_buffer = string(__buffer);
 							this->__clients[j].__command.add_command(__command_buffer);
 							__command_buffer.erase();
@@ -276,14 +277,14 @@ void	Server::run()
 									}
 									try
 									{
-										if (this->__clients[j].__command.get_command()  == "PRIVMSG" || this->__clients[j].__command.get_command()  == "NOTICE")
+										if ((this->__clients[j].__command.get_command()  == "PRIVMSG" || this->__clients[j].__command.get_command()  == "privmsg") || (this->__clients[j].__command.get_command()  == "NOTICE" || this->__clients[j].__command.get_command()  == "notice"))
 										{
 											if (this->__clients[j].__command.get_params().size() != 2)
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 											else
 											{
 												int res = 0;
-												if (this->__clients[j].__command.get_command()  == "PRIVMSG")
+												if (this->__clients[j].__command.get_command()  == "PRIVMSG" || this->__clients[j].__command.get_command()  == "privmsg")
 													res = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), this->get_ref_channels(), this->__clients[j].get_fd(), this->__clients[j].get_nickname(), true);
 												else
 													res = this->__clients[j].__privmsg.parsPrivmsg(this->__clients[j].__command.get_params(), this->get_clients(), this->get_ref_channels(), this->__clients[j].get_fd(), this->__clients[j].get_nickname(), false);
@@ -293,14 +294,14 @@ void	Server::run()
 													this->__clients[j].__command.send_error(res, this->__clients[j].get_fd());
 											}
 										}
-										else if (this->__clients[j].__command.get_command()  == "JOIN") 
+										else if (this->__clients[j].__command.get_command()  == "JOIN" || this->__clients[j].__command.get_command()  == "join") 
 										{
 											this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->__clients[j].get_nickname(), this->get_ref_channels());
 											this->__clients[j].__join.erase_channels();
 										}
-										else if  (this->__clients[j].__command.get_command()  == "PART")
+										else if  (this->__clients[j].__command.get_command()  == "PART" || this->__clients[j].__command.get_command()  == "part")
 											this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->get_ref_channels());
-										else if (this->__clients[j].__command.get_command() == "MODE")
+										else if (this->__clients[j].__command.get_command() == "MODE" || this->__clients[j].__command.get_command() == "mode")
 										{
 											if (this->__clients[j].__command.get_params().size() == 0)
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
@@ -308,7 +309,7 @@ void	Server::run()
 												if (this->__clients[j].__mode.parseMode(this->__clients[j].__command.get_params(),  this->get_ref_channels(), this->__clients[j].get_fd(), this->__clients[j].get_nickname()) == -1)
 													throw Error("Failed to send message to client");
 										}
-										else if (this->__clients[j].__command.get_command() == "KICK")
+										else if (this->__clients[j].__command.get_command() == "KICK" || this->__clients[j].__command.get_command() == "kick")
 										{
 											if (this->__clients[j].__command.get_params().size() == 0)
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
@@ -316,7 +317,7 @@ void	Server::run()
 												this->__clients[j].__kick.kick(this->__clients[j].__command.get_params(), std::pair<std::string, int> (this->__clients[j].get_nickname(), this->__clients[j].get_fd()), this->get_ref_channels());
 									
 										}
-										else if (this->__clients[j].__command.get_command() == "QUIT")
+										else if (this->__clients[j].__command.get_command() == "QUIT" || this->__clients[j].__command.get_command() == "quit")
 										{
 											if (this->__clients[j].__command.get_params().size() == 0 )
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
@@ -332,7 +333,7 @@ void	Server::run()
 													throw Error("Failed to send message to client");
 											}
 										}
-										else if (this->__clients[j].__command.get_command() == "INVITE")
+										else if (this->__clients[j].__command.get_command() == "INVITE" || this->__clients[j].__command.get_command() == "invite")
 										{
 											string	user, channel;
 											int		i;
@@ -405,9 +406,17 @@ void	Server::run()
 												}
 											}
 										}
-										else if (this->__clients[j].__command.get_command() == "TOPIC")
+										else if (this->__clients[j].__command.get_command() == "NICK" || this->__clients[j].__command.get_command() == "nick")
 										{
-											
+											if (this->parse_input(this->__clients[j].__command.get_params()[0], 2) == -1)
+												this->__clients[j].__command.send_error(ERR_NICKNAMEINUSE, this->__clients[j].get_fd());
+											else
+											{
+												string old_nick = this->__clients[j].get_nickname();
+												this->__clients[j].set_nickname(this->__clients[j].__command.get_params()[0]);
+												string repl_nick(string(":") + string(old_nick) + string(" NICK :") + string(this->__clients[j].get_nickname() + string("\n")));
+												send(this->__clients[j].get_fd(), repl_nick.c_str(), repl_nick.size(), 0) == -1?throw Error("failling to snd msg\n"):1;
+											}
 										}
 										else if (this->__clients[j].__command.get_command() == "!time")
 										{
@@ -513,6 +522,8 @@ void	Server::connect_client(int nb_client)
 			{
 				this->__clients[nb_client].set_nickname(this->__clients[nb_client].__command.get_command());
 				this->__clients[nb_client].__command.set_nick_registration(true);
+				string repl_nick(string(":") + string(this->__clients[nb_client].get_nickname()) + string(" NICK :") + string(this->__clients[nb_client].get_nickname() + string("\n")));
+				send(this->__clients[nb_client].get_fd(), repl_nick.c_str(), repl_nick.size(), 0) == -1?throw Error("failling to snd msg\n"):1;
 			}
 		}
 		else if (this->__clients[nb_client].__command.get_registration().get_nick() && !this->__clients[nb_client].__command.get_registration().get_user())
@@ -531,13 +542,13 @@ void	Server::connect_client(int nb_client)
 			{
 				this->__clients[nb_client].set_username(this->__clients[nb_client].__command.get_command());
 				this->__clients[nb_client].__command.set_user_registration(true);
-				__message = "001 Welcome to the Internet Relay Network " + this->__clients[nb_client].get_nickname() + "!" + this->__clients[nb_client].get_username() + "@" + string(hostname) + "\n";
+				__message = ":" + this->__server_name + " 001 " + this->__clients[nb_client].get_nickname() +  " :Welcome to the Internet Relay Network " + this->__clients[nb_client].get_nickname() + "!" + this->__clients[nb_client].get_username() + "@" + string(hostname) + "\n";
 				send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0);
-				__message = "002 Your host is " + this->__server_name + ", running version 1.0\n";
+				__message = ":" + this->__server_name + " 002 " + this->__clients[nb_client].get_nickname() + " :Your host is " + this->__server_name + ", running version 1.0\n";
 				send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0);
-				__message = "003 This server was created Dec 2, 2022\n";
+				__message = ":" + this->__server_name + " 003 " + this->__clients[nb_client].get_nickname() + " :This server was created Dec 2, 2022\n";
 				send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0);
-				__message = "004 " + this->__server_name + " 1.0 iok\n";
+				__message =":" + this->__server_name +  " 004 " + this->__clients[nb_client].get_nickname() +  " " + this->__server_name + " 1.0 iok\n";
 				send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0);
 				this->__clients[nb_client].set_is_registred(true);
 			}
