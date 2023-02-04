@@ -385,15 +385,13 @@ void	Server::run()
 																	usr_in_chnl = false;
 																	for (size_t x = 0; x < this->get_channels()[i].get_operators().size(); x++)
 																		if (this->__clients[j].get_nickname() == this->get_channels()[i].get_operators()[x].second)
-																		{
 																			usr_in_chnl = true;
-																		}
 																	if (!usr_in_chnl)
 																		this->__clients[j].__command.send_error(ERR_CHANOPRIVSNEEDED, this->__clients[j].get_fd());
 																	else
 																		for (size_t k = 0; k < this->__get_clients().size(); k++)
 																			if (this->__get_clients()[k].get_nickname() == user)
-																				this->get_channels()[i].invited_client(user);
+																				this->get_ref_channels()[i].invited_client(user);
 																}
 															}
 														}
