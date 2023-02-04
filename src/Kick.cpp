@@ -18,7 +18,6 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
     }
  
     std::stringstream           __splitchannels(__args[0]);
-	std::cout << __args[0] << std::endl;
 	if (__args.size() == 1)
 	{
 		__message =  std::string(RED) + ": " + __client.first + " 401 * No such nick/channel\n" + std::string(RESET);
@@ -105,7 +104,7 @@ void	Kick::noticeAll(Channel __channel,int   __client, std::string  __nameofclie
 
     if (__reason && !(__reasonMsg.size() == 1 && __reasonMsg[0] == ':'))
     {
-        __message =  "KICK " + __channel.getchannelname() + " " + __nameofclient + " "+ __reasonMsg +"\n";
+        __message =  ":" + __nameofclient + " KICK " + __channel.getchannelname() + " " + __reasonMsg +"\n";
         for(size_t i = 0; i < __channel.get_clients_size(); i++)
         {
 			if (__channel.get_clients()[i].first != __client)
@@ -114,7 +113,7 @@ void	Kick::noticeAll(Channel __channel,int   __client, std::string  __nameofclie
     }
     else
     {
-		__message =  "KICK " + __channel.getchannelname() + " " + __nameofclient + "\n";
+        __message =  ":" + __nameofclient + " KICK " + __channel.getchannelname() + " " + __reasonMsg +"\n";
         for(size_t i = 0; i < __channel.get_clients_size(); i++)
         {
 			if (__channel.get_clients()[i].first != __client)
@@ -123,7 +122,7 @@ void	Kick::noticeAll(Channel __channel,int   __client, std::string  __nameofclie
     }
 }
 
-bool    Kick::checkOperator(int   __id, std::vector<Channel> __channels, std::string __nameChannel)
+bool    Kick::checkOperator(int	__id, std::vector<Channel>	__channels, std::string	__nameChannel)
 {
     bool found(false);
     int index = this->indexOfChannel(__nameChannel, __channels);

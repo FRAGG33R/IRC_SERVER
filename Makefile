@@ -40,7 +40,7 @@ fclean :
 	@rm -rf $(OBJ_FILE) $(NAME)
 	@echo "[$(GREEN) OK $(RESET)]$(YELLOW) $(NAME) deleted$(RESET)"
 run : 
-	make && ./ircserv 3000 local
+	make && ./ircserv 3 local
 
 re : fclean all
 

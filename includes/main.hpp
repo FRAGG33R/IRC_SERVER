@@ -18,6 +18,8 @@
 # include <string.h>
 # include <errno.h>
 # include <iomanip>
+#include <limits.h>
+
 # include <sstream>
 
 //Colors
@@ -106,7 +108,7 @@ using std::cerr;
 #define SERVER_NAME "CW9"
 #define CONCAT(x, y) x ##y
 
-#define WELCOME ":* 001 * welcome to "
+#define WELCOME ":* 001 * Welcome to the Internet Relay Network "
 
 #define MSG_WELCOME WELCOME SERVER_NAME "\n"
 
