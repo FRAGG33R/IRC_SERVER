@@ -75,7 +75,7 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 				return (-1);
 			return (0);
 		}
-		if ((__params[1][1] != 'o' && __params[1][1] != 'k') || __params[1].size() > 2)
+		if ((__params[1][1] != 'o' && __params[1][1] != 'k' && __params[1][1] != 'i' && __params[1][1] != 't') || __params[1].size() > 2)
 		{
 			__message  = std::string (RED) + ":" + __sender_name + " 472 * is unknown mode char to me\n" + std::string(RESET);
 			if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
@@ -160,7 +160,28 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 					return (-1);
 			}
 		}
-		
+		else if (__params[1][1] == 'i')
+		{
+			if (__params[1][0]  == '-')
+			{
+				__channels[__index].set_invited(false);
+			}
+			else if (__params[1][0]  == '+')
+			{
+				__channels[__index].set_invited(true);
+			}
+		}
+		else if (__params[1][1] == 't')
+		{
+			if (__params[1][0]  == '-')
+			{
+				__channels[__index].set_topic(false);
+			}
+			else if (__params[1][0]  == '+')
+			{
+				__channels[__index].set_topic(true);
+			}
+		}
 	}
 
 	return (0);

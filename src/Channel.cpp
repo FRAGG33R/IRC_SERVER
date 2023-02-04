@@ -4,6 +4,7 @@ Channel::Channel(std::string channel_name)
 {
 	this->__channel_name = channel_name;
 	this->invited = false;
+	this->__topic = false;
 }
 
 std::string	Channel::getchannelname(){
@@ -48,6 +49,36 @@ std::string	&Channel::get_password()
 void	Channel::set_password(std::string __pass)
 {
 	this->__password = __pass;
+}
+
+bool	Channel::get_invited()
+{
+	return (this->invited);
+}
+
+void	Channel::set_invited(bool __is_invated)
+{
+	this->invited = __is_invated;
+}
+
+bool	Channel::get_topic()
+{
+	return (this->__topic);
+}
+
+void	Channel::set_topic(bool __is_topic)
+{
+	this->__topic = __is_topic;
+}
+
+std::vector<std::string>	Channel::get_invited_clients()
+{
+	return (this->__invited_clients);
+}
+
+void	Channel::invited_client(std::string new_client)
+{
+	this->__invited_clients.push_back(new_client);
 }
 
 Channel::~Channel()

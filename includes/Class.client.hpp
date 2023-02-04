@@ -20,7 +20,6 @@ class Client
 		bool			__is_authenticated;
 		bool			__is_registred;
 		int				__fd;
-		vector<string>	__invited_channels;
 	public :
 		Parser	__command;
 		Privmsg	__privmsg;
@@ -41,7 +40,6 @@ class Client
 		Client(int fd);
 
 		int		get_fd() const;
-		void	add_invited_channels(string);
 		void	get_invited_channels();
 		string	get_username() const;
 		string	get_nickname() const;

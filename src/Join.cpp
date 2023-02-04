@@ -78,10 +78,28 @@ int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_clien
 					{
 						if (ref_channels[i].get_password().empty() || ref_channels[i].get_password() == it->second)
 						{
-							ref_channels[i].add_client(std::pair<int, std::string>(__new_client, __sender_nickname));
-								__message = ":" + __sender_nickname + " JOIN " + it->first + "\n";
-							if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
+							bool	invited(false);
+
+							if (ref_channels[i].get_invited())
+							{
+								for (size_t k = 0; k < ref_channels[i].get_invited_clients().size(); k++)
+									if (ref_channels[i].get_invited_clients()[k] == __sender_nickname)
+										invited = true;
+								if (invited)
+								{
+									ref_channels[i].add_client(std::pair<int, std::string>(__new_client, __sender_nickname));
+									__message = ":" + __sender_nickname + " JOIN " + it->first + "\n";
+									if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
+										return (-1);
+								}
+							}
+							else
+							{
+								ref_channels[i].add_client(std::pair<int, std::string>(__new_client, __sender_nickname));
+									__message = ":" + __sender_nickname + " JOIN " + it->first + "\n";
+								if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
 									return (-1);
+							}
 						}
 						else
 						{
@@ -98,7 +116,7 @@ int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_clien
 				ref_channels.push_back(__new);
 				__message = ":" + __sender_nickname + " JOIN " + it->first + "\n";
 				if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
-						return (-1);
+					return (-1);
 			}
 		}
 		else
