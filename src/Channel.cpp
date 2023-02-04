@@ -71,6 +71,15 @@ void	Channel::set_topic(bool __is_topic)
 	this->__topic = __is_topic;
 }
 
+void	Channel::set_topicInfo(std::string __info)
+{
+	this->__topic_info =  __info;
+}
+
+std::string	Channel::get_topicInfo(){
+	return (this->__topic_info);
+}
+
 std::vector<std::string>	Channel::get_invited_clients()
 {
 	return (this->__invited_clients);

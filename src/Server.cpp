@@ -333,7 +333,18 @@ void	Server::run()
 													throw Error("Failed to send message to client");
 											}
 										}
+<<<<<<< HEAD
 										else if (this->__clients[j].__command.get_command() == "INVITE" || this->__clients[j].__command.get_command() == "invite")
+=======
+										else if (this->__clients[j].__command.get_command() == "TOPIC")
+										{
+											if (this->__clients[j].__command.get_params().size() == 0)
+												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+											else
+												this->__clients[j].__topic.topic(this->__clients[j].__command.get_params(), std::pair<std::string, int> (this->__clients[j].get_nickname(), this->__clients[j].get_fd()), this->get_ref_channels());
+										}
+										else if (this->__clients[j].__command.get_command() == "INVITE")
+>>>>>>> e55b7d60aa39668473cfcdb241913a31d9125eaa
 										{
 											string	user, channel;
 											int		i;
