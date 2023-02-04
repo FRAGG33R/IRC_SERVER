@@ -184,11 +184,24 @@ void	Parser::send_error(int __err, int fd)
 			(send(fd, MSG_401, strlen(MSG_401), 0) == -1) ? throw Error("failling to send msg") : 1;
 			break;
 		}
+		case ERR_NOSUCHCHANNEL : {
+			(send(fd, MSG_403, strlen(MSG_403), 0) == -1) ? throw Error("failling to send msg") : 1;
+			break;
+		}
+		case ERR_USERONCHANNEL : {
+			(send(fd, MSG_443, strlen(MSG_443), 0) == -1) ? throw Error("failling to send msg") : 1;
+			break;
+		}
+		case ERR_NOTONCHANNEL : {
+			(send(fd, MSG_442, strlen(MSG_442), 0) == -1) ? throw Error("failling to send msg") : 1;
+			break;
+		}
+		case ERR_CHANOPRIVSNEEDED : {
+			(send(fd, MSG_482, strlen(MSG_482), 0) == -1) ? throw Error("failling to send msg") : 1;
+			break;
+		}
 		case -1 : {
 			throw Error("failling to send msg");
-		}
-		case 0 : {
-			(send(fd, MSG_0, strlen(MSG_0), 0) == -1) ? throw Error("failling to send msg") : 1;
 		}
 		default : { break ; }
 	}

@@ -3,6 +3,7 @@
 Channel::Channel(std::string channel_name)
 {
 	this->__channel_name = channel_name;
+	this->invited = false;
 }
 
 std::string	Channel::getchannelname(){
@@ -60,4 +61,5 @@ Channel::Channel(std::string __channel_name, std::string __password, std::pair<i
 	this->__password = __password;
 	this->__clients.push_back(__client);
 	this->__operators.push_back(__operator);
+	this->invited = false;
 }

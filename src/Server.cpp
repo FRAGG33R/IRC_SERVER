@@ -46,6 +46,11 @@ vector<Channel>    Server::get_channels(void)
 	return(this->__channels);
 }
 
+vector<Client>    &Server::__get_clients(void)
+{
+	return(this->__clients);
+}
+
 void	Server::add_to_poll(struct pollfd *__poll_fds, int __fd)
 {
 	int i = 0;
@@ -234,7 +239,10 @@ void	Server::run()
 											substrings.push_back(temp);
 									}
 									else
+									{
 										this->__clients[j].__command.set_command(backup);
+										backup.erase();
+									}
 									if (substrings.size() != 0)
 									{
 										temp = "";
@@ -326,7 +334,76 @@ void	Server::run()
 										}
 										else if (this->__clients[j].__command.get_command() == "INVITE")
 										{
+											string	user, channel;
+											int		i;
+											bool	exists_client_chnl(false);
+											bool	usr_in_chnl(false), usr(false);
 
+											i = 0;
+											if (!backup.empty())
+											{
+												user = backup.substr(0, backup.find(" "));
+												if (backup.find(" ") != string::npos)
+													backup = backup.substr(backup.find(" "), string::npos);
+												else
+													backup.erase();
+												while (backup[i] == ' ')
+													i++;
+												backup = backup.substr(i, string::npos);
+											}
+											if (!backup.empty())
+												channel = backup;
+											if (user.empty() || channel.empty())
+												this->__clients[j].__command.send_error(ERR_NEEDMOREPARAMS, this->__clients[j].get_fd());
+											else
+											{
+												for (size_t i = 0; i < this->get_clients().size(); i++)
+													if (this->get_clients()[i].first == user)
+														exists_client_chnl = true;
+												if (!exists_client_chnl)
+													this->__clients[j].__command.send_error(ERR_NOSUCHNICK, this->__clients[j].get_fd());
+												else
+												{
+													exists_client_chnl = false;
+													for (size_t i = 0; i < this->get_channels().size(); i++)
+													{
+														if (this->get_channels()[i].getchannelname() == channel)
+														{
+															exists_client_chnl = true;
+															for (size_t k = 0; k < this->get_channels()[i].get_clients().size(); k++)
+																if (this->get_channels()[i].get_clients()[k].second == user)
+																	usr = true;
+															if (!usr && exists_client_chnl)
+															{
+																for (size_t x = 0; x < this->get_channels()[i].get_clients().size(); x++)
+																	if (this->get_channels()[i].get_clients()[x].second == this->__clients[j].get_nickname())
+																		usr_in_chnl = true;
+																if (!usr_in_chnl)
+																	this->__clients[j].__command.send_error(ERR_NOTONCHANNEL, this->__clients[j].get_fd());
+																else
+																{
+																	usr_in_chnl = false;
+																	for (size_t x = 0; x < this->get_channels()[i].get_operators().size(); x++)
+																		if (this->__clients[j].get_nickname() == this->get_channels()[i].get_operators()[x].second)
+																		{
+																			usr_in_chnl = true;
+																		}
+																	if (!usr_in_chnl)
+																		this->__clients[j].__command.send_error(ERR_CHANOPRIVSNEEDED, this->__clients[j].get_fd());
+																	else
+																		for (size_t k = 0; k < this->__get_clients().size(); k++)
+																			if (this->__get_clients()[k].get_nickname() == user)
+																				this->__get_clients()[k].add_invited_channels(channel);
+																}
+															}
+														}
+													}
+													if (!exists_client_chnl)
+														this->__clients[j].__command.send_error(ERR_NOSUCHCHANNEL, this->__clients[j].get_fd());
+													else if (usr)
+														this->__clients[j].__command.send_error(ERR_USERONCHANNEL, this->__clients[j].get_fd());
+												}
+											}
 										}
 										else if (this->__clients[j].__command.get_command() == "!time")
 										{

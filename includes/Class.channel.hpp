@@ -14,6 +14,7 @@ class Channel
 		std::string									__password;
 		std::vector<std::pair<int, std::string> >	__clients;
 		std::vector<std::pair<int, std::string> >	__operators;
+		bool										invited;
 	public:
 		Channel(std::string __channel_name, std::string __password, std::pair<int, std::string> __client, std::pair<int, std::string> __operator);
 		Channel(std::string channel_name);
@@ -27,5 +28,8 @@ class Channel
 		std::vector<std::pair<int, std::string> >	&get_clients(void);
 		std::vector<std::pair<int, std::string> >	&get_operators(void);
 		void										remove_client(int index);
+		void										set_invited(bool);
+		bool										get_invited();
+
 };
 #endif

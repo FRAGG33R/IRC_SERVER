@@ -73,13 +73,32 @@ using std::cerr;
 #define ERR_NOTEXTTOSEND 412
 #define MSG_407 ":* 407 * Duplicate recipients. No message delivered\n"
 #define ERR_TOOMANYTARGETS 407
-#define MSG_401 ":* 401 * No such nick/channel\n"
+
+
+
+
+
+
+
+
+
 #define ERR_NOSUCHNICK 401
-#define MSG_0 ":* 0 * Too many parameters\n"
+#define MSG_401 ":* 0 * No such nick name\n"
+
+#define ERR_NOSUCHCHANNEL 403
+#define MSG_403 ":* 403 * No such channel\n"
+
+#define ERR_USERONCHANNEL 443
+#define MSG_443 ":* 443 * user already exists on that channel\n"
 
 #define MSG_402 ":* 402 No such server\n"
 #define ERR_NOSUCHSERVER 402
 
+#define ERR_NOTONCHANNEL 442
+#define MSG_442 ":* 442 * You're not on that channel\n"
+
+#define ERR_CHANOPRIVSNEEDED 482
+#define MSG_482 ":* 442 * You're not an operator on that channel\n"
 //server informations
 
 #define RPL_WELCOME 1

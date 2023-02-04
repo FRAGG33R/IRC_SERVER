@@ -79,4 +79,14 @@ void Client::set_nickname(string nickname)
 	this->__nickname_filled = true;
 }
 
+void Client::add_invited_channels(string channel)
+{
+	bool exists(false);
+
+	for (size_t i = 0; i < this->__invited_channels.size(); i++)
+		exists = true;
+	if (!exists)
+		this->__invited_channels.push_back(channel);
+}
+
 Client::~Client() {}
