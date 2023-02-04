@@ -393,7 +393,7 @@ void	Server::run()
 																	else
 																		for (size_t k = 0; k < this->__get_clients().size(); k++)
 																			if (this->__get_clients()[k].get_nickname() == user)
-																				this->__get_clients()[k].add_invited_channels(channel);
+																				this->get_channels()[i].invited_client(user);
 																}
 															}
 														}
@@ -404,6 +404,10 @@ void	Server::run()
 														this->__clients[j].__command.send_error(ERR_USERONCHANNEL, this->__clients[j].get_fd());
 												}
 											}
+										}
+										else if (this->__clients[j].__command.get_command() == "TOPIC")
+										{
+											
 										}
 										else if (this->__clients[j].__command.get_command() == "!time")
 										{

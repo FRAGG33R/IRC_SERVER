@@ -50,6 +50,20 @@ void	Channel::set_password(std::string __pass)
 	this->__password = __pass;
 }
 
+bool	Channel::get_invited()
+{
+	return (this->invited);
+}
+std::vector<std::string>	Channel::get_invited_clients()
+{
+	return (this->__invited_clients);
+}
+
+void	Channel::invited_client(std::string new_client)
+{
+	this->__invited_clients.push_back(new_client);
+}
+
 Channel::~Channel()
 {
 
