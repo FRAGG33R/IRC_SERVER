@@ -162,24 +162,52 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 		}
 		else if (__params[1][1] == 'i')
 		{
-			if (__params[1][0]  == '-')
+			for (size_t i = 0; i < __channels[__index].get_operators().size(); i++)
 			{
-				__channels[__index].set_invited(false);
+				if (__sender_name == __channels[__index].get_operators()[i].second)
+					__is_op = 1;
 			}
-			else if (__params[1][0]  == '+')
+			if (__is_op)
 			{
-				__channels[__index].set_invited(true);
+				if (__params[1][0]  == '-')
+				{
+					__channels[__index].set_invited(false);
+				}
+				else if (__params[1][0]  == '+')
+				{
+					__channels[__index].set_invited(true);
+				}
+			}
+			else
+			{
+				__message  = std::string(RED) + ":" + __sender_name + " 482 * You're not channel operator\n" + std::string(RESET);
+				if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
+					return (-1);
 			}
 		}
 		else if (__params[1][1] == 't')
 		{
-			if (__params[1][0]  == '-')
+			for (size_t i = 0; i < __channels[__index].get_operators().size(); i++)
 			{
-				__channels[__index].set_topic(false);
+				if (__sender_name == __channels[__index].get_operators()[i].second)
+					__is_op = 1;
 			}
-			else if (__params[1][0]  == '+')
+			if (__is_op)
 			{
-				__channels[__index].set_topic(true);
+				if (__params[1][0]  == '-')
+				{
+					__channels[__index].set_topic(false);
+				}
+				else if (__params[1][0]  == '+')
+				{
+					__channels[__index].set_topic(true);
+				}
+			}
+			else
+			{
+				__message  = std::string(RED) + ":" + __sender_name + " 482 * You're not channel operator\n" + std::string(RESET);
+				if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
+					return (-1);
 			}
 		}
 	}

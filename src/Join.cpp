@@ -92,6 +92,12 @@ int	Join::set_channels_keys(std::vector<std::string> &__params , int __new_clien
 									if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
 										return (-1);
 								}
+								else
+								{
+									__message = std::string(RED)  + ":" + __sender_nickname + " 473 * Cannot join channel (+i)\n" + std::string(RESET);
+									if (send(__new_client, __message.c_str(), __message.size(), 0) == -1)
+										return (-1);
+								}
 							}
 							else
 							{

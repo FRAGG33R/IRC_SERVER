@@ -15,9 +15,8 @@ int parse_arguments(const string &__port, const string &__password)
 
 int	is_command(string __request)
 {
-	string __commands[15] = {"PASS", "NICK", "USER", "OPER", "MODE", "QUIT", "JOIN", "PART", "KICK", "PRIVMSG", "SENDFILE", "WHOIS", "KILL", "OP", \
-							"pass", "nick", "user", "oper", "mode", "quit", "join", "part", "kick", "privmsg", "sendfile", "whois", "kill", "op"};
-	for (int i = 0; i < 15; i++)
+	string __commands[18] = {"PASS", "NICK", "USER", "MODE", "QUIT", "JOIN", "PART", "KICK", "PRIVMSG", "pass", "nick", "user", "mode", "quit", "join", "part", "kick", "privmsg"};
+	for (int i = 0; i < 18; i++)
 	{
 		if (__commands[i] == __request)
 			return 1;

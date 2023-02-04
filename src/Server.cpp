@@ -189,7 +189,6 @@ void	Server::run()
 								break ;
 							}
 							string	backup;
-							std::cout << "-" << __buffer << std::endl;
 							__command_buffer = string(__buffer);
 							this->__clients[j].__command.add_command(__command_buffer);
 							__command_buffer.erase();
@@ -333,18 +332,7 @@ void	Server::run()
 													throw Error("Failed to send message to client");
 											}
 										}
-<<<<<<< HEAD
 										else if (this->__clients[j].__command.get_command() == "INVITE" || this->__clients[j].__command.get_command() == "invite")
-=======
-										else if (this->__clients[j].__command.get_command() == "TOPIC")
-										{
-											if (this->__clients[j].__command.get_params().size() == 0)
-												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
-											else
-												this->__clients[j].__topic.topic(this->__clients[j].__command.get_params(), std::pair<std::string, int> (this->__clients[j].get_nickname(), this->__clients[j].get_fd()), this->get_ref_channels());
-										}
-										else if (this->__clients[j].__command.get_command() == "INVITE")
->>>>>>> e55b7d60aa39668473cfcdb241913a31d9125eaa
 										{
 											string	user, channel;
 											int		i;
@@ -416,6 +404,13 @@ void	Server::run()
 														this->__clients[j].__command.send_error(ERR_USERONCHANNEL, this->__clients[j].get_fd());
 												}
 											}
+										}
+										else if (this->__clients[j].__command.get_command() == "TOPIC" || this->__clients[j].__command.get_command() == "topic")
+										{
+											if (this->__clients[j].__command.get_params().size() == 0)
+												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
+											else
+												this->__clients[j].__topic.topic(this->__clients[j].__command.get_params(), std::pair<std::string, int> (this->__clients[j].get_nickname(), this->__clients[j].get_fd()), this->get_ref_channels());
 										}
 										else if (this->__clients[j].__command.get_command() == "NICK" || this->__clients[j].__command.get_command() == "nick")
 										{
@@ -533,8 +528,6 @@ void	Server::connect_client(int nb_client)
 			{
 				this->__clients[nb_client].set_nickname(this->__clients[nb_client].__command.get_command());
 				this->__clients[nb_client].__command.set_nick_registration(true);
-				string repl_nick(string(":") + string(this->__clients[nb_client].get_nickname()) + string(" NICK :") + string(this->__clients[nb_client].get_nickname() + string("\n")));
-				send(this->__clients[nb_client].get_fd(), repl_nick.c_str(), repl_nick.size(), 0) == -1?throw Error("failling to snd msg\n"):1;
 			}
 		}
 		else if (this->__clients[nb_client].__command.get_registration().get_nick() && !this->__clients[nb_client].__command.get_registration().get_user())
