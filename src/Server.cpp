@@ -147,7 +147,7 @@ void	Server::run()
 	while (true)
 	{
 		this->__poll_res = poll(this->__poll_fds, MAX_FD, 0);
-		if (__poll_res == -1)
+		if (this->__poll_res == -1 /* || this->__poll_res == 0 */)
 			throw Error("poll error : failed to poll on socket " + std::to_string(this->__socket_fd));
 		else if (this->__poll_res > 0)
 		{
@@ -424,14 +424,19 @@ void	Server::run()
 										}
 										else if (this->__clients[j].__command.get_command() == "NICK" || this->__clients[j].__command.get_command() == "nick")
 										{
-											if (this->parse_input(this->__clients[j].__command.get_params()[0], 2) == -1)
-												this->__clients[j].__command.send_error(ERR_NICKNAMEINUSE, this->__clients[j].get_fd());
+											if (this->__clients[j].__command.get_params().size() == 0)
+												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 											else
 											{
-												string old_nick = this->__clients[j].get_nickname();
-												this->__clients[j].set_nickname(this->__clients[j].__command.get_params()[0]);
-												string repl_nick(string(":") + string(old_nick) + string(" NICK :") + string(this->__clients[j].get_nickname() + string("\n")));
-												send(this->__clients[j].get_fd(), repl_nick.c_str(), repl_nick.size(), 0) == -1?throw Error("failling to snd msg\n"):1;
+												if (this->parse_input(this->__clients[j].__command.get_params()[0], 2) == -1)
+													this->__clients[j].__command.send_error(ERR_NICKNAMEINUSE, this->__clients[j].get_fd());
+												else
+												{
+													string old_nick = this->__clients[j].get_nickname();
+													this->__clients[j].set_nickname(this->__clients[j].__command.get_params()[0]);
+													string repl_nick(string(":") + string(old_nick) + string(" NICK :") + string(this->__clients[j].get_nickname() + string("\n")));
+													send(this->__clients[j].get_fd(), repl_nick.c_str(), repl_nick.size(), 0) == -1?throw Error("failling to snd msg\n"):1;
+												}
 											}
 										}
 										else if (this->__clients[j].__command.get_command() == "!time")
@@ -557,13 +562,13 @@ void	Server::connect_client(int nb_client)
 				this->__clients[nb_client].set_username(this->__clients[nb_client].__command.get_command());
 				this->__clients[nb_client].__command.set_user_registration(true);
 				__message = ":" + this->__server_name + " 001 " + this->__clients[nb_client].get_nickname() +  " :Welcome to the Internet Relay Network " + this->__clients[nb_client].get_nickname() + "!" + this->__clients[nb_client].get_username() + "@" + string(hostname) + "\n";
-				send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0);
+				(send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0) == -1)?throw Error("failling to send msg"):1;
 				__message = ":" + this->__server_name + " 002 " + this->__clients[nb_client].get_nickname() + " :Your host is " + this->__server_name + ", running version 1.0\n";
-				send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0);
+				(send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0) == -1)?throw Error("failling to send msg"):1;
 				__message = ":" + this->__server_name + " 003 " + this->__clients[nb_client].get_nickname() + " :This server was created Dec 2, 2022\n";
-				send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0);
+				(send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0) == -1)?throw Error("failling to send msg"):1;
 				__message =":" + this->__server_name +  " 004 " + this->__clients[nb_client].get_nickname() +  " " + this->__server_name + " 1.0 iok\n";
-				send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0);
+				(send(this->__clients[nb_client].get_fd(), __message.c_str(), __message.size(), 0) == -1)?throw Error("failling to send msg"):1;
 				this->__clients[nb_client].set_is_registred(true);
 			}
 		}

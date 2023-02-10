@@ -1,5 +1,5 @@
 # include "../includes/Class.KICK.hpp"
-
+# include "../includes/main.hpp"
 void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> __client, std::vector<Channel> &__channels)
 {
     __params[0].erase(__params[0].find_last_not_of(" ") + 1);
@@ -21,7 +21,7 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
 	if (__args.size() == 1)
 	{
 		__message =  std::string(RED) + ": " + __client.first + " 401 * No such nick/channel\n" + std::string(RESET);
-		send(__client.second, __message.c_str(), __message.size(), 0);
+		if (send(__client.second, __message.c_str(), __message.size(), 0) == -1) throw Error("failling to send msg");
 		return ;
 	}
     std::stringstream           __splitclients(__args[1]);
@@ -44,7 +44,7 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
         if (__listofchannels[index][0] != '#')
         {
 			__message = std::string(RED) + ": " + __listofchannels[index] + " 403 * No such channel\n" + std::string(RESET);
-            send(__client.second, __message.c_str(), __message.size(), 0);
+            if (send(__client.second, __message.c_str(), __message.size(), 0) == -1) throw Error("failling to send msg");
             __listofchannels.erase(__listofchannels.begin() + index);
 			index--;
         }
@@ -55,12 +55,12 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
         if (!this->searchChannel(__listofchannels[i], __channels))
         {
 			__message = std::string(RED) + ": " + __listofchannels[i] + " 403 * No such channel\n" + std::string(RESET);
-            send(__client.second, __message.c_str(), __message.size(), 0);
+            if (send(__client.second, __message.c_str(), __message.size(), 0) == -1) throw Error("failling to send msg");
         }
         else if (!this->searchClient(__client.second, __channels, __listofchannels[i]))
         {
 			__message = std::string (RED) + ": " + __listofchannels[i] + " 442 * You're not on that channel\n" + std::string(RESET);
-            send(__client.second, __message.c_str(), __message.size(), 0);
+            if (send(__client.second, __message.c_str(), __message.size(), 0) == -1) throw Error("failling to send msg");
         }
         else if (this->searchClient(__client.second, __channels, __listofchannels[i]))
         {
@@ -84,14 +84,14 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
 					else
 					{
 						__message  = std::string(RED) + ":" + __listofclients[j] + " 401 * No such nick/channel\n" + std::string(RESET);
-						send(__client.second, __message.c_str(), __message.size(), 0);
+						if (send(__client.second, __message.c_str(), __message.size(), 0) == -1) throw Error("failling to send msg");
 					}
                 }
 			}
 			else
 			{
 				__message = std::string (RED) + ": " + __listofchannels[i] + " 482 * You're not channel operator\n" + std::string(RESET);
-				send(__client.second, __message.c_str(), __message.size(), 0);
+				if (send(__client.second, __message.c_str(), __message.size(), 0) == -1) throw Error("failling to send msg");
 			}
         }
     }
@@ -108,7 +108,7 @@ void	Kick::noticeAll(Channel __channel,int   __client, std::string  __nameofclie
         for(size_t i = 0; i < __channel.get_clients_size(); i++)
         {
 			if (__channel.get_clients()[i].first != __client)
-            	send(__channel.get_clients()[i].first, __message.c_str(), __message.size(), 0);
+            	if (send(__channel.get_clients()[i].first, __message.c_str(), __message.size(), 0) == -1) throw Error("failling to send msg");
         }
     }
     else
@@ -117,7 +117,7 @@ void	Kick::noticeAll(Channel __channel,int   __client, std::string  __nameofclie
         for(size_t i = 0; i < __channel.get_clients_size(); i++)
         {
 			if (__channel.get_clients()[i].first != __client)
-            	send(__channel.get_clients()[i].first, __message.c_str(), __message.size(), 0);
+            	if (send(__channel.get_clients()[i].first, __message.c_str(), __message.size(), 0) == -1) throw Error("failling to send msg");
         }
     }
 }

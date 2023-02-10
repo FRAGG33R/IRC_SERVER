@@ -1,4 +1,5 @@
 #include "../includes/Class.part.hpp"
+# include "../includes/main.hpp"
 
 int    Part::part(std::vector<std::string> __params, int __client, std::vector<Channel> &__channels)
 {
@@ -55,7 +56,8 @@ int    Part::part(std::vector<std::string> __params, int __client, std::vector<C
 		else
 		{
 			__message = std::string(RED) + ": " + __leave_channels[i] + " 403 * No such channel\n" + std::string(RESET);
-			send(__client, __message.c_str(), __message.size(), 0);
+			if (send(__client, __message.c_str(), __message.size(), 0) == -1) 
+				return (-1);
 		}
     }
 	return (0);
@@ -67,7 +69,7 @@ void    Part::noticeAll(Channel __channel, std::string __client)
     for(size_t i = 0; i < __channel.get_clients_size(); i++)
     {
         __message = ":" + __client + " PART " + __channel.getchannelname() + "\n";
-        send(__channel.get_clients()[i].first, __message.c_str(), __message.size(), 0);
+        if (send(__channel.get_clients()[i].first, __message.c_str(), __message.size(), 0) == -1) throw Error("failing tosend msg");
     }
 }
 

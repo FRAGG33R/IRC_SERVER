@@ -1,4 +1,5 @@
 #include "../includes/Class.TOPIC.hpp"
+# include "../includes/main.hpp"
 
 
 void    Topic::topic(std::vector<std::string> __params, std::pair<std::string, int> __client, std::vector<Channel> &__channels){
@@ -11,12 +12,12 @@ void    Topic::topic(std::vector<std::string> __params, std::pair<std::string, i
     if (!this->searchChannel(__params[0], __channels))
     {
         __error = std::string(RED) + ": " + __error + " 403 * No such channel\n" + std::string(RESET);
-        send(__client.second, __error.c_str(), __error.size(), 0);
+        if (send(__client.second, __error.c_str(), __error.size(), 0) == -1) throw Error("falling to send msg");
         return ;
     }
     if (__params[0][0] != '#'){
         __error = std::string(RED) + ": " + __params[0] + " 403 * No such channel\n" + std::string(RESET);
-        send(__client.second, __error.c_str(), __error.size(), 0);
+        if (send(__client.second, __error.c_str(), __error.size(), 0) == -1) throw Error("falling to send msg");
         return ;
     }
     
@@ -28,16 +29,16 @@ void    Topic::topic(std::vector<std::string> __params, std::pair<std::string, i
             if (!this->searchClient(__client.first, __channels, __params[0]))
             {
                 __message = std::string (RED) + ":   442 * You're not on that channel\n" + std::string(RESET);
-                send(__client.second, __message.c_str(), __message.size(), 0);
+                if (send(__client.second, __message.c_str(), __message.size(), 0) == -1) throw Error("falling to send msg");
                 return ;
             }
             if (checkOperator(__client.second, __channels, __params[0])){
                 __channels[indexOfChannel(__params[0], __channels)].set_topicInfo(__message);
                 __message = ":" + __client.first + " TOPIC " + __params[0] + " " + __params[1] + "\n";
-                send(__client.second, __message.c_str(), __message.size(), 0);
+                if (send(__client.second, __message.c_str(), __message.size(), 0) == -1) throw Error("falling to send msg");
             }else{
                 __error= std::string (RED) + ":  482 * You're not channel operator\n" + std::string(RESET);
-                send(__client.second, __error.c_str(), __error.size(), 0);
+                if (send(__client.second, __error.c_str(), __error.size(), 0) == -1) throw Error("falling to send msg");
                 return ;
             }
         }
@@ -45,11 +46,11 @@ void    Topic::topic(std::vector<std::string> __params, std::pair<std::string, i
     else{
         if (!__channels[indexOfChannel(__params[0], __channels)].get_topicInfo().empty()){
             __message =  std::string(": ") + " 332 * "+ __params[0] + " " + __channels[indexOfChannel(__params[0], __channels)].get_topicInfo() + "\n";
-            send(__client.second, __message.c_str(), __message.size(), 0);
+            if (send(__client.second, __message.c_str(), __message.size(), 0) == -1) throw Error("falling to send msg");
         }
         else{
             __message = std::string (RED) + ": " + " 331 * "+ __params[0] + " :No topic is set\n"+ std::string(RESET);
-            send(__client.second, __message.c_str(), __message.size(), 0);
+            if (send(__client.second, __message.c_str(), __message.size(), 0) == -1) throw Error("falling to send msg");
         }
         
     }
