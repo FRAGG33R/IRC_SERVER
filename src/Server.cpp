@@ -325,16 +325,7 @@ void	Server::run()
 											if (this->__clients[j].__command.get_params().size() == 0)
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 											else
-											{
-												// std::vector<std::string> split;
-												// if (this->__clients[j].__command.get_params()[0].find(" ") != string::npos)
-												// {
-												// 	split.push_back(this->__clients[j].__command.get_params()[0].substr(0, this->__clients[j].__command.get_params()[0].find(" ")));
-												// 	split.push_back(this->__clients[j].__command.get_params()[0].substr(this->__clients[j].__command.get_params()[0].find(" ") + 1, string::npos));
-												// 	this->__clients[j].__command.set_params(split);
-												// }
 												this->__clients[j].__kick.kick(this->__clients[j].__command.get_params(), std::pair<std::string, int> (this->__clients[j].get_nickname(), this->__clients[j].get_fd()), this->get_ref_channels());
-											}
 									
 										}
 										else if (this->__clients[j].__command.get_command() == "QUIT" || this->__clients[j].__command.get_command() == "quit")

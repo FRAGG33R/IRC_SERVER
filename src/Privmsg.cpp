@@ -41,9 +41,6 @@ void Privmsg::setType(std::string &type)
 
 int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pair<std::string, int> > __clients, std::vector<Channel> &__channels, int __sender, std::string __sender_nickname, bool __command)
 {
-
-// 	:Angel PRIVMSG Wiz :Hello are you receiving this message ?
-//                                 ; Message from Angel to Wiz.
 	std::vector<std::string>	__given_clients;
 	__params[0].erase(__params[0].find_last_not_of(" ") + 1);
 	std::stringstream 			stream(__params[0]);
@@ -51,8 +48,6 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 	std::string                 __message;
 
 	__message  = __params[1];
-	// if (__params[0][0] == ':' || __params[1][0] != ':')
-	// 	return 412;
 	while (getline(stream, temp, ','))
 	{
 		if (!temp.empty())
@@ -63,10 +58,12 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 	{
 		if (__given_clients[i][0] == '#')
 		{
+			bool ex_channel(false);
 			for (size_t k = 0; k < __channels.size(); k++)
 			{
 				if (__given_clients[i] == __channels[k].getchannelname())
 				{
+					ex_channel = true;
 					for (size_t l = 0; l < __channels[k].get_clients().size(); l++)
 					{
 						if (__command)
@@ -77,15 +74,12 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 							return (-1);
 					}
 				}
-				else
-				{
-					if (__command)
-					{
-						std::string msg(std::string(RED) + ":" + __sender_nickname + " 401 " + __given_clients[i] + " No such nick/channel\n" + std::string(RESET));
-						if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
-							return (-1);
-					}
-				}
+			}
+			if (!ex_channel)
+			{
+				std::string msg(std::string(RED) + ":" + __sender_nickname + " 401 " + __given_clients[i] + " No such nick/channel\n" + std::string(RESET));
+				if (send(__sender, msg.c_str(), msg.size(), 0) == -1)
+					return (-1);
 			}
 		}
 		else

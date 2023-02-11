@@ -71,17 +71,15 @@ void	Kick::kick(std::vector<std::string> __params, std::pair<std::string, int> _
                 {
                     if (this->searchClient(__listofclients[j], __channels, __listofchannels[i]))
                     {
-                        for (size_t xx = 0; xx < __params.size(); xx++)
-                            std::cout << "parm : " << xx << __params[xx] << "\n";
                         if (__params.size() == 1)
                             __params.push_back("no reason specified!!");
 						this->noticeAll(__channels[i], __client.second, __listofclients[j], (__params[1].size() > 1 && __params[1][0] == ':'), __params[1]);
 						int	__client_index = this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]);
 						int	__operator_index = this->indexOfOper(__listofclients[j], __channels, __listofchannels[i]);
 						if (__client_index != -1)
-							__channels[i].get_clients().erase(__channels[i].get_clients().begin() + this->indexOfClient(__listofclients[j], __channels, __listofchannels[i]));//erasing client
+							__channels[i].get_clients().erase(__channels[i].get_clients().begin() + __client_index);//erasing client
 						if (__operator_index != -1)
-							__channels[i].get_operators().erase(__channels[i].get_operators().begin() + this->indexOfOper(__listofclients[j], __channels, __listofchannels[i]));//erasing operator
+							__channels[i].get_operators().erase(__channels[i].get_operators().begin() + __operator_index);//erasing operator
 						if (__channels[i].get_clients().size() == 0)
 							__channels.erase(__channels.begin() + i);//erase channel
                     }
