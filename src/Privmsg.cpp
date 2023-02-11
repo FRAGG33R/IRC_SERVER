@@ -64,8 +64,15 @@ int		Privmsg::parsPrivmsg(std::vector<std::string> __params, std::vector<std::pa
 				if (__given_clients[i] == __channels[k].getchannelname())
 				{
 					ex_channel = true;
+					if (!this->searchClient(__sender,__channels, __given_clients[i]))
+					{
+						std::string __message = std::string (RED) + ": " + __given_clients[i] + " 442 * You're not on that channel\n" + std::string(RESET);
+           				if (send(__sender, __message.c_str(), __message.size(), 0) == -1) return (-1);
+						return -2;
+					}
 					for (size_t l = 0; l < __channels[k].get_clients().size(); l++)
 					{
+	
 						if (__command)
 							this->setMessage(":" + __sender_nickname + " PRIVMSG " + __channels[k].get_clients()[l].second + " " +  __message  + "\n");
 						else
@@ -116,4 +123,27 @@ int	Privmsg::client_exist(std::vector<std::pair<std::string, int> > __client_lis
 			return (j);
 	}
 	return (-1);
+}
+
+bool	Privmsg::searchClient(int __clientId, std::vector<Channel> __channels, std::string __nameChannel)
+{
+    bool found(false);
+
+    int index = this->indexOfChannel(__nameChannel, __channels);
+    for (size_t i = 0; i <  __channels[index].get_clients_size(); i++)
+    {
+        if (__clientId == __channels[index].get_clients()[i].first)
+            found = true;
+    }
+    return found;
+}
+
+int		Privmsg::indexOfChannel(std::string __channelName, std::vector<Channel> __channels)
+{
+    for (size_t i = 0; i < __channels.size(); i++)
+    {
+        if (__channelName == __channels[i].getchannelname())
+            return i;
+    }
+    return -1;
 }
