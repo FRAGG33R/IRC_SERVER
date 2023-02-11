@@ -227,6 +227,8 @@ vector<string>	&Parser::get_params()
 
 void	Parser::set_params(const vector<string> &parametters)
 {
+	for (size_t i = 0; i < this->params.size(); i++)
+		this->params[i].erase();
 	this->params = parametters;
 }
 
