@@ -98,7 +98,8 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 						if (__params[2] == __channels[__index].get_operators()[i].second)
 						{ 
 							__message = ":" + __sender_name + " MODE -o " + __channels[__index].get_operators()[i].second + "\n";
-							send(__sender, __message.c_str(), __message.size(), 0);
+							if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
+								return (-1);
 							return (__channels[__index].get_operators().erase(__channels[__index].get_operators().begin() + i), 0);
 						}
 					}
@@ -113,7 +114,8 @@ int Mode::parseMode(std::vector<std::string> __params,  std::vector<Channel> &__
 						if (__params[2] == __channels[__index].get_clients()[i].second)
 						{
 							__message = ":" + __sender_name + " MODE +o " + __channels[__index].get_operators()[i].second + "\n";
-							send(__sender, __message.c_str(), __message.size(), 0);
+							if (send(__sender, __message.c_str(), __message.size(), 0) == -1)
+								return (-1);
 							return (__channels[__index].add_operator(std::pair<int, std::string> (__channels[__index].get_clients()[i].first, __channels[__index].get_clients()[i].second)), 0);
 						}
 					}

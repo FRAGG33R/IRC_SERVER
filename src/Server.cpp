@@ -299,7 +299,8 @@ void	Server::run()
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 											else
 											{
-												this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->__clients[j].get_nickname(), this->get_ref_channels());
+												if (this->__clients[j].__join.set_channels_keys(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->__clients[j].get_nickname(), this->get_ref_channels()) == -1)
+													throw Error("Failed to send message to client");
 												this->__clients[j].__join.erase_channels();
 											}
 										}
@@ -309,7 +310,8 @@ void	Server::run()
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 											else
 											{
-												this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->get_ref_channels());
+												if (this->__clients[j].__part.part(this->__clients[j].__command.get_params(), this->__clients[j].get_fd(), this->get_ref_channels())== -1)
+													throw Error("Failed to send message to client");
 											}
 										}
 										else if (this->__clients[j].__command.get_command() == "MODE" || this->__clients[j].__command.get_command() == "mode")
@@ -326,7 +328,6 @@ void	Server::run()
 												this->__clients[j].__command.send_error(461, this->__clients[j].get_fd());
 											else
 												this->__clients[j].__kick.kick(this->__clients[j].__command.get_params(), std::pair<std::string, int> (this->__clients[j].get_nickname(), this->__clients[j].get_fd()), this->get_ref_channels());
-									
 										}
 										else if (this->__clients[j].__command.get_command() == "QUIT" || this->__clients[j].__command.get_command() == "quit")
 										{
@@ -435,7 +436,7 @@ void	Server::run()
 													string old_nick = this->__clients[j].get_nickname();
 													this->__clients[j].set_nickname(this->__clients[j].__command.get_params()[0]);
 													string repl_nick(string(":") + string(old_nick) + string(" NICK :") + string(this->__clients[j].get_nickname() + string("\n")));
-													send(this->__clients[j].get_fd(), repl_nick.c_str(), repl_nick.size(), 0) == -1?throw Error("failling to snd msg\n"):1;
+													send(this->__clients[j].get_fd(), repl_nick.c_str(), repl_nick.size(), 0) == -1 ? throw Error("failling to snd msg\n") : 1;
 												}
 											}
 										}
